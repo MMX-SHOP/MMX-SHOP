@@ -5,30 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MMX Shop • Fortnite Private Cheat</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
     body { font-family: 'Inter', sans-serif; }
-    
-    .shooting-star { position: absolute; width: 3px; height: 3px; background: #fff; border-radius: 50%; box-shadow: 0 0 20px 6px #c026d3; animation: shoot 4s linear infinite; }
-    @keyframes shoot { from { transform: translateX(-150px) translateY(-150px); opacity: 0; } to { transform: translateX(800px) translateY(600px); opacity: 0; } }
-    
-    .logo-float { animation: float 6s ease-in-out infinite; }
-    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-    
-    .feature-item { transition: all 0.3s ease; }
-    .feature-item:hover { transform: translateX(10px); color: #c026d3; }
+
+    .shooting-star {
+      position: absolute; width: 4px; height: 2px; background: linear-gradient(90deg, transparent, #c026d3, #fff);
+      box-shadow: 0 0 25px 8px #c026d3; animation: shoot linear infinite;
+    }
+    @keyframes shoot {
+      from { transform: translateX(-300px) translateY(-300px); opacity: 0; }
+      to { transform: translateX(1200px) translateY(800px); opacity: 0; }
+    }
   </style>
 </head>
-<body class="bg-black text-white">
+<body class="bg-black text-white overflow-x-hidden">
 
-  <!-- SPLASH SCREEN -->
+  <!-- SPLASH -->
   <div id="splash" class="fixed inset-0 z-50 flex items-center justify-center bg-black">
     <div class="text-center relative">
-      <img src="https://i.imgur.com/UMobm.jpg" alt="MMX Logo" class="w-96 logo-float mx-auto">
-      <h1 class="text-8xl font-black tracking-tighter mt-8 glow-text">MMX SHOP</h1>
-      <p class="text-3xl text-purple-400 mt-3">FORTNITE PRIVATE CHEAT</p>
-      <button onclick="enterSite()" class="mt-12 px-20 py-7 text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 rounded-3xl hover:scale-110 transition-all shadow-2xl">ENTER THE MATRIX</button>
+      <img id="splash-logo" src="logo.jpg" alt="MMX" class="w-96 mx-auto">
+      <h1 id="splash-title" class="text-8xl font-black tracking-tighter mt-10 text-white">MMX SHOP</h1>
+      <button onclick="enterSite()" 
+              class="mt-16 px-20 py-7 text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 rounded-3xl hover:scale-110 transition-all duration-300 shadow-2xl shadow-purple-500/60">
+        ENTER THE MATRIX
+      </button>
     </div>
     <div id="stars-splash" class="absolute inset-0 pointer-events-none"></div>
   </div>
@@ -37,153 +40,161 @@
   <div id="main-site" class="hidden">
 
     <!-- NAVBAR -->
-    <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-xl border-b border-purple-500/20 z-50">
+    <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-xl border-b border-purple-500/30 z-50">
       <div class="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
-        <img src="https://i.imgur.com/UMobm.jpg" class="h-12">
+        <img src="logo.jpg" class="h-12 cursor-pointer" onclick="window.location.reload()">
+        
         <div class="flex gap-10 text-lg font-medium">
-          <a href="#hero" class="hover:text-purple-400 transition">Accueil</a>
-          <a href="#features" class="hover:text-purple-400 transition">Features</a>
-          <a href="#pricing" class="hover:text-purple-400 transition">Prix</a>
-          <a href="#discord" class="hover:text-purple-400 transition">Discord</a>
+          <a href="#" class="hover:text-purple-400 transition">Accueil</a>
+          <a href="#" onclick="showProduct()" class="hover:text-purple-400 transition">Fortnite Private</a>
+        </div>
+
+        <!-- Panier Amélioré -->
+        <div onclick="showCart()" id="cart-button"
+             class="flex items-center gap-3 cursor-pointer group">
+          <div class="relative">
+            <i class="fas fa-shopping-cart text-3xl transition-transform group-hover:rotate-12"></i>
+            <span id="cart-count" class="absolute -top-1 -right-1 bg-purple-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full scale-0 transition-transform">0</span>
+          </div>
+          <span class="text-sm font-medium opacity-0 group-hover:opacity-100 transition">Panier</span>
         </div>
       </div>
     </nav>
 
     <!-- HERO -->
-    <section id="hero" class="min-h-screen flex items-center justify-center pt-20">
-      <div class="max-w-6xl mx-auto text-center px-8">
-        <img src="https://i.imgur.com/UMobm.jpg" class="w-80 mx-auto logo-float">
-        <h1 class="text-8xl font-black tracking-tighter mt-10">MMX PRIVATE FORTNITE</h1>
-        <p class="text-4xl text-purple-300 mt-4">Le cheat le plus propre du marché</p>
+    <section class="min-h-screen flex items-center justify-center relative pt-20">
+      <div class="text-center px-8">
+        <img src="logo.jpg" class="w-80 mx-auto" id="hero-logo">
+        <h1 onclick="showProduct()" class="text-7xl font-black tracking-tighter cursor-pointer hover:text-purple-400 transition mt-8" id="hero-title">
+          FORTNITE PRIVATE
+        </h1>
+        <p class="text-3xl text-purple-400 mt-4">LIFETIME • UNDETECTED</p>
       </div>
       <div id="stars-hero" class="absolute inset-0 pointer-events-none"></div>
     </section>
-
-    <!-- FEATURES -->
-    <section id="features" class="py-24 bg-zinc-950">
-      <div class="max-w-6xl mx-auto px-8">
-        <h2 class="text-6xl font-black text-center mb-16">Features</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <!-- AIMBOT -->
-          <div class="bg-black/70 border border-purple-500/30 rounded-3xl p-8">
-            <h3 class="text-3xl font-bold mb-6">AIMBOT</h3>
-            <ul class="space-y-3 text-lg">
-              <li class="feature-item">Enable + Keybind</li>
-              <li class="feature-item">Enable Predictions</li>
-              <li class="feature-item">Target Line (+ Color Picker)</li>
-              <li class="feature-item">Visible Check</li>
-              <li class="feature-item">Draw Aimbot FOV (+ Color Picker)</li>
-              <li class="feature-item">No Aimbot While No Weapon</li>
-              <li class="feature-item">Bullet Drop Compensation</li>
-              <li class="feature-item">Humanization (0.1 - 25)</li>
-              <li class="feature-item">Aimbot Type: Kernel / Memory / Silent Aim</li>
-              <li class="feature-item">Hitbox Type: Head / Chest / Pelvis</li>
-              <li class="feature-item">Aimbot Distance (10-500)</li>
-              <li class="feature-item">FOV (10-500) - global or per weapon</li>
-              <li class="feature-item">Smooth (1-50) - global or per weapon</li>
-              <li class="feature-item">Crosshair</li>
-            </ul>
-          </div>
-
-          <!-- WEAPON CONFIG + TRIGGERBOT -->
-          <div class="space-y-8">
-            <div class="bg-black/70 border border-purple-500/30 rounded-3xl p-8">
-              <h3 class="text-3xl font-bold mb-6">WEAPON CONFIG</h3>
-              <ul class="space-y-3 text-lg">
-                <li class="feature-item">Enable Weapon Configs</li>
-                <li class="feature-item">Rifle (FOV + Smooth)</li>
-                <li class="feature-item">Shotgun (FOV + Smooth)</li>
-                <li class="feature-item">SMG (FOV + Smooth)</li>
-                <li class="feature-item">Sniper (FOV + Smooth)</li>
-                <li class="feature-item">Pistol (FOV + Smooth)</li>
-                <li class="feature-item">All Weapons (global)</li>
-              </ul>
-            </div>
-            <div class="bg-black/70 border border-purple-500/30 rounded-3xl p-8">
-              <h3 class="text-3xl font-bold mb-6">TRIGGERBOT</h3>
-              <ul class="space-y-3 text-lg">
-                <li class="feature-item">Enable + Keybind</li>
-                <li class="feature-item">No Triggerbot Key</li>
-                <li class="feature-item">Shotgun Only</li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- VISUALS, RADAR, EXPLOITS, MISC -->
-          <div class="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-black/70 border border-purple-500/30 rounded-3xl p-8">
-              <h3 class="text-3xl font-bold mb-6">VISUALS - PLAYER ESP</h3>
-              <ul class="space-y-3 text-lg">
-                <li class="feature-item">Box ESP • Corner Box • Filled Box</li>
-                <li class="feature-item">Skeleton ESP • Head ESP • Snapline</li>
-                <li class="feature-item">Weapon • Distance • Username • Platform</li>
-                <li class="feature-item">Ranked ESP • Arrow ESP • Invisible Color</li>
-              </ul>
-            </div>
-            <div class="bg-black/70 border border-purple-500/30 rounded-3xl p-8">
-              <h3 class="text-3xl font-bold mb-6">WORLD ESP + RADAR + EXPLOITS</h3>
-              <ul class="space-y-3 text-lg">
-                <li class="feature-item">World ESP • Item Rarity Filter</li>
-                <li class="feature-item">Radar (Size + Color Picker)</li>
-                <li class="feature-item">Magic Bullet • Pickaxe Teleports • Player Speed</li>
-                <li class="feature-item">Config Manager • Ignore Bots/NPCs/Teammates</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PRICING -->
-    <section id="pricing" class="py-24 bg-black">
-      <div class="max-w-6xl mx-auto px-8 text-center">
-        <h2 class="text-6xl font-black mb-12">Prix</h2>
-        <div class="max-w-md mx-auto bg-zinc-950 border-2 border-purple-500 rounded-3xl p-12">
-          <h3 class="text-5xl font-bold">LIFETIME</h3>
-          <div class="text-8xl font-black text-purple-400 mt-6">69.99€</div>
-          <p class="text-xl mt-4 text-purple-300">Accès à vie • Mise à jour permanente</p>
-          <button onclick="window.location.href='#'" class="mt-12 w-full py-6 text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 rounded-3xl hover:scale-105 transition">Acheter maintenant</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- DISCORD -->
-    <section id="discord" class="py-24 bg-zinc-950">
-      <div class="max-w-6xl mx-auto px-8 text-center">
-        <h2 class="text-6xl font-black mb-12">Rejoins le Discord Officiel</h2>
-        <div class="flex flex-col md:flex-row gap-8 justify-center items-center">
-          <a href="https://discord.com/users/kyotouhq" target="_blank" class="flex flex-col items-center hover:scale-110 transition">
-            <i class="fab fa-discord text-8xl text-purple-400 mb-4"></i>
-            <p class="text-xl">kyotouhq</p>
-          </a>
-          <a href="https://discord.com/users/mtx93" target="_blank" class="flex flex-col items-center hover:scale-110 transition">
-            <i class="fab fa-discord text-8xl text-purple-400 mb-4"></i>
-            <p class="text-xl">mtx93</p>
-          </a>
-        </div>
-      </div>
-    </section>
-
   </div>
 
+  <!-- PRODUCT PAGE -->
+  <div id="product-page" class="hidden fixed inset-0 bg-black z-50 overflow-auto">
+    <div class="max-w-7xl mx-auto p-8 pt-24 grid md:grid-cols-2 gap-12">
+      <div>
+        <img src="logo.jpg" class="w-full rounded-3xl border border-purple-500/30 shadow-2xl">
+      </div>
+      <div>
+        <h1 class="text-6xl font-black">MMX PRIVATE FORTNITE</h1>
+        <div class="flex items-center gap-4 mt-6">
+          <span class="text-6xl font-bold text-purple-400">69.99€</span>
+          <span class="bg-green-500 px-6 py-2 rounded-full text-black font-bold">LIFETIME</span>
+        </div>
+        <button onclick="addToCart()" 
+                class="mt-12 w-full py-8 text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 rounded-3xl hover:scale-105 transition-all">
+          AJOUTER AU PANIER
+        </button>
+      </div>
+    </div>
+    <button onclick="hideProduct()" class="fixed top-8 right-8 text-5xl hover:text-purple-400">✕</button>
+  </div>
+
+  <!-- CART MODAL -->
+  <div id="cart-modal" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center">
+    <div class="bg-zinc-950 rounded-3xl w-full max-w-2xl p-10">
+      <h2 class="text-4xl font-black mb-8">Votre Panier</h2>
+      <div id="cart-items" class="space-y-6"></div>
+      
+      <div class="mt-10 border-t border-purple-500/30 pt-8 flex justify-between text-3xl font-bold">
+        <span>Total</span>
+        <span id="cart-total" class="text-purple-400">0.00€</span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6 mt-10">
+        <button onclick="fakePaypal()" class="py-7 text-2xl font-bold bg-[#003087] rounded-3xl hover:scale-105 transition">PayPal</button>
+        <button onclick="fakeCard()" class="py-7 text-2xl font-bold bg-gradient-to-r from-gray-700 to-gray-800 rounded-3xl hover:scale-105 transition">Carte Bancaire</button>
+      </div>
+      <button onclick="hideCart()" class="mt-8 text-gray-400 hover:text-white">Fermer</button>
+    </div>
+  </div>
+
+  <!-- AUDIO -->
   <audio id="bgMusic" loop>
-    <source src="https://files.catbox.moe/1v2k8p.mp3" type="audio/mpeg">
+    <source src="music.mp3" type="audio/mpeg">
   </audio>
 
   <script>
+    let cart = [];
+
+    // GSAP Animations
+    function initGSAP() {
+      gsap.from("#hero-logo", { y: -100, opacity: 0, duration: 1.5, ease: "bounce.out" });
+      gsap.from("#hero-title", { y: 50, opacity: 0, duration: 1.2, delay: 0.5 });
+    }
+
+    function addToCart() {
+      cart = [{ name: "MMX Private Fortnite - Lifetime", price: 69.99 }];
+      updateCartCount();
+      gsap.fromTo("#cart-button", { scale: 0.8 }, { scale: 1.3, duration: 0.4, yoyo: true, repeat: 1 });
+      alert("✅ Ajouté au panier !");
+      hideProduct();
+      showCart();
+    }
+
+    function updateCartCount() {
+      const countEl = document.getElementById('cart-count');
+      countEl.textContent = cart.length;
+      gsap.fromTo(countEl, { scale: 0 }, { scale: 1, duration: 0.4 });
+    }
+
+    function showCart() {
+      const modal = document.getElementById('cart-modal');
+      const container = document.getElementById('cart-items');
+      container.innerHTML = '';
+
+      if (cart.length === 0) {
+        container.innerHTML = `<p class="text-center py-12 text-gray-400">Votre panier est vide</p>`;
+      } else {
+        let total = 0;
+        cart.forEach((item, i) => {
+          total += item.price;
+          container.innerHTML += `
+            <div class="flex justify-between bg-zinc-900 p-6 rounded-2xl">
+              <div>
+                <p class="font-semibold">${item.name}</p>
+                <p class="text-purple-400">${item.price}€</p>
+              </div>
+              <button onclick="removeFromCart(${i})" class="text-red-500 hover:text-red-400">Supprimer</button>
+            </div>`;
+        });
+        document.getElementById('cart-total').textContent = total.toFixed(2) + "€";
+      }
+      modal.classList.remove('hidden');
+      gsap.from(modal, { opacity: 0, y: 100, duration: 0.6, ease: "power3.out" });
+    }
+
+    function removeFromCart(i) {
+      cart.splice(i, 1);
+      updateCartCount();
+      showCart();
+    }
+
+    function hideCart() { document.getElementById('cart-modal').classList.add('hidden'); }
+    function fakePaypal() { hideCart(); setTimeout(() => { alert("✅ Paiement PayPal réussi !"); cart = []; updateCartCount(); }, 600); }
+    function fakeCard() { hideCart(); setTimeout(() => { alert("✅ Paiement carte réussi !"); cart = []; updateCartCount(); }, 600); }
+
+    function showProduct() { document.getElementById('product-page').classList.remove('hidden'); }
+    function hideProduct() { document.getElementById('product-page').classList.add('hidden'); }
+
     function createShootingStar(container) {
       const star = document.createElement('div');
       star.className = 'shooting-star';
       star.style.left = Math.random() * 100 + 'vw';
-      star.style.top = Math.random() * 60 + 'vh';
-      star.style.animationDuration = (3 + Math.random() * 3) + 's';
+      star.style.top = Math.random() * 70 + 'vh';
+      star.style.animationDuration = (3 + Math.random() * 4) + 's';
       container.appendChild(star);
-      setTimeout(() => star.remove(), 8000);
+      setTimeout(() => star.remove(), 15000);
     }
 
     function startStars(id) {
-      const container = document.getElementById(id);
-      setInterval(() => createShootingStar(container), 280);
+      const cont = document.getElementById(id);
+      setInterval(() => createShootingStar(cont), 250);
     }
 
     function enterSite() {
@@ -195,10 +206,13 @@
         document.getElementById('main-site').classList.remove('hidden');
         document.getElementById('bgMusic').play();
         startStars('stars-hero');
+        initGSAP();
       }, 1200);
     }
 
-    window.onload = () => startStars('stars-splash');
+    window.onload = () => {
+      startStars('stars-splash');
+    };
   </script>
 </body>
 </html>
