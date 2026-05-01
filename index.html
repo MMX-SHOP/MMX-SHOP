@@ -3,200 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMX | Elite Software</title>
+    <title>MMX | Nebula Private</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Orbitron:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Orbitron:wght@700&display=swap');
 
         :root { 
             --accent: #a78bfa; 
-            --bg: #050508; 
+            --bg: #050208; 
+            --nebula: #1a0b2e;
         }
 
         * { cursor: crosshair !important; box-sizing: border-box; }
-        body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; margin: 0; }
+        
+        body { 
+            background-color: var(--bg); 
+            color: white; 
+            font-family: 'Inter', sans-serif; 
+            overflow-x: hidden; 
+            margin: 0;
+        }
+
+        /* --- NEBULA BACKGROUND --- */
+        #nebula-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, var(--nebula) 0%, var(--bg) 100%);
+        }
 
         /* --- NAVIGATION --- */
         #main-nav {
             position: fixed; top: 0; width: 100%; height: 80px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 5%; z-index: 1000; background: #000;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 0 5%; z-index: 1000; 
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(167, 139, 250, 0.1);
         }
 
-        .logo-block { background: #000; padding: 10px; display: flex; align-items: center; }
-        .logo-img { height: 50px; width: auto; mix-blend-mode: lighten; }
+        .logo-container {
+            background: #000;
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
 
-        .nav-link { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; color: #fff; transition: 0.3s; }
-        .nav-link:hover { color: var(--accent); }
+        .logo-img { height: 40px; filter: drop-shadow(0 0 5px rgba(167, 139, 250, 0.5)); }
 
         .btn-discord {
-            background: transparent; border: 2px solid #7c5dfa; padding: 8px 20px;
-            border-radius: 50px; display: flex; align-items: center; gap: 8px;
-            color: #a78bfa; font-weight: 700; font-size: 12px; transition: 0.3s;
+            background: rgba(124, 93, 250, 0.1);
+            border: 1px solid #7c5dfa;
+            padding: 10px 20px;
+            border-radius: 12px;
+            color: #a78bfa;
+            font-weight: 800;
+            font-size: 12px;
+            transition: 0.3s;
+            display: flex; gap: 8px; align-items: center;
         }
-        .btn-discord:hover { background: #7c5dfa; color: white; box-shadow: 0 0 15px rgba(124, 93, 250, 0.4); }
+        .btn-discord:hover { 
+            background: #7c5dfa; 
+            color: white; 
+            box-shadow: 0 0 25px rgba(124, 93, 250, 0.4); 
+        }
 
-        /* --- CORE FEATURES DESIGN (image_73bcc1.png) --- */
-        .core-section { max-width: 1200px; margin: 0 auto; padding: 100px 20px; }
-        .core-tag { color: #a78bfa; text-transform: uppercase; font-weight: 900; font-size: 11px; letter-spacing: 2px; margin-bottom: 15px; display: block; }
-        .core-title { font-size: 42px; font-weight: 700; margin-bottom: 15px; letter-spacing: -1px; }
-        .core-subtitle { color: #888; font-size: 16px; margin-bottom: 60px; font-weight: 400; }
+        /* --- HERO & GLASS CARDS --- */
+        .glass-card {
+            background: rgba(15, 10, 25, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 35px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
 
-        .grid-core { display: grid; grid-template-cols: repeat(5, 1fr); gap: 20px; }
-        .feature-card {
-            background: #08080a; border: 1px solid rgba(255,255,255,0.03);
-            padding: 30px 25px; border-radius: 16px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .price-btn {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            text-align: center;
+            border-radius: 15px;
+            font-weight: 900;
+            font-size: 10px;
+            transition: 0.3s;
         }
-        .feature-card:hover { border-color: var(--accent); transform: translateY(-10px); background: #0c0c10; }
-        
-        .icon-box {
-            width: 45px; height: 45px; border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 25px; color: var(--accent);
+        .price-btn.active {
+            border-color: var(--accent);
+            background: rgba(167, 139, 250, 0.15);
+            color: var(--accent);
+            box-shadow: 0 0 15px rgba(167, 139, 250, 0.2);
         }
-        .feature-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 10px; color: #fff; }
-        .feature-card p { font-size: 12px; color: #666; line-height: 1.6; font-weight: 400; }
+
+        /* --- CORE FEATURES (Glass Style) --- */
+        .core-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 35px 25px;
+            border-radius: 24px;
+            transition: 0.4s;
+        }
+        .core-card:hover {
+            transform: translateY(-8px);
+            background: rgba(167, 139, 250, 0.05);
+            border-color: var(--accent);
+        }
+        .core-icon {
+            color: var(--accent);
+            margin-bottom: 25px;
+            filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.6));
+        }
 
         /* --- OVERLAYS --- */
-        #status-page, #feature-overlay {
-            position: fixed; inset: 0; background: #050508; z-index: 2000;
-            display: none; flex-direction: column; align-items: center; justify-content: center;
+        #feature-panel {
+            position: fixed; inset: 0; 
+            background: rgba(5, 2, 8, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 2000; display: none;
+            align-items: center; justify-content: center;
         }
-
-        /* --- TOAST --- */
-        #toast {
-            position: fixed; bottom: 30px; right: 30px; background: #0f0f12;
-            border-left: 4px solid #facc15; padding: 15px 25px; border-radius: 10px;
-            display: flex; align-items: center; gap: 15px; z-index: 5000;
-            transform: translateX(200%); transition: 0.5s;
-        }
-        #toast.active { transform: translateX(0); }
     </style>
 </head>
 <body>
 
+    <canvas id="nebula-canvas"></canvas>
     <audio id="bgMusic" loop><source src="music.mp3" type="audio/mpeg"></audio>
 
+    <!-- NAVBAR -->
     <nav id="main-nav">
-        <div class="logo-block">
+        <div class="logo-container">
             <img src="logo.jpg" class="logo-img" alt="MMX" onclick="location.reload()">
         </div>
         
-        <div class="flex gap-12">
-            <a href="#" onclick="showStatus()" class="nav-link">Status</a>
+        <div class="flex gap-12 text-[11px] font-black uppercase tracking-[4px]">
+            <a href="#" onclick="showStatus()" class="hover:text-[#a78bfa] transition">System Status</a>
         </div>
 
         <div class="flex items-center gap-4">
-            <button class="w-10 h-10 bg-[#0d0d0f] border border-white/10 rounded-xl flex items-center justify-center">
-                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
-            </button>
             <button class="btn-discord" onclick="window.open('https://discord.gg/kyotouhq', '_blank')">
-                <i data-lucide="message-circle" class="w-4 h-4"></i> Discord
+                <i data-lucide="zap" class="w-4 h-4"></i> DISCORD
             </button>
         </div>
     </nav>
 
     <!-- HERO SECTION -->
-    <section class="pt-[160px] flex justify-center px-5">
-        <div class="bg-[#08080a] border border-white/5 w-[1100px] flex rounded-[35px] overflow-hidden shadow-2xl">
+    <section class="mt-[150px] flex justify-center px-5 relative z-10">
+        <div class="glass-card w-[1100px] flex overflow-hidden">
             <div class="w-1/2 bg-black relative">
-                <img src="fortnite.jpg" class="w-full h-full object-cover opacity-50">
-                <div class="absolute inset-0 bg-gradient-to-r from-transparent to-[#08080a]"></div>
+                <img src="fortnite.jpg" class="w-full h-full object-cover opacity-40">
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent to-[#0f0a19]"></div>
             </div>
-            <div class="w-1/2 p-20">
-                <span class="text-[#a78bfa] font-black text-[10px] tracking-[6px] uppercase">Elite Security</span>
-                <h1 class="text-7xl font-black italic mt-5 mb-10 tracking-tighter">PRIVATE <span class="text-[#a78bfa]">V2</span></h1>
+            <div class="w-1/2 p-16">
+                <span class="text-[#a78bfa] font-black text-[10px] tracking-[6px] uppercase opacity-70">Undetected Software</span>
+                <h1 class="text-7xl font-black italic mt-4 mb-10 tracking-tighter">NEBULA <span class="text-[#a78bfa]">V2</span></h1>
                 
                 <div class="grid grid-cols-4 gap-3 mb-12">
-                    <div class="py-4 border border-white/5 text-center text-[10px] font-bold rounded-xl hover:border-[#a78bfa] cursor-pointer" onclick="setPrice('4.99€')">DAY</div>
-                    <div class="py-4 border border-white/5 text-center text-[10px] font-bold rounded-xl hover:border-[#a78bfa] cursor-pointer" onclick="setPrice('14.99€')">WEEK</div>
-                    <div class="py-4 border border-[#a78bfa] bg-[#a78bfa]/10 text-[#a78bfa] text-center text-[10px] font-bold rounded-xl" onclick="setPrice('24.99€')">MONTH</div>
-                    <div class="py-4 border border-white/5 text-center text-[10px] font-bold rounded-xl hover:border-[#a78bfa] cursor-pointer" onclick="setPrice('69.99€')">LIFE</div>
+                    <div class="price-btn cursor-pointer" onclick="updatePrice(this, '5.00€')">DAY</div>
+                    <div class="price-btn cursor-pointer" onclick="updatePrice(this, '15.00€')">WEEK</div>
+                    <div class="price-btn active cursor-pointer" onclick="updatePrice(this, '30.00€')">MONTH</div>
+                    <div class="price-btn cursor-pointer" onclick="updatePrice(this, '80.00€')">LIFE</div>
                 </div>
 
                 <div class="flex items-center justify-between">
-                    <span id="price-display" class="text-5xl font-bold font-['Orbitron']">24.99€</span>
-                    <button onclick="triggerToast()" class="bg-white text-black px-12 py-5 font-black uppercase text-[11px] rounded-2xl hover:bg-[#a78bfa] hover:text-white transition-all">Buy Now</button>
+                    <span id="display-price" class="text-5xl font-bold font-['Orbitron']">30.00€</span>
+                    <button class="bg-white text-black px-12 py-5 font-black uppercase text-[11px] rounded-2xl hover:bg-[#a78bfa] hover:text-white transition-all duration-500">Purchase</button>
                 </div>
-                <button onclick="toggleFeatures(true)" class="mt-12 text-[9px] tracking-[5px] text-[#a78bfa] block w-full text-center opacity-40 hover:opacity-100 transition">[ VIEW ALL FEATURES ]</button>
+
+                <button onclick="togglePanel(true)" class="mt-12 text-[10px] tracking-[5px] text-[#a78bfa] block w-full text-center opacity-50 hover:opacity-100 transition">
+                    [ VIEW INTERNAL FEATURES ]
+                </button>
             </div>
         </div>
     </section>
 
-    <!-- CORE FEATURES (IMAGE_73BCC1.PNG DESIGN) -->
-    <section class="core-section">
-        <span class="core-tag">Core Features</span>
-        <h2 class="core-title">What you receive with every product</h2>
-        <p class="core-subtitle">Secure delivery, consistent updates, reliable support, and instant access.</p>
+    <!-- CORE FEATURES -->
+    <section class="max-w-[1200px] mx-auto py-32 px-5">
+        <div class="text-center mb-20">
+            <h2 class="text-4xl font-black tracking-tight mb-4">PREMIUM STANDARDS</h2>
+            <div class="h-1 w-20 bg-[#a78bfa] mx-auto rounded-full"></div>
+        </div>
 
-        <div class="grid-core">
-            <div class="feature-card">
-                <div class="icon-box"><i data-lucide="shield-check"></i></div>
-                <h3>Safe & Undetected</h3>
-                <p>The most secure & discrete products on the market.</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div class="core-card">
+                <i data-lucide="shield-check" class="core-icon"></i>
+                <h3 class="font-bold text-lg mb-2">Security</h3>
+                <p class="text-gray-500 text-xs leading-relaxed">Advanced bypass for EAC/BE kernel-level protection.</p>
             </div>
-            <div class="feature-card">
-                <div class="icon-box"><i data-lucide="award"></i></div>
-                <h3>Battle-Tested Quality</h3>
-                <p>Stable, reliable releases with changelogs every update.</p>
+            <div class="core-card">
+                <i data-lucide="target" class="core-icon"></i>
+                <h3 class="font-bold text-lg mb-2">Accuracy</h3>
+                <p class="text-gray-500 text-xs leading-relaxed">Smooth aimbot with customizable human-like movement.</p>
             </div>
-            <div class="feature-card">
-                <div class="icon-box"><i data-lucide="share-2"></i></div>
-                <h3>Save & Share Configs</h3>
-                <p>Store your setups or import configs in seconds.</p>
+            <div class="core-card">
+                <i data-lucide="eye" class="core-icon"></i>
+                <h3 class="font-bold text-lg mb-2">Visuals</h3>
+                <p class="text-gray-500 text-xs leading-relaxed">Clean ESP box, skeletons and loot items filters.</p>
             </div>
-            <div class="feature-card">
-                <div class="icon-box"><i data-lucide="credit-card"></i></div>
-                <h3>Secure Payments</h3>
-                <p>All transactions go through trusted payment gateways.</p>
+            <div class="core-card">
+                <i data-lucide="refresh-cw" class="core-icon"></i>
+                <h3 class="font-bold text-lg mb-2">Updates</h3>
+                <p class="text-gray-500 text-xs leading-relaxed">Instant updates within minutes of game patches.</p>
             </div>
-            <div class="feature-card">
-                <div class="icon-box"><i data-lucide="zap"></i></div>
-                <h3>Instant Delivery</h3>
-                <p>Download immediately after purchase with zero wait time.</p>
+            <div class="core-card">
+                <i data-lucide="headset" class="core-icon"></i>
+                <h3 class="font-bold text-lg mb-2">Support</h3>
+                <p class="text-gray-500 text-xs leading-relaxed">24/7 dedicated assistance via our discord server.</p>
             </div>
         </div>
     </section>
 
-    <!-- OVERLAYS -->
-    <div id="status-page">
-        <div class="text-center bg-[#08080a] p-16 rounded-[40px] border border-[#7c5dfa]/30">
-            <div class="w-20 h-20 bg-[#a78bfa]/10 rounded-full flex items-center justify-center mx-auto mb-8">
-                <i data-lucide="activity" class="text-[#a78bfa] w-10 h-10"></i>
+    <!-- INTERNAL PANEL -->
+    <div id="feature-panel">
+        <div class="max-w-5xl w-full p-10">
+            <div class="flex justify-between items-end mb-20">
+                <div>
+                    <h2 class="text-6xl font-black italic text-white">SYSTEM <span class="text-[#a78bfa]">V2</span></h2>
+                    <p class="text-[#a78bfa] tracking-[8px] uppercase text-[10px] mt-2">Internal Menu Preview</p>
+                </div>
+                <button onclick="togglePanel(false)" class="text-white/20 hover:text-white text-5xl">&times;</button>
             </div>
-            <h2 class="text-4xl font-black mb-2">PRIVATE FORTNITE</h2>
-            <p class="text-green-400 font-bold tracking-[4px] text-xs mb-10">● UNDETECTED</p>
-            <button onclick="hideStatus()" class="text-[10px] tracking-[4px] text-white/30 hover:text-white transition uppercase">[ BACK TO STORE ]</button>
-        </div>
-    </div>
-
-    <div id="toast">
-        <i data-lucide="alert-circle" class="text-yellow-500"></i>
-        <div>
-            <p class="font-bold text-[11px] uppercase">API Error</p>
-            <p class="text-[10px] text-white/40">Checkout is currently down.</p>
+            <div class="grid grid-cols-2 gap-10">
+                <div class="bg-white/5 p-12 rounded-[40px] border border-white/5">
+                    <h3 class="text-[#a78bfa] font-bold mb-10 tracking-widest uppercase text-xs">Combat Modifiers</h3>
+                    <div class="space-y-8">
+                        <div class="flex justify-between items-center text-sm font-medium"><span>Memory Aimbot</span> <div class="w-10 h-5 bg-[#a78bfa] rounded-full"></div></div>
+                        <div class="flex justify-between items-center text-sm font-medium"><span>Draw FOV Circle</span> <div class="w-10 h-5 bg-[#a78bfa] rounded-full"></div></div>
+                        <div class="flex justify-between items-center text-sm font-medium text-white/30"><span>No Spread (Risky)</span> <div class="w-10 h-5 bg-white/10 rounded-full"></div></div>
+                    </div>
+                </div>
+                <div class="bg-white/5 p-12 rounded-[40px] border border-white/5">
+                    <h3 class="text-[#a78bfa] font-bold mb-10 tracking-widest uppercase text-xs">Visual Overlays</h3>
+                    <div class="space-y-8">
+                        <div class="flex justify-between items-center text-sm font-medium"><span>Skeleton ESP</span> <div class="w-10 h-5 bg-[#a78bfa] rounded-full"></div></div>
+                        <div class="flex justify-between items-center text-sm font-medium"><span>Snaplines</span> <div class="w-10 h-5 bg-[#a78bfa] rounded-full"></div></div>
+                        <div class="flex justify-between items-center text-sm font-medium"><span>Distance ESP</span> <div class="w-10 h-5 bg-[#a78bfa] rounded-full"></div></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
-        
-        window.addEventListener('click', () => {
-            const audio = document.getElementById('bgMusic');
-            if(audio.paused) audio.play();
-        }, { once: true });
 
-        function setPrice(p) { document.getElementById('price-display').innerText = p; }
-        function showStatus() { document.getElementById('status-page').style.display = 'flex'; }
-        function hideStatus() { document.getElementById('status-page').style.display = 'none'; }
-        function triggerToast() {
-            const t = document.getElementById('toast');
-            t.classList.add('active');
-            setTimeout(() => t.classList.remove('active'), 4000);
+        // PARTICLE SYSTEM
+        const canvas = document.getElementById('nebula-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let w, h;
+
+        function initCanvas() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
         }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * w;
+                this.y = Math.random() * h;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random();
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > w) this.x = 0;
+                if (this.x < 0) this.x = w;
+                if (this.y > h) this.y = 0;
+                if (this.y < 0) this.y = h;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(167, 139, 250, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function createParticles() {
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
+        createParticles();
+        animate();
+
+        // LOGIC
+        function updatePrice(btn, price) {
+            document.querySelectorAll('.price-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('display-price').innerText = price;
+        }
+
+        function togglePanel(show) {
+            document.getElementById('feature-panel').style.display = show ? 'flex' : 'none';
+        }
+
+        window.addEventListener('click', () => {
+            document.getElementById('bgMusic').play().catch(() => {});
+        }, { once: true });
     </script>
 </body>
 </html>
