@@ -15,7 +15,7 @@
             --bg: #030005; 
         }
 
-        * { cursor: crosshair !important; box-sizing: border-box; scroll-behavior: smooth; }
+        * { cursor: crosshair !important; box-sizing: border-box; }
         body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; margin: 0; }
 
         /* --- BACKGROUND --- */
@@ -26,23 +26,26 @@
             z-index: 1; pointer-events: none;
         }
 
-        /* --- NAV & LOGO (Fond Noir Pur) --- */
+        /* --- NAV & LOGO FIX (FOND NOIR PUR) --- */
         #main-nav {
             position: fixed; top: 0; width: 100%; height: 100px;
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 8%; z-index: 1000;
+            background: #000; /* Force le noir pur sur toute la barre */
         }
+        
         .logo-container {
-            background: #000; /* Fond noir derrière le logo */
-            padding: 10px 20px;
-            border-radius: 4px;
             display: flex;
             align-items: center;
+            overflow: hidden;
         }
+
         .logo-container img { 
-            height: 60px; width: auto; 
-            filter: contrast(1.1) brightness(1.2); 
-            mix-blend-mode: screen;
+            height: 50px; 
+            width: auto; 
+            /* Ce filtre supprime les gris foncés pour ne laisser que le texte brillant */
+            filter: brightness(1.1) contrast(1.3);
+            mix-blend-mode: screen; 
         }
 
         /* --- PRODUCT CARD --- */
@@ -62,21 +65,7 @@
         }
         .price-item.active { border-color: var(--accent); color: var(--accent); background: rgba(167, 139, 250, 0.1); }
 
-        /* --- CORE FEATURES --- */
-        .core-section { position: relative; z-index: 10; padding: 100px 8%; }
-        .core-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
-        .core-card {
-            background: rgba(15, 15, 20, 0.4); border: 1px solid rgba(255, 255, 255, 0.03);
-            padding: 30px 20px; border-radius: 12px; transition: 0.4s;
-        }
-        .core-card:hover { border-color: var(--accent); background: rgba(167, 139, 250, 0.05); }
-        .icon-sq { 
-            width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 8px; display: flex; align-items: center; justify-content: center;
-            margin-bottom: 20px; color: var(--accent);
-        }
-
-        /* --- FEATURE PANEL & IOS SWITCH --- */
+        /* --- FEATURE PANEL --- */
         #feature-overlay {
             position: fixed; inset: 0; background: rgba(2, 0, 5, 0.99);
             z-index: 2000; display: none; padding: 60px 40px; overflow-y: auto;
@@ -99,13 +88,11 @@
         }
         .switch:checked::before { transform: translateX(16px); }
 
-        /* --- GLOW ONLY ON FEATURES BUTTON --- */
         .btn-features {
             margin-top: 40px; text-transform: uppercase; font-size: 10px;
             letter-spacing: 5px; color: var(--accent);
             text-shadow: 0 0 15px var(--accent-glow);
-            transition: 0.3s;
-            background: none; border: none; cursor: pointer;
+            transition: 0.3s; background: none; border: none;
         }
         .btn-features:hover { text-shadow: 0 0 25px var(--accent); color: white; }
 
@@ -116,17 +103,14 @@
 </head>
 <body>
 
-    <!-- MUSIQUE (Assure-toi d'avoir music.mp3 dans ton dossier) -->
-    <audio id="bgMusic" loop>
-        <source src="music.mp3" type="audio/mpeg">
-    </audio>
-
+    <audio id="bgMusic" loop><source src="music.mp3" type="audio/mpeg"></audio>
     <div class="bg-gradient-overlay"></div>
     <canvas id="particles-canvas"></canvas>
 
     <nav id="main-nav">
         <div class="logo-container">
-            <img src="logo.jpg" alt="MMX Logo">
+            <!-- Utilisation du logo avec mix-blend-mode -->
+            <img src="logo.jpg" alt="MMX">
         </div>
         <div class="flex gap-12 text-[11px] font-bold uppercase tracking-[4px]">
             <a href="#" class="hover:violet-txt transition">Store</a>
@@ -138,21 +122,12 @@
     <section class="hero-section">
         <div class="product-card">
             <div class="card-left">
-                <img src="fortnite.jpg" alt="MMX Fortnite" onerror="this.src='https://i.imgur.com/8pS7yqV.png'">
+                <img src="fortnite.jpg" alt="Fortnite">
             </div>
             <div class="flex-1 p-12 flex flex-col justify-center">
                 <span class="violet-txt font-black text-[11px] tracking-[6px] uppercase mb-2">Elite Private</span>
                 <h1 class="text-6xl font-black mb-8 tracking-tighter italic text-white">Fortnite <span class="violet-txt">Private</span></h1>
                 
-                <div class="flex gap-8 mb-10">
-                    <div class="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-green-500"></i> Undetected
-                    </div>
-                    <div class="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                        <i data-lucide="cpu" class="w-4 h-4 text-purple-500"></i> Kernel
-                    </div>
-                </div>
-
                 <div class="grid grid-cols-4 gap-3 mb-10">
                     <div class="price-item cursor-pointer" onclick="setPrice('4.99€', this)">Day</div>
                     <div class="price-item cursor-pointer" onclick="setPrice('14.99€', this)">Week</div>
@@ -165,43 +140,7 @@
                     <button class="btn-purchase px-14 py-5 text-[12px]">Purchase Now</button>
                 </div>
 
-                <button class="btn-features" onclick="toggleOverlay(true)">
-                    [ Click to see Features ]
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION CORE -->
-    <section class="core-section">
-        <h2 class="text-[11px] violet-txt font-bold uppercase tracking-[6px] mb-4">Core Features</h2>
-        <h3 class="text-4xl font-black mb-12 text-white">What you receive with every product</h3>
-
-        <div class="core-grid">
-            <div class="core-card">
-                <div class="icon-sq"><i data-lucide="lock" class="w-5 h-5"></i></div>
-                <h4 class="font-bold mb-2 uppercase text-xs tracking-wider">Safe & Undetected</h4>
-                <p class="text-[10px] text-gray-500">The most secure & discrete products on the market.</p>
-            </div>
-            <div class="core-card">
-                <div class="icon-sq"><i data-lucide="shield" class="w-5 h-5"></i></div>
-                <h4 class="font-bold mb-2 uppercase text-xs tracking-wider">Battle-Tested</h4>
-                <p class="text-[10px] text-gray-500">Stable, reliable releases with changelogs.</p>
-            </div>
-            <div class="core-card">
-                <div class="icon-sq"><i data-lucide="upload-cloud" class="w-5 h-5"></i></div>
-                <h4 class="font-bold mb-2 uppercase text-xs tracking-wider">Save Configs</h4>
-                <p class="text-[10px] text-gray-500">Store your setups or import configs in seconds.</p>
-            </div>
-            <div class="core-card">
-                <div class="icon-sq"><i data-lucide="credit-card" class="w-5 h-5"></i></div>
-                <h4 class="font-bold mb-2 uppercase text-xs tracking-wider">Secure Payments</h4>
-                <p class="text-[10px] text-gray-500">All transactions through trusted gateways.</p>
-            </div>
-            <div class="core-card">
-                <div class="icon-sq"><i data-lucide="zap" class="w-5 h-5"></i></div>
-                <h4 class="font-bold mb-2 uppercase text-xs tracking-wider">Instant Delivery</h4>
-                <p class="text-[10px] text-gray-500">Download immediately with zero wait time.</p>
+                <button class="btn-features" onclick="toggleOverlay(true)">[ Click for Features ]</button>
             </div>
         </div>
     </section>
@@ -213,35 +152,12 @@
                 <h2 class="text-4xl font-black italic tracking-tighter">MMX <span class="violet-txt">FEATURES</span></h2>
                 <button class="text-6xl hover:violet-txt transition" onclick="toggleOverlay(false)">&times;</button>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="panel-card">
-                    <h3 class="violet-txt font-bold uppercase tracking-widest text-[10px] mb-6">Combat System</h3>
+                    <h3 class="violet-txt font-bold uppercase text-[10px] mb-6 tracking-widest">Combat</h3>
                     <div class="space-y-2">
-                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">Enable Aimbot</span> <input type="checkbox" class="switch" checked> </div>
+                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">Aimbot</span> <input type="checkbox" class="switch" checked> </div>
                         <div class="ios-switch"> <span class="text-[11px] text-gray-400">Silent Aim</span> <input type="checkbox" class="switch"> </div>
-                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">Visible Check</span> <input type="checkbox" class="switch" checked> </div>
-                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">Prediction</span> <input type="checkbox" class="switch" checked> </div>
-                    </div>
-                </div>
-
-                <div class="panel-card">
-                    <h3 class="violet-txt font-bold uppercase tracking-widest text-[10px] mb-6">Visual Overlay</h3>
-                    <div class="space-y-2">
-                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">Box ESP</span> <input type="checkbox" class="switch" checked> </div>
-                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">Skeleton</span> <input type="checkbox" class="switch" checked> </div>
-                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">Distance</span> <input type="checkbox" class="switch" checked> </div>
-                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">Radar 2D</span> <input type="checkbox" class="switch"> </div>
-                    </div>
-                </div>
-
-                <div class="panel-card">
-                    <h3 class="violet-txt font-bold uppercase tracking-widest text-[10px] mb-6">Internal Misc</h3>
-                    <div class="space-y-2">
-                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">No Recoil</span> <input type="checkbox" class="switch" checked> </div>
-                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">Instant Reload</span> <input type="checkbox" class="switch"> </div>
-                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">Stream Proof</span> <input type="checkbox" class="switch" checked> </div>
-                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">Watermark</span> <input type="checkbox" class="switch" checked> </div>
                     </div>
                 </div>
             </div>
@@ -251,7 +167,7 @@
     <script>
         lucide.createIcons();
 
-        // --- Particles ---
+        // Particles
         const canvas = document.getElementById('particles-canvas');
         const ctx = canvas.getContext('2d');
         let W, H, flakes = [];
@@ -271,13 +187,12 @@
         }
         window.addEventListener('resize', resize); resize(); init(); draw();
 
-        // --- Music Logic ---
-        const audio = document.getElementById('bgMusic');
+        // Musique au clic
         window.addEventListener('click', () => {
+            const audio = document.getElementById('bgMusic');
             if(audio.paused) audio.play();
-        }, { once: true }); // Ne s'exécute qu'au premier clic
+        }, { once: true });
 
-        // --- UI Logic ---
         function setPrice(p, el) {
             document.getElementById('big-price').innerText = p;
             document.querySelectorAll('.price-item').forEach(i => i.classList.remove('active'));
@@ -286,7 +201,6 @@
 
         function toggleOverlay(show) {
             document.getElementById('feature-overlay').style.display = show ? 'block' : 'none';
-            document.body.style.overflow = show ? 'hidden' : 'auto';
         }
     </script>
 </body>
