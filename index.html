@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=Orbitron:wght@700&family=JetBrains+Mono&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=Orbitron:wght@700&display=swap');
 
         :root { 
             --accent: #a78bfa; 
@@ -18,163 +18,241 @@
         * { cursor: crosshair !important; box-sizing: border-box; }
         body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; margin: 0; }
 
-        /* --- BACKGROUND --- */
+        /* --- BACKGROUND & PARTICLES --- */
         #particles-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-        .bg-gradient-overlay {
+        .bg-dots {
             position: fixed; inset: 0;
-            background: radial-gradient(circle at 50% -20%, #1a1033 0%, transparent 60%);
-            z-index: 1; pointer-events: none;
+            background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 30px 30px; z-index: 1; pointer-events: none;
         }
 
-        /* --- NAV & LOGO FIX (FOND NOIR PUR) --- */
+        /* --- NAV --- */
         #main-nav {
-            position: fixed; top: 0; width: 100%; height: 100px;
+            position: fixed; top: 0; width: 100%; height: 110px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 8%; z-index: 1000;
-            background: #000; /* Force le noir pur sur toute la barre */
+            padding: 0 5%; z-index: 1000; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
         }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-            overflow: hidden;
+        .logo-img { 
+            height: 90px; width: auto; 
+            filter: brightness(1.2) contrast(1.3);
+            mix-blend-mode: screen; transform: scale(1.5);
         }
 
-        .logo-container img { 
-            height: 50px; 
-            width: auto; 
-            /* Ce filtre supprime les gris foncés pour ne laisser que le texte brillant */
-            filter: brightness(1.1) contrast(1.3);
-            mix-blend-mode: screen; 
+        /* Nav Buttons (Right) */
+        .nav-right-btns { display: flex; align-items: center; gap: 15px; }
+        .btn-cart {
+            background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px;
+            color: white; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;
         }
-
-        /* --- PRODUCT CARD --- */
-        .hero-section { position: relative; z-index: 10; padding: 160px 20px 100px; display: flex; justify-content: center; }
-        .product-card {
-            background: rgba(10, 10, 15, 0.7); border: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex; width: 1050px; border-radius: 12px; backdrop-filter: blur(30px);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+        .btn-cart:hover { background: var(--accent); color: black; transform: scale(1.1); }
+        .btn-discord {
+            background: transparent; border: 2px solid var(--accent); padding: 10px 25px;
+            border-radius: 30px; display: flex; align-items: center; gap: 10px;
+            color: var(--accent); font-weight: bold; transition: 0.3s;
         }
-        .card-left { width: 48%; border-right: 1px solid rgba(255,255,255,0.05); overflow: hidden; background: #000; border-radius: 12px 0 0 12px; }
-        .card-left img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
+        .btn-discord:hover { background: var(--accent); color: black; box-shadow: 0 0 20px var(--accent-glow); }
 
-        .price-item {
-            border: 1px solid rgba(255,255,255,0.08); padding: 15px; text-align: center;
-            font-size: 11px; font-weight: 800; text-transform: uppercase; transition: 0.3s;
-            background: rgba(255,255,255,0.02); border-radius: 4px;
+        /* --- STATUS PAGE (HIDDEN BY DEFAULT) --- */
+        #status-page {
+            position: fixed; inset: 0; background: var(--bg); z-index: 3000;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
         }
-        .price-item.active { border-color: var(--accent); color: var(--accent); background: rgba(167, 139, 250, 0.1); }
+        .status-card {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--accent);
+            padding: 40px; border-radius: 20px; text-align: center;
+            box-shadow: 0 0 50px rgba(167, 139, 250, 0.2);
+            animation: pulse-border 2s infinite;
+        }
+        @keyframes pulse-border { 0% { border-color: #a78bfa; } 50% { border-color: #6d28d9; } 100% { border-color: #a78bfa; } }
 
-        /* --- FEATURE PANEL --- */
+        /* --- CORE FEATURES GRID --- */
+        .core-section { position: relative; z-index: 10; padding: 100px 5%; }
+        .core-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+        .core-card {
+            background: rgba(15, 15, 20, 0.4); border: 1px solid rgba(255,255,255,0.05);
+            padding: 30px 20px; border-radius: 15px; transition: 0.4s; position: relative; overflow: hidden;
+        }
+        .core-card:hover { 
+            border-color: var(--accent); background: rgba(167, 139, 250, 0.05); 
+            transform: translateY(-5px); 
+        }
+        .core-card i { color: var(--accent); margin-bottom: 15px; }
+
+        /* --- TOAST --- */
+        #toast {
+            position: fixed; bottom: 30px; right: 30px; background: #1a1a2e;
+            border-left: 4px solid #facc15; padding: 15px 25px; border-radius: 8px;
+            display: flex; align-items: center; gap: 15px; z-index: 5000;
+            transform: translateX(150%); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #toast.active { transform: translateX(0); }
+
+        /* --- FEATURE OVERLAY --- */
         #feature-overlay {
-            position: fixed; inset: 0; background: rgba(2, 0, 5, 0.99);
-            z-index: 2000; display: none; padding: 60px 40px; overflow-y: auto;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 4000;
+            display: none; padding: 50px; overflow-y: auto;
         }
-        .panel-card { background: rgba(20, 20, 25, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 30px; }
-        
-        .ios-switch {
+        .feat-item {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .switch {
-            position: relative; width: 34px; height: 18px;
-            appearance: none; background: #333; border-radius: 20px;
-            outline: none; cursor: pointer; transition: 0.3s;
-        }
+
+        /* iOS Switch */
+        .switch { position: relative; width: 40px; height: 20px; appearance: none; background: #333; border-radius: 20px; cursor: pointer; transition: 0.3s; }
         .switch:checked { background: var(--accent); }
-        .switch::before {
-            content: ''; position: absolute; width: 14px; height: 14px;
-            background: white; border-radius: 50%; top: 2px; left: 2px; transition: 0.3s;
-        }
-        .switch:checked::before { transform: translateX(16px); }
+        .switch::before { content: ''; position: absolute; width: 16px; height: 16px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: 0.3s; }
+        .switch:checked::before { transform: translateX(20px); }
 
-        .btn-features {
-            margin-top: 40px; text-transform: uppercase; font-size: 10px;
-            letter-spacing: 5px; color: var(--accent);
-            text-shadow: 0 0 15px var(--accent-glow);
-            transition: 0.3s; background: none; border: none;
-        }
-        .btn-features:hover { text-shadow: 0 0 25px var(--accent); color: white; }
-
-        .btn-purchase { background: white; color: black; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; border-radius: 4px; transition: 0.3s; }
-        .btn-purchase:hover { background: var(--accent); color: white; box-shadow: 0 0 40px var(--accent-glow); }
-        .violet-txt { color: var(--accent); }
+        .violet-hover:hover { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
     </style>
 </head>
 <body>
 
     <audio id="bgMusic" loop><source src="music.mp3" type="audio/mpeg"></audio>
-    <div class="bg-gradient-overlay"></div>
+    <div class="bg-dots"></div>
     <canvas id="particles-canvas"></canvas>
 
+    <!-- NAVIGATION -->
     <nav id="main-nav">
-        <div class="logo-container">
-            <!-- Utilisation du logo avec mix-blend-mode -->
-            <img src="logo.jpg" alt="MMX">
+        <img src="logo.jpg" class="logo-img" alt="MMX">
+        <div class="flex gap-10 text-[11px] font-bold uppercase tracking-[3px]">
+            <a href="#" onclick="location.reload()" class="violet-hover transition">Store</a>
+            <a href="#" onclick="showStatus()" class="violet-hover transition">Status</a>
+            <a href="https://discord.com/users/kyotouhq" target="_blank" class="violet-hover transition">Support</a>
         </div>
-        <div class="flex gap-12 text-[11px] font-bold uppercase tracking-[4px]">
-            <a href="#" class="hover:violet-txt transition">Store</a>
-            <a href="https://discord.com/users/kyotouhq" target="_blank" class="hover:violet-txt transition">Support</a>
-            <a href="#" class="hover:violet-txt transition">Status</a>
+        <div class="nav-right-btns">
+            <button class="btn-cart"><i data-lucide="shopping-cart" class="w-5 h-5"></i></button>
+            <button class="btn-discord">
+                <i data-lucide="message-circle" class="w-5 h-5"></i> Discord
+            </button>
         </div>
     </nav>
 
-    <section class="hero-section">
-        <div class="product-card">
-            <div class="card-left">
-                <img src="fortnite.jpg" alt="Fortnite">
+    <!-- HERO SECTION -->
+    <section class="mt-[180px] flex justify-center px-5">
+        <div class="bg-[#0a0a0f]/80 border border-white/5 w-[1100px] flex rounded-2xl overflow-hidden backdrop-blur-xl">
+            <div class="w-1/2 bg-black">
+                <img src="fortnite.jpg" class="w-full h-full object-cover opacity-80" onerror="this.src='https://i.imgur.com/8pS7yqV.png'">
             </div>
-            <div class="flex-1 p-12 flex flex-col justify-center">
-                <span class="violet-txt font-black text-[11px] tracking-[6px] uppercase mb-2">Elite Private</span>
-                <h1 class="text-6xl font-black mb-8 tracking-tighter italic text-white">Fortnite <span class="violet-txt">Private</span></h1>
+            <div class="w-1/2 p-12">
+                <span class="text-[#a78bfa] font-black text-[10px] tracking-[5px] uppercase">Fortnite Elite</span>
+                <h1 class="text-6xl font-black italic mt-2 mb-8">PRIVATE <span class="text-[#a78bfa]">V2</span></h1>
                 
-                <div class="grid grid-cols-4 gap-3 mb-10">
-                    <div class="price-item cursor-pointer" onclick="setPrice('4.99€', this)">Day</div>
-                    <div class="price-item cursor-pointer" onclick="setPrice('14.99€', this)">Week</div>
-                    <div class="price-item active cursor-pointer" onclick="setPrice('24.99€', this)">Month</div>
-                    <div class="price-item cursor-pointer" onclick="setPrice('69.99€', this)">Lifetime</div>
+                <div class="grid grid-cols-4 gap-2 mb-10">
+                    <div class="p-3 border border-white/10 text-center text-[10px] font-black rounded hover:border-[#a78bfa] cursor-pointer transition" onclick="setPrice('4.99€')">DAY</div>
+                    <div class="p-3 border border-white/10 text-center text-[10px] font-black rounded hover:border-[#a78bfa] cursor-pointer transition" onclick="setPrice('14.99€')">WEEK</div>
+                    <div class="p-3 border border-[#a78bfa] bg-[#a78bfa]/10 text-[#a78bfa] text-center text-[10px] font-black rounded cursor-pointer" onclick="setPrice('24.99€')">MONTH</div>
+                    <div class="p-3 border border-white/10 text-center text-[10px] font-black rounded hover:border-[#a78bfa] cursor-pointer transition" onclick="setPrice('69.99€')">LIFE</div>
                 </div>
 
                 <div class="flex items-center justify-between">
-                    <div id="big-price" class="text-4xl font-bold font-['Orbitron'] tracking-tighter">24.99€</div>
-                    <button class="btn-purchase px-14 py-5 text-[12px]">Purchase Now</button>
+                    <span id="price-display" class="text-4xl font-bold font-['Orbitron']">24.99€</span>
+                    <button onclick="triggerToast()" class="bg-white text-black px-10 py-4 font-black uppercase text-xs rounded hover:bg-[#a78bfa] hover:text-white transition-all duration-300">Purchase</button>
                 </div>
 
-                <button class="btn-features" onclick="toggleOverlay(true)">[ Click for Features ]</button>
+                <button onclick="toggleFeatures(true)" class="mt-8 text-[9px] tracking-[4px] text-[#a78bfa] block w-full text-center opacity-70 hover:opacity-100 transition">[ VIEW ALL FEATURES ]</button>
             </div>
         </div>
     </section>
 
-    <!-- FEATURE PANEL -->
-    <div id="feature-overlay">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex justify-between items-center mb-16">
-                <h2 class="text-4xl font-black italic tracking-tighter">MMX <span class="violet-txt">FEATURES</span></h2>
-                <button class="text-6xl hover:violet-txt transition" onclick="toggleOverlay(false)">&times;</button>
+    <!-- CORE FEATURES SECTION (COMME TON IMAGE) -->
+    <section class="core-section">
+        <p class="text-[#a78bfa] font-bold text-[10px] uppercase tracking-[4px] mb-2">Core Features</p>
+        <h2 class="text-4xl font-bold mb-4">What you receive with every product</h2>
+        <p class="text-gray-500 mb-12">Secure delivery, consistent updates, reliable support, and instant access.</p>
+
+        <div class="core-grid">
+            <div class="core-card">
+                <i data-lucide="shield-check" class="w-8 h-8"></i>
+                <h3 class="font-bold mb-2">Safe & Undetected</h3>
+                <p class="text-[11px] text-gray-500">The most secure & discrete products on the market.</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="panel-card">
-                    <h3 class="violet-txt font-bold uppercase text-[10px] mb-6 tracking-widest">Combat</h3>
-                    <div class="space-y-2">
-                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">Aimbot</span> <input type="checkbox" class="switch" checked> </div>
-                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">Silent Aim</span> <input type="checkbox" class="switch"> </div>
-                    </div>
+            <div class="core-card">
+                <i data-lucide="swords" class="w-8 h-8"></i>
+                <h3 class="font-bold mb-2">Battle-Tested Quality</h3>
+                <p class="text-[11px] text-gray-500">Stable, reliable releases with changelogs every update.</p>
+            </div>
+            <div class="core-card">
+                <i data-lucide="settings-2" class="w-8 h-8"></i>
+                <h3 class="font-bold mb-2">Save & Share Configs</h3>
+                <p class="text-[11px] text-gray-500">Store your setups or import configs in seconds.</p>
+            </div>
+            <div class="core-card">
+                <i data-lucide="credit-card" class="w-8 h-8"></i>
+                <h3 class="font-bold mb-2">Secure Payments</h3>
+                <p class="text-[11px] text-gray-500">All transactions go through trusted payment gateways.</p>
+            </div>
+            <div class="core-card">
+                <i data-lucide="zap" class="w-8 h-8"></i>
+                <h3 class="font-bold mb-2">Instant Delivery</h3>
+                <p class="text-[11px] text-gray-500">Download immediately after purchase with zero wait time.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATUS PAGE -->
+    <div id="status-page">
+        <div class="status-card">
+            <i data-lucide="activity" class="w-16 h-16 text-[#a78bfa] mx-auto mb-6"></i>
+            <h1 class="text-3xl font-black mb-4">PRIVATE FORTNITE</h1>
+            <p class="text-green-400 font-bold tracking-[2px] mb-2">● UNDETECTED</p>
+            <p class="text-gray-400 text-sm">UPDATED TO THE LATEST GAME VERSION</p>
+            <button onclick="hideStatus()" class="mt-8 text-[10px] text-white/50 hover:text-white uppercase">[ Back to Store ]</button>
+        </div>
+    </div>
+
+    <!-- FEATURES PANEL -->
+    <div id="feature-overlay">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex justify-between items-center mb-10">
+                <h2 class="text-4xl font-black italic">MMX <span class="text-[#a78bfa]">FEATURES</span></h2>
+                <button onclick="toggleFeatures(false)" class="text-4xl">&times;</button>
+            </div>
+            <div class="grid grid-cols-2 gap-10">
+                <div class="bg-white/5 p-8 rounded-xl border border-white/10">
+                    <h3 class="text-[#a78bfa] font-bold mb-6 uppercase tracking-widest">Aimbot</h3>
+                    <div class="feat-item"><span>Memory Aimbot</span> <input type="checkbox" class="switch" checked></div>
+                    <div class="feat-item"><span>Silent Aim</span> <input type="checkbox" class="switch"></div>
+                    <div class="feat-item"><span>Visible Check</span> <input type="checkbox" class="switch" checked></div>
+                    <div class="feat-item"><span>FOV Circle</span> <input type="checkbox" class="switch" checked></div>
+                </div>
+                <div class="bg-white/5 p-8 rounded-xl border border-white/10">
+                    <h3 class="text-[#a78bfa] font-bold mb-6 uppercase tracking-widest">Visuals</h3>
+                    <div class="feat-item"><span>Box ESP</span> <input type="checkbox" class="switch" checked></div>
+                    <div class="feat-item"><span>Skeleton ESP</span> <input type="checkbox" class="switch" checked></div>
+                    <div class="feat-item"><span>Lines ESP</span> <input type="checkbox" class="switch"></div>
+                    <div class="feat-item"><span>Distance ESP</span> <input type="checkbox" class="switch" checked></div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast">
+        <i data-lucide="alert-triangle" class="text-yellow-400"></i>
+        <div>
+            <p class="font-bold text-xs uppercase">System Error</p>
+            <p class="text-[10px] text-gray-400">API Not Linked. Please contact support.</p>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        // Particles
+        // Musique au clic
+        window.addEventListener('click', () => {
+            const audio = document.getElementById('bgMusic');
+            if(audio.paused) audio.play();
+        }, { once: true });
+
+        // Particles Background
         const canvas = document.getElementById('particles-canvas');
         const ctx = canvas.getContext('2d');
         let W, H, flakes = [];
         function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
         function init() {
             flakes = [];
-            for (let i = 0; i < 60; i++) flakes.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.5, s: Math.random()*0.3+0.1, o: Math.random()*0.5 });
+            for (let i = 0; i < 70; i++) flakes.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.5, s: Math.random()*0.3+0.1, o: Math.random()*0.5 });
         }
         function draw() {
             ctx.clearRect(0,0,W,H);
@@ -187,19 +265,19 @@
         }
         window.addEventListener('resize', resize); resize(); init(); draw();
 
-        // Musique au clic
-        window.addEventListener('click', () => {
-            const audio = document.getElementById('bgMusic');
-            if(audio.paused) audio.play();
-        }, { once: true });
-
-        function setPrice(p, el) {
-            document.getElementById('big-price').innerText = p;
-            document.querySelectorAll('.price-item').forEach(i => i.classList.remove('active'));
-            el.classList.add('active');
+        // UI Logic
+        function setPrice(p) { document.getElementById('price-display').innerText = p; }
+        
+        function triggerToast() {
+            const t = document.getElementById('toast');
+            t.classList.add('active');
+            setTimeout(() => t.classList.remove('active'), 4000);
         }
 
-        function toggleOverlay(show) {
+        function showStatus() { document.getElementById('status-page').style.display = 'flex'; }
+        function hideStatus() { document.getElementById('status-page').style.display = 'none'; }
+
+        function toggleFeatures(show) {
             document.getElementById('feature-overlay').style.display = show ? 'block' : 'none';
         }
     </script>
