@@ -15,7 +15,7 @@
         * { cursor: none !important; box-sizing: border-box; }
         body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
 
-        /* --- CURSEUR IMMORTEL --- */
+        /* --- CURSEUR --- */
         #cursor {
             width: 12px; height: 12px; background: var(--accent); border-radius: 50%;
             position: fixed; pointer-events: none; z-index: 200000;
@@ -27,7 +27,14 @@
             transition: transform 0.12s ease-out; opacity: 0.3;
         }
 
-        /* --- INITIALIZE SCREEN --- */
+        /* --- BACKGROUND MODERNE (NON-IA) --- */
+        #bg-canvas { position: fixed; inset: 0; z-index: -1; filter: contrast(120%); }
+        .grain {
+            position: fixed; inset: 0; z-index: -1; opacity: 0.04; pointer-events: none;
+            background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+        }
+
+        /* --- INITIALIZE --- */
         #enter-gateway {
             position: fixed; inset: 0; background: #000; z-index: 150000;
             display: flex; align-items: center; justify-content: center;
@@ -40,37 +47,33 @@
         }
         .init-btn:hover { background: var(--accent); color: black; box-shadow: 0 0 80px rgba(167, 139, 250, 0.4); }
 
-        /* --- PRICE REVEAL (LENT & BLURRED) --- */
+        /* --- PRICE REVEAL --- */
         #price-list {
             display: none; opacity: 0; filter: blur(30px);
             transform: translateY(30px);
-            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); /* Animation ralentie */
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
         #price-list.active {
             display: grid; opacity: 1; filter: blur(0px);
             transform: translateY(0px); margin-top: 35px;
         }
-
         .price-card {
             background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
             padding: 22px; border-radius: 12px; transition: 0.5s;
         }
         .price-card:hover { border-color: var(--accent); background: rgba(167, 139, 250, 0.08); }
 
-        /* --- REVEAL SCROLL --- */
+        /* --- UI ELEMENTS --- */
         .reveal { opacity: 0; transform: translateY(60px); filter: blur(25px); }
         .logo-x, .text-fortnite { color: var(--accent); text-shadow: 0 0 25px var(--accent); font-style: italic; }
         
-        #bg-canvas { position: fixed; inset: 0; z-index: -1; }
-        
         .core-card {
             background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 35px; border-radius: 20px; transition: 0.6s cubic-bezier(0.2, 1, 0.2, 1);
-            backdrop-filter: blur(10px);
+            padding: 35px; border-radius: 20px; transition: 0.6s; backdrop-filter: blur(10px);
         }
         .core-card:hover { transform: translateY(-12px); border-color: var(--accent); }
 
-        /* --- MODAL SORRY SATISFAISANT --- */
+        /* --- MODAL --- */
         #purchase-modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 100001;
             display: none; align-items: center; justify-content: center; backdrop-filter: blur(30px);
@@ -81,35 +84,30 @@
 
     <div id="cursor"></div>
     <div id="cursor-follower"></div>
+    <div class="grain"></div>
+    <canvas id="bg-canvas"></canvas>
 
     <!-- INITIALIZE -->
     <div id="enter-gateway">
         <button class="init-btn" onclick="startSystem()">Initialize</button>
     </div>
 
-    <!-- MODAL SORRY (FIXED & MTX ADDED) -->
+    <!-- MODAL SORRY (NEW LINK) -->
     <div id="purchase-modal">
         <div id="modal-content" class="text-center p-12 bg-[#050505] border border-white/10 rounded-[45px] max-w-lg shadow-2xl">
             <h2 class="text-[50px] font-black italic mb-4 tracking-tighter leading-none">SORRY...</h2>
-            <p class="text-gray-500 text-[10px] tracking-[5px] mb-12 uppercase opacity-60">Our Website is Not Finished Yet.<br>Contact us on Discord to purchase.</p>
+            <p class="text-gray-500 text-[10px] tracking-[5px] mb-12 uppercase opacity-60">Our Website is Not Finished Yet.</p>
             
-            <div class="space-y-4">
-                <a href="https://discord.com/users/kyotouhq" target="_blank" class="flex items-center justify-between p-6 bg-white/5 border border-white/5 hover:border-purple-500 transition-all duration-500 rounded-2xl group">
-                    <span class="font-black text-xs tracking-[4px]">KYOTOUHQ</span>
-                    <i data-lucide="message-square" class="w-5 h-5 text-purple-400 opacity-40 group-hover:opacity-100"></i>
-                </a>
-                <!-- MTX EST DE RETOUR -->
-                <a href="https://discord.com/users/mtx93." target="_blank" class="flex items-center justify-between p-6 bg-white/5 border border-white/5 hover:border-purple-500 transition-all duration-500 rounded-2xl group">
-                    <span class="font-black text-xs tracking-[4px]">MTX93.</span>
-                    <i data-lucide="message-square" class="w-5 h-5 text-purple-400 opacity-40 group-hover:opacity-100"></i>
-                </a>
-            </div>
+            <a href="https://discord.gg/3FUMtkyPkF" target="_blank" class="flex flex-col items-center justify-center p-8 bg-white/5 border border-white/10 hover:border-purple-500 transition-all duration-500 rounded-3xl group">
+                <i data-lucide="discord" class="w-12 h-12 text-purple-400 mb-4 group-hover:scale-110 transition-transform"></i>
+                <span class="font-black text-sm tracking-[6px]">JOIN OUR COMMUNITY</span>
+                <p class="text-[8px] mt-2 opacity-40 uppercase">Open a ticket to purchase</p>
+            </a>
             
-            <button onclick="closeModal()" class="mt-12 opacity-20 hover:opacity-100 text-[10px] font-black tracking-[6px] uppercase transition-all duration-500">Back</button>
+            <button onclick="closeModal()" class="mt-12 opacity-20 hover:opacity-100 text-[10px] font-black tracking-[6px] uppercase transition">Back</button>
         </div>
     </div>
 
-    <canvas id="bg-canvas"></canvas>
     <audio id="main-audio" loop><source src="music.mp3" type="audio/mpeg"></audio>
 
     <div id="app" style="display: none;">
@@ -121,7 +119,6 @@
             </div>
         </nav>
 
-        <!-- HERO -->
         <section class="min-h-screen flex items-center px-[8%] pt-20">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center w-full">
                 <div class="reveal">
@@ -130,14 +127,13 @@
                     
                     <div class="flex flex-col gap-6">
                         <div class="flex items-center gap-6">
-                            <button onclick="openModal()" class="bg-white text-black px-16 py-7 font-black uppercase text-xs hover:bg-purple-500 hover:text-white transition-all duration-700 shadow-2xl">Purchase</button>
-                            <button onclick="togglePrices()" class="border border-white/10 px-10 py-7 flex items-center gap-4 hover:border-purple-500 transition-all duration-500 group">
+                            <button onclick="openModal()" class="bg-white text-black px-16 py-7 font-black uppercase text-xs hover:bg-purple-500 hover:text-white transition-all duration-700">Purchase</button>
+                            <button onclick="togglePrices()" class="border border-white/10 px-10 py-7 flex items-center gap-4 hover:border-purple-500 transition-all duration-500">
                                 <i data-lucide="tag" class="w-5 h-5 text-purple-400"></i>
                                 <span class="font-black text-xs uppercase tracking-widest">Price List</span>
                             </button>
                         </div>
 
-                        <!-- PRICE LIST (SLOW REVEAL) -->
                         <div id="price-list" class="grid grid-cols-2 md:grid-cols-5 gap-3 w-full">
                             <div class="price-card text-center"><div class="text-[9px] text-gray-500 uppercase mb-1">1 Day</div><div class="font-black">4.99€</div></div>
                             <div class="price-card text-center"><div class="text-[9px] text-gray-500 uppercase mb-1">1 Week</div><div class="font-black">14.99€</div></div>
@@ -215,7 +211,6 @@
         lucide.createIcons();
         gsap.registerPlugin(ScrollTrigger);
 
-        // CURSEUR
         const cur = document.getElementById('cursor');
         const fol = document.getElementById('cursor-follower');
         window.addEventListener('mousemove', e => {
@@ -223,11 +218,10 @@
             gsap.to(fol, { x: e.clientX - 20, y: e.clientY - 20, duration: 0.15 });
         });
 
-        // DEMARRAGE
         function startSystem() {
             const audio = document.getElementById('main-audio');
             audio.play().catch(() => {});
-            gsap.to("#enter-gateway", { opacity: 0, duration: 1.5, ease: "power4.inOut", onComplete: () => {
+            gsap.to("#enter-gateway", { opacity: 0, duration: 1.5, onComplete: () => {
                 document.getElementById('enter-gateway').style.display = 'none';
                 document.getElementById('app').style.display = 'block';
                 document.body.style.overflow = 'auto';
@@ -235,7 +229,6 @@
             }});
         }
 
-        // REVEALS
         function initAnims() {
             gsap.utils.toArray(".reveal").forEach(el => {
                 gsap.to(el, {
@@ -245,53 +238,63 @@
             });
         }
 
-        // PRIX (LENT & BLUR)
-        function togglePrices() {
-            const list = document.getElementById('price-list');
-            list.classList.toggle('active');
-        }
+        function togglePrices() { document.getElementById('price-list').classList.toggle('active'); }
 
-        // MODAL (ANIMATION SATISFAISANTE)
         function openModal() {
             const modal = document.getElementById('purchase-modal');
             const content = document.getElementById('modal-content');
             modal.style.display = 'flex';
-            gsap.fromTo(content, 
-                { scale: 0.7, opacity: 0, filter: "blur(20px)" }, 
-                { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.8, ease: "back.out(1.4)" }
-            );
+            gsap.fromTo(content, { scale: 0.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.4)" });
         }
 
         function closeModal() {
-            const modal = document.getElementById('purchase-modal');
-            const content = document.getElementById('modal-content');
-            gsap.to(content, { scale: 0.8, opacity: 0, filter: "blur(15px)", duration: 0.4, onComplete: () => {
-                modal.style.display = 'none';
+            gsap.to("#modal-content", { scale: 0.8, opacity: 0, duration: 0.4, onComplete: () => {
+                document.getElementById('purchase-modal').style.display = 'none';
             }});
         }
 
-        // BG CANVAS
+        // --- NEW NEBULA BACKGROUND (NON-IA) ---
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
-        let pts = [];
-        function resize() {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            pts = []; for(let i=0; i<80; i++) pts.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5 });
-        }
+        let time = 0;
+
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+
         function draw() {
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(167, 139, 250, 0.2)";
-            pts.forEach((p, i) => {
-                p.x += p.vx; p.y += p.vy;
-                if(p.x<0 || p.x>canvas.width) p.vx*=-1; if(p.y<0 || p.y>canvas.height) p.vy*=-1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI*2); ctx.fill();
-                for(let j=i+1; j<pts.length; j++) {
-                    let d = Math.hypot(p.x-pts[j].x, p.y-pts[j].y);
-                    if(d<130) { ctx.strokeStyle = `rgba(167, 139, 250, ${1 - d/130})`; ctx.lineWidth = 0.5; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke(); }
-                }
-            });
+            time += 0.002;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // Gradient 1 (Top Left)
+            let g1 = ctx.createRadialGradient(
+                centerX + Math.cos(time) * 300, 
+                centerY + Math.sin(time) * 200, 
+                0, 
+                centerX, centerY, canvas.width
+            );
+            g1.addColorStop(0, "rgba(167, 139, 250, 0.08)");
+            g1.addColorStop(1, "transparent");
+
+            // Gradient 2 (Bottom Right)
+            let g2 = ctx.createRadialGradient(
+                centerX + Math.sin(time * 0.8) * 400, 
+                centerY + Math.cos(time * 0.8) * 300, 
+                0, 
+                centerX, centerY, canvas.width
+            );
+            g2.addColorStop(0, "rgba(139, 92, 246, 0.05)");
+            g2.addColorStop(1, "transparent");
+
+            ctx.fillStyle = g1;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = g2;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
             requestAnimationFrame(draw);
         }
+
         resize(); draw(); window.onresize = resize;
     </script>
 </body>
