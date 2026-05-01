@@ -13,59 +13,60 @@
         
         :root { --accent: #a78bfa; --bg: #010101; }
         * { cursor: none !important; box-sizing: border-box; }
-        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow: hidden; }
 
-        /* --- CURSEUR GLOBAL --- */
+        /* --- CURSEUR UNIVERSEL (Fixé pour être au-dessus de TOUT) --- */
         #cursor {
             width: 12px; height: 12px; background: var(--accent); border-radius: 50%;
-            position: fixed; pointer-events: none; z-index: 100000;
-            box-shadow: 0 0 15px var(--accent), 0 0 30px var(--accent);
+            position: fixed; pointer-events: none; z-index: 200000;
+            box-shadow: 0 0 20px var(--accent);
         }
         #cursor-follower {
-            width: 35px; height: 35px; border: 1px solid var(--accent); border-radius: 50%;
-            position: fixed; pointer-events: none; z-index: 99999;
-            transition: transform 0.12s ease-out; opacity: 0.3;
+            width: 40px; height: 40px; border: 1px solid var(--accent); border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 199999;
+            transition: transform 0.1s ease-out; opacity: 0.3;
         }
 
-        /* --- LOGO X VIOLET GLOWED --- */
-        .logo-x { color: var(--accent); text-shadow: 0 0 25px var(--accent); font-style: italic; }
-
-        /* --- BACKGROUND --- */
-        #bg-canvas { position: fixed; inset: 0; z-index: -1; }
-
-        /* --- ANIMATIONS DE SCROLL (REVEAL) --- */
-        .reveal { opacity: 0; transform: translateY(50px); filter: blur(20px); transition: none; }
-
-        /* --- CORE CARDS STYLE --- */
-        .core-card {
-            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 35px; border-radius: 20px; transition: all 0.5s cubic-bezier(0.2, 1, 0.2, 1);
-            backdrop-filter: blur(10px);
+        /* --- INITIALIZE SCREEN --- */
+        #enter-gateway {
+            position: fixed; inset: 0; background: #000; z-index: 150000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .core-card:hover { 
-            transform: translateY(-10px) scale(1.02); 
-            border-color: var(--accent); 
-            background: rgba(167, 139, 250, 0.05);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        .init-btn {
+            padding: 30px 60px; border: 1px solid rgba(167, 139, 250, 0.3);
+            background: transparent; color: white; font-weight: 900;
+            letter-spacing: 15px; text-transform: uppercase;
+            transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            position: relative;
+        }
+        .init-btn:hover {
+            background: var(--accent); color: black;
+            box-shadow: 0 0 100px rgba(167, 139, 250, 0.5);
+            transform: scale(1.05); border-color: var(--accent);
         }
 
-        /* --- PRICE LIST --- */
-        #price-list { 
-            max-height: 0; overflow: hidden; opacity: 0; 
-            transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1); 
+        /* --- PRIX MINIMALISTES --- */
+        .price-card {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            padding: 20px; transition: 0.4s;
         }
-        #price-list.active { max-height: 500px; opacity: 1; margin-top: 30px; }
+        .price-card:hover { border-color: var(--accent); background: rgba(255,255,255,0.06); }
 
-        /* --- FEATURES --- */
-        .feature-box { background: rgba(5,5,5,0.8); backdrop-filter: blur(15px); padding: 40px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.03); }
-        .f-item { font-family: monospace; font-size: 11px; color: #777; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
-        .f-item::before { content: "├─"; color: var(--accent); }
-
-        /* --- MODAL --- */
+        /* --- MODAL AVEC CURSEUR FIX --- */
         #purchase-modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 100001;
-            display: none; align-items: center; justify-content: center; backdrop-filter: blur(30px);
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(20px);
         }
+
+        .reveal { opacity: 0; transform: translateY(40px); filter: blur(15px); }
+        .logo-x { color: var(--accent); text-shadow: 0 0 20px var(--accent); font-style: italic; }
+        #bg-canvas { position: fixed; inset: 0; z-index: -1; }
+
+        .core-card {
+            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 30px; border-radius: 15px; transition: 0.5s;
+        }
+        .core-card:hover { transform: translateY(-10px); border-color: var(--accent); }
     </style>
 </head>
 <body>
@@ -73,218 +74,208 @@
     <div id="cursor"></div>
     <div id="cursor-follower"></div>
 
-    <!-- MODAL SATISFAISANT -->
+    <!-- INITIALIZE -->
+    <div id="enter-gateway">
+        <div class="mb-10 text-2xl font-black italic tracking-widest opacity-20">SYSTEM DISCONNECTED</div>
+        <button class="init-btn" onclick="startSystem()">Initialize</button>
+    </div>
+
+    <!-- PURCHASE MODAL -->
     <div id="purchase-modal">
-        <div class="text-center p-12 bg-white/5 border border-white/10 rounded-[40px] max-w-xl shadow-2xl">
-            <h2 class="text-4xl font-black italic mb-4 tracking-tighter">SORRY...</h2>
-            <p class="text-gray-400 text-xs tracking-[3px] mb-10 uppercase">Our Website is Not Finished Yet.<br>But you can still order through one of us Private Message</p>
-            <div class="space-y-4">
-                <a href="https://discord.com/users/kyotouhq" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white hover:text-black transition-all duration-500 group">
-                    <span class="font-black tracking-widest text-sm">KYOTOUHQ</span>
-                    <i data-lucide="message-square" class="text-purple-400 group-hover:text-black"></i>
+        <div class="text-center p-12 bg-[#050505] border border-white/10 rounded-[30px] max-w-lg shadow-2xl relative">
+            <h2 class="text-4xl font-black italic mb-2 tracking-tighter">SORRY...</h2>
+            <p class="text-gray-500 text-[10px] tracking-[4px] mb-12 uppercase">Our Website is Not Finished Yet.<br>But you can still order through us via Discord</p>
+            
+            <div class="space-y-3">
+                <a href="https://discord.com/users/kyotouhq" target="_blank" class="flex items-center justify-between p-5 bg-white/5 border border-white/5 hover:border-purple-500 transition-all rounded-xl">
+                    <span class="font-black text-xs tracking-widest">KYOTOUHQ</span>
+                    <i data-lucide="external-link" class="w-4 h-4 text-purple-400"></i>
                 </a>
-                <a href="https://discord.com/users/mtx93." target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white hover:text-black transition-all duration-500 group">
-                    <span class="font-black tracking-widest text-sm">MTX93.</span>
-                    <i data-lucide="message-square" class="text-purple-400 group-hover:text-black"></i>
+                <a href="https://discord.com/users/mtx93." target="_blank" class="flex items-center justify-between p-5 bg-white/5 border border-white/5 hover:border-purple-500 transition-all rounded-xl">
+                    <span class="font-black text-xs tracking-widest">MTX93.</span>
+                    <i data-lucide="external-link" class="w-4 h-4 text-purple-400"></i>
                 </a>
             </div>
-            <button onclick="closeModal()" class="mt-10 opacity-20 hover:opacity-100 text-[10px] font-bold tracking-[5px] uppercase">Back to Terminal</button>
+            <button onclick="closeModal()" class="mt-10 opacity-20 hover:opacity-100 text-[9px] font-bold tracking-[5px] uppercase transition">Close</button>
         </div>
     </div>
 
     <canvas id="bg-canvas"></canvas>
+    <audio id="main-audio" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg"></audio>
 
-    <!-- HEADER -->
-    <nav class="fixed top-0 w-full h-[110px] px-[8%] flex justify-between items-center z-[5000]">
-        <div class="text-4xl font-black italic tracking-tighter">MM<span class="logo-x">X</span></div>
-        <div class="flex gap-12 text-[10px] font-black tracking-[6px] uppercase opacity-40">
-            <span>PROTOCOL: V2</span>
-            <span class="text-purple-400">STATUS: UNDETECTED</span>
-        </div>
-    </nav>
+    <div id="app" style="display: none;">
+        <nav class="fixed top-0 w-full h-[100px] px-[8%] flex justify-between items-center z-[5000]">
+            <div class="text-4xl font-black italic tracking-tighter">MM<span class="logo-x">X</span></div>
+            <div class="flex gap-10 text-[10px] font-black tracking-[5px] opacity-40">
+                <span>PROTOCOL: V2</span>
+                <span class="text-green-500">STATUS: UNDETECTED</span>
+            </div>
+        </nav>
 
-    <!-- HERO SECTION -->
-    <section class="min-h-screen flex items-center px-[8%] pt-20">
-        <div class="w-full">
-            <div class="reveal">
-                <p class="text-purple-400 font-black tracking-[5px] text-[12px] mb-6 uppercase">Most Undetected & Safest External Cheats</p>
-                <h1 class="text-[11vw] font-black italic leading-[0.8] mb-12 tracking-tighter uppercase">Ultimate<br>Precision</h1>
-                
-                <div class="flex flex-col items-start gap-8">
-                    <div class="flex items-center gap-6">
-                        <button onclick="openModal()" class="bg-white text-black px-16 py-7 font-black uppercase text-xs hover:bg-purple-500 hover:text-white transition-all duration-700 shadow-2xl">Purchase</button>
-                        <button onclick="togglePrices()" class="border border-white/10 px-10 py-7 flex items-center gap-4 hover:border-purple-500 transition group">
-                            <i data-lucide="tag" class="w-5 h-5 text-purple-400"></i>
-                            <span class="font-black text-xs uppercase tracking-widest">Price</span>
-                        </button>
-                    </div>
+        <!-- HERO -->
+        <section class="h-screen flex items-center px-[8%] pt-20">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center w-full">
+                <div class="reveal">
+                    <p class="text-purple-400 font-black tracking-[6px] text-[11px] mb-6 uppercase">Most Undetected & Safest External Cheats</p>
+                    <h1 class="text-[8vw] font-black italic leading-[0.8] mb-10 tracking-tighter uppercase">DOMINATE<br>EVERYONE</h1>
+                    
+                    <div class="flex flex-col gap-6">
+                        <div class="flex items-center gap-6">
+                            <button onclick="openModal()" class="bg-white text-black px-16 py-6 font-black uppercase text-xs hover:bg-purple-500 hover:text-white transition-all duration-500">Purchase</button>
+                            <button onclick="togglePrices()" class="border border-white/10 px-10 py-6 flex items-center gap-4 hover:border-purple-500 transition group">
+                                <i data-lucide="tag" class="w-4 h-4 text-purple-400"></i>
+                                <span class="font-black text-xs uppercase tracking-widest">Price List</span>
+                            </button>
+                        </div>
 
-                    <!-- PRIX APPARAISSANT EN DESSOUS -->
-                    <div id="price-list" class="grid grid-cols-2 md:grid-cols-5 gap-4 w-full max-w-4xl">
-                        <div class="p-6 border border-white/5 bg-white/5 rounded-xl text-center">
-                            <div class="text-gray-500 text-[9px] mb-1">DAILY</div>
-                            <div class="font-black text-lg">4.99€</div>
-                        </div>
-                        <div class="p-6 border border-white/5 bg-white/5 rounded-xl text-center">
-                            <div class="text-gray-500 text-[9px] mb-1">WEEKLY</div>
-                            <div class="font-black text-lg">14.99€</div>
-                        </div>
-                        <div class="p-6 border border-purple-500/30 bg-purple-500/5 rounded-xl text-center">
-                            <div class="text-purple-400 text-[9px] mb-1">MONTHLY</div>
-                            <div class="font-black text-lg">35.00€</div>
-                        </div>
-                        <div class="p-6 border border-white/5 bg-white/5 rounded-xl text-center">
-                            <div class="text-gray-500 text-[9px] mb-1">3 MONTHS</div>
-                            <div class="font-black text-lg">69.99€</div>
-                        </div>
-                        <div class="p-6 border border-yellow-500/30 bg-yellow-500/5 rounded-xl text-center">
-                            <div class="text-yellow-500 text-[9px] mb-1">LIFETIME</div>
-                            <div class="font-black text-lg">99.99€</div>
+                        <!-- LISTE DE PRIX MINIMALISTE -->
+                        <div id="price-list" class="hidden grid grid-cols-2 md:grid-cols-5 gap-3 w-full opacity-0">
+                            <div class="price-card text-center"><div class="text-[9px] text-gray-500 uppercase">1 Day</div><div class="font-black">4.99€</div></div>
+                            <div class="price-card text-center"><div class="text-[9px] text-gray-500 uppercase">1 Week</div><div class="font-black">14.99€</div></div>
+                            <div class="price-card text-center border-purple-500/50"><div class="text-[9px] text-purple-400 uppercase">1 Month</div><div class="font-black">35.00€</div></div>
+                            <div class="price-card text-center"><div class="text-[9px] text-gray-500 uppercase">3 Month</div><div class="font-black">69.99€</div></div>
+                            <div class="price-card text-center"><div class="text-[9px] text-yellow-500 uppercase">Lifetime</div><div class="font-black text-yellow-500">99.99€</div></div>
                         </div>
                     </div>
                 </div>
+                <div class="reveal">
+                    <div class="p-2 border border-white/5 bg-white/5 rounded-2xl overflow-hidden shadow-2xl">
+                        <img src="fortnite.jpg" class="w-full h-[500px] object-cover opacity-80" alt="MMX Preview">
+                    </div>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- CORE CARDS SECTION -->
-    <section class="py-24 px-[8%]">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div class="core-card reveal">
-                <i data-lucide="shield-check" class="text-purple-400 mb-6 w-10 h-10"></i>
-                <h3 class="font-black uppercase tracking-tighter mb-2">Undetected</h3>
-                <p class="text-[11px] text-gray-500 leading-relaxed uppercase font-bold">Kernel Level Bypass. Safe since day one.</p>
+        <!-- CORE CARDS -->
+        <section class="py-20 px-[8%] grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="core-card reveal text-center">
+                <i data-lucide="shield" class="mx-auto mb-6 text-purple-400"></i>
+                <h3 class="font-black uppercase text-sm mb-2">Undetected</h3>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest">Bypass since 2024</p>
             </div>
-            <div class="core-card reveal">
-                <i data-lucide="zap" class="text-purple-400 mb-6 w-10 h-10"></i>
-                <h3 class="font-black uppercase tracking-tighter mb-2">Instant</h3>
-                <p class="text-[11px] text-gray-500 leading-relaxed uppercase font-bold">Automated delivery system 24/7.</p>
+            <div class="core-card reveal text-center">
+                <i data-lucide="zap" class="mx-auto mb-6 text-purple-400"></i>
+                <h3 class="font-black uppercase text-sm mb-2">Instant</h3>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest">Automatic delivery</p>
             </div>
-            <div class="core-card reveal">
-                <i data-lucide="cpu" class="text-purple-400 mb-6 w-10 h-10"></i>
-                <h3 class="font-black uppercase tracking-tighter mb-2">Optimized</h3>
-                <p class="text-[11px] text-gray-500 leading-relaxed uppercase font-bold">Zero FPS drops. Performance driven.</p>
+            <div class="core-card reveal text-center">
+                <i data-lucide="cpu" class="mx-auto mb-6 text-purple-400"></i>
+                <h3 class="font-black uppercase text-sm mb-2">Optimized</h3>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest">0% Performance Loss</p>
             </div>
-            <div class="core-card reveal">
-                <i data-lucide="lock" class="text-purple-400 mb-6 w-10 h-10"></i>
-                <h3 class="font-black uppercase tracking-tighter mb-2">Secure</h3>
-                <p class="text-[11px] text-gray-500 leading-relaxed uppercase font-bold">Encryption layers on all modules.</p>
+            <div class="core-card reveal text-center">
+                <i data-lucide="headphones" class="mx-auto mb-6 text-purple-400"></i>
+                <h3 class="font-black uppercase text-sm mb-2">Support</h3>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest">24/7 Dedicated Staff</p>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- FEATURES -->
-    <section class="py-24 px-[8%] grid grid-cols-1 md:grid-cols-3 gap-12 pb-60">
-        <div class="feature-box reveal">
-            <div class="font-black text-purple-400 mb-8 uppercase tracking-widest text-xs border-b border-white/5 pb-4">Aimbot Config</div>
-            <div class="f-item">Advanced Predictions</div>
-            <div class="f-item">Humanized Smoothness</div>
-            <div class="f-item">FOV Circle (Customizable)</div>
-            <div class="f-item">Visible Check System</div>
-            <div class="f-item">Hitbox Selection</div>
-        </div>
-        <div class="feature-box reveal">
-            <div class="font-black text-purple-400 mb-8 uppercase tracking-widest text-xs border-b border-white/5 pb-4">Visual Suite</div>
-            <div class="f-item">Corner Box ESP</div>
-            <div class="f-item">Full Skeleton</div>
-            <div class="f-item">Snaplines</div>
-            <div class="f-item">Weapon & Ammo ESP</div>
-            <div class="f-item">Distance / Platform</div>
-        </div>
-        <div class="feature-box reveal">
-            <div class="font-black text-purple-400 mb-8 uppercase tracking-widest text-xs border-b border-white/5 pb-4">Miscellaneous</div>
-            <div class="f-item">Magic Bullet v2</div>
-            <div class="f-item">Speed Hack (Safe)</div>
-            <div class="f-item">Radar 2D / 3D</div>
-            <div class="f-item">Stream Proof Mode</div>
-            <div class="f-item">Config Cloud Saving</div>
-        </div>
-    </section>
+        <!-- FEATURES -->
+        <section class="py-40 px-[8%] grid grid-cols-1 md:grid-cols-3 gap-10 pb-60">
+            <div class="reveal p-10 bg-white/[0.02] border border-white/5 rounded-3xl">
+                <div class="font-black text-purple-400 mb-8 uppercase tracking-widest border-b border-white/5 pb-4">Aimbot Config</div>
+                <div class="space-y-3 opacity-60 text-[11px] font-bold uppercase tracking-tighter">
+                    <div>├─ Advanced Predictions</div>
+                    <div>├─ Humanized Smoothness</div>
+                    <div>├─ Custom Hitboxes</div>
+                    <div>├─ FOV Configuration</div>
+                </div>
+            </div>
+            <div class="reveal p-10 bg-white/[0.02] border border-white/5 rounded-3xl">
+                <div class="font-black text-purple-400 mb-8 uppercase tracking-widest border-b border-white/5 pb-4">Visual Suite</div>
+                <div class="space-y-3 opacity-60 text-[11px] font-bold uppercase tracking-tighter">
+                    <div>├─ Corner Box ESP</div>
+                    <div>├─ Skeleton ESP</div>
+                    <div>├─ Weapon & Rank ESP</div>
+                    <div>├─ Spectator Count</div>
+                </div>
+            </div>
+            <div class="reveal p-10 bg-white/[0.02] border border-white/5 rounded-3xl">
+                <div class="font-black text-purple-400 mb-8 uppercase tracking-widest border-b border-white/5 pb-4">Exploits</div>
+                <div class="space-y-3 opacity-60 text-[11px] font-bold uppercase tracking-tighter">
+                    <div>├─ Magic Bullet v2</div>
+                    <div>├─ No Recoil / Spread</div>
+                    <div>├─ Instant Revive</div>
+                    <div>├─ Radar 2D</div>
+                </div>
+            </div>
+        </section>
+    </div>
 
     <script>
         lucide.createIcons();
         gsap.registerPlugin(ScrollTrigger);
 
-        // --- CURSEUR GLOBAL ---
-        const cursor = document.getElementById('cursor');
-        const follower = document.getElementById('cursor-follower');
-        window.addEventListener('mousemove', (e) => {
-            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0 });
-            gsap.to(follower, { x: e.clientX - 17, y: e.clientY - 17, duration: 0.15 });
+        const cur = document.getElementById('cursor');
+        const fol = document.getElementById('cursor-follower');
+        window.addEventListener('mousemove', e => {
+            gsap.to(cur, { x: e.clientX, y: e.clientY, duration: 0 });
+            gsap.to(fol, { x: e.clientX - 20, y: e.clientY - 20, duration: 0.15 });
         });
 
-        // --- GSAP SCROLL ANIMATIONS ---
-        function initAnims() {
-            gsap.utils.toArray(".reveal").forEach((el) => {
-                gsap.to(el, {
-                    scrollTrigger: {
-                        trigger: el,
-                        start: "top 90%",
-                        toggleActions: "play none none none"
-                    },
-                    opacity: 1,
-                    y: 0,
-                    filter: "blur(0px)",
-                    duration: 1.2,
-                    ease: "power4.out"
-                });
-            });
-        }
-        initAnims();
-
-        // --- UI FUNCTIONS ---
-        function togglePrices() {
-            document.getElementById('price-list').classList.toggle('active');
-        }
-
-        function openModal() {
-            const modal = document.getElementById('purchase-modal');
-            modal.style.display = 'flex';
-            gsap.fromTo(modal.children[0], { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" });
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('purchase-modal');
-            gsap.to(modal.children[0], { scale: 0.8, opacity: 0, duration: 0.3, onComplete: () => {
-                modal.style.display = 'none';
+        function startSystem() {
+            document.getElementById('main-audio').play();
+            gsap.to("#enter-gateway", { opacity: 0, duration: 1.5, ease: "power4.inOut", onComplete: () => {
+                document.getElementById('enter-gateway').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                document.body.style.overflow = 'auto';
+                initScrollAnims();
             }});
         }
 
-        // --- BACKGROUND PARTICLES ---
+        function initScrollAnims() {
+            gsap.utils.toArray(".reveal").forEach(el => {
+                gsap.to(el, {
+                    scrollTrigger: { trigger: el, start: "top 90%" },
+                    opacity: 1, y: 0, filter: "blur(0px)", duration: 1.5, ease: "power4.out"
+                });
+            });
+        }
+
+        function togglePrices() {
+            const list = document.getElementById('price-list');
+            if(list.classList.contains('hidden')) {
+                list.classList.remove('hidden');
+                gsap.to(list, { opacity: 1, y: 0, duration: 0.6, ease: "back.out" });
+            } else {
+                gsap.to(list, { opacity: 0, y: 10, duration: 0.4, onComplete: () => list.classList.add('hidden') });
+            }
+        }
+
+        function openModal() {
+            document.getElementById('purchase-modal').style.display = 'flex';
+            gsap.fromTo("#purchase-modal > div", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "power4.out" });
+        }
+
+        function closeModal() {
+            gsap.to("#purchase-modal > div", { scale: 0.8, opacity: 0, duration: 0.3, onComplete: () => {
+                document.getElementById('purchase-modal').style.display = 'none';
+            }});
+        }
+
+        // --- BACKGROUND ---
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let pts = [];
-
         function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            pts = [];
-            for(let i=0; i<100; i++) pts.push({
-                x: Math.random()*canvas.width, y: Math.random()*canvas.height,
-                vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5
-            });
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            pts = []; for(let i=0; i<80; i++) pts.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4 });
         }
         function draw() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(167, 139, 250, 0.3)";
+            ctx.fillStyle = "rgba(167, 139, 250, 0.2)";
             pts.forEach((p, i) => {
                 p.x += p.vx; p.y += p.vy;
-                if(p.x<0 || p.x>canvas.width) p.vx*=-1;
-                if(p.y<0 || p.y>canvas.height) p.vy*=-1;
+                if(p.x<0 || p.x>canvas.width) p.vx*=-1; if(p.y<0 || p.y>canvas.height) p.vy*=-1;
                 ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI*2); ctx.fill();
                 for(let j=i+1; j<pts.length; j++) {
                     let d = Math.hypot(p.x-pts[j].x, p.y-pts[j].y);
-                    if(d<120) {
-                        ctx.strokeStyle = `rgba(167, 139, 250, ${1 - d/120})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
-                    }
+                    if(d<130) { ctx.strokeStyle = `rgba(167, 139, 250, ${1 - d/130})`; ctx.lineWidth = 0.5; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke(); }
                 }
             });
             requestAnimationFrame(draw);
         }
-        resize(); draw();
-        window.onresize = resize;
+        resize(); draw(); window.onresize = resize;
     </script>
 </body>
 </html>
