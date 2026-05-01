@@ -3,221 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMX | Elite Private Access</title>
+    <title>MMX | Private Protocol</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Orbitron:wght@900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
 
-        :root { 
-            --accent: #a78bfa; 
-            --accent-glow: rgba(167, 139, 250, 0.4);
-            --bg: #030303; 
-            --card-bg: #080808;
-        }
-
-        * { cursor: crosshair !important; box-sizing: border-box; scroll-behavior: smooth; }
+        :root { --accent: #a78bfa; --bg: #020202; }
+        * { cursor: crosshair !important; box-sizing: border-box; }
         body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
 
-        /* --- UTILS --- */
-        .glass { 
-            background: rgba(255, 255, 255, 0.02); 
-            backdrop-filter: blur(25px); 
-            border: 1px solid rgba(255, 255, 255, 0.05); 
+        /* --- BACKGROUND ANIMÉ --- */
+        #bg-canvas { position: fixed; inset: 0; z-index: -1; opacity: 0.6; }
+
+        /* --- GLASS EFFECT --- */
+        .glass-feature {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(167, 139, 250, 0.1);
+            border-radius: 30px;
+            padding: 35px;
+            transition: all 0.4s ease;
         }
-        .glow-purple { color: var(--accent); filter: drop-shadow(0 0 10px var(--accent)); }
-        .text-glow { text-shadow: 0 0 20px rgba(167, 139, 250, 0.5); }
+        .glass-feature:hover {
+            border-color: var(--accent);
+            background: rgba(167, 139, 250, 0.05);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        .feature-list { list-style: none; font-size: 11px; color: #888; margin-top: 15px; }
+        .feature-list li { margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        .feature-list li::before { content: "├"; color: var(--accent); opacity: 0.5; }
+        .feature-list li:last-child::before { content: "└"; }
+
+        .category-title { font-weight: 900; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #fff; display: flex; align-items: center; gap: 10px; }
 
         /* --- NAVBAR --- */
         nav {
-            position: fixed; top: 0; width: 100%; height: 90px;
+            position: fixed; top: 0; width: 100%; height: 80px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 8%; z-index: 1000; background: rgba(3, 3, 3, 0.8);
-            backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding: 0 8%; z-index: 1000; background: rgba(2,2,2,0.8); backdrop-filter: blur(10px);
         }
-        .logo { font-size: 26px; font-weight: 900; letter-spacing: -1px; }
-        .logo span { color: var(--accent); }
+        .logo span { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
 
-        /* --- HERO & PRODUCT SECTION --- */
-        .hero-section { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding-top: 100px; }
-        .product-card {
-            background: var(--card-bg); border-radius: 50px; border: 1px solid rgba(255,255,255,0.03);
-            padding: 80px; width: 90%; max-width: 1250px; display: flex; align-items: center; gap: 60px;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+        /* --- HERO --- */
+        .product-frame {
+            background: #080808; border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 40px; padding: 60px; display: flex; align-items: center; gap: 50px;
+            max-width: 1100px; margin: 120px auto 50px;
         }
+        .img-holder { width: 450px; height: 280px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(167, 139, 250, 0.2); }
+        .img-holder img { width: 100%; height: 100%; object-fit: cover; }
 
-        .img-frame {
-            flex: 1; height: 350px; border-radius: 30px; overflow: hidden;
-            border: 1px solid rgba(167, 139, 250, 0.2); position: relative;
-            box-shadow: 0 0 40px rgba(167, 139, 250, 0.1);
-        }
-        .img-frame img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-        .img-frame:hover img { transform: scale(1.05); }
-
-        /* --- CORE FEATURES (image_67d81b.jpg) --- */
-        .core-card { 
-            padding: 40px 30px; border-radius: 24px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            height: 100%; border: 1px solid rgba(255,255,255,0.03);
-        }
-        .core-card:hover { transform: translateY(-10px); border-color: var(--accent); background: rgba(167, 139, 250, 0.03); }
-        .feature-icon { 
-            width: 50px; height: 50px; background: rgba(167, 139, 250, 0.1); 
-            border: 1px solid var(--accent); border-radius: 14px; 
-            display: flex; align-items: center; justify-content: center; margin-bottom: 25px;
-        }
-
-        /* --- MODAL PURCHASE --- */
-        #buy-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.98);
-            display: none; align-items: center; justify-content: center; z-index: 2000;
-        }
-
-        /* --- FOOTER --- */
-        footer { border-top: 1px solid rgba(255,255,255,0.03); padding: 60px 8%; background: #050505; }
-        .pay-icon { opacity: 0.3; filter: grayscale(1); transition: 0.3s; width: 40px; }
-        .pay-icon:hover { opacity: 1; filter: grayscale(0); }
+        .btn-buy { background: white; color: black; padding: 15px 40px; border-radius: 12px; font-weight: 900; text-transform: uppercase; font-size: 12px; transition: 0.3s; }
+        .btn-buy:hover { background: var(--accent); color: white; box-shadow: 0 0 20px var(--accent); }
     </style>
 </head>
 <body>
 
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- MUSIQUE DISCRÈTE (Auto-play bloqué par nav, nécessite une interaction) -->
+    <audio id="bg-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
     <nav>
-        <div class="logo">MM<span>X</span></div>
-        <div class="flex items-center gap-10">
-            <div class="flex gap-8 text-[10px] font-black uppercase tracking-[2px] opacity-40">
-                <a href="#" class="hover:text-[#a78bfa] hover:opacity-100 transition">Store</a>
-                <a href="#" class="hover:text-[#a78bfa] hover:opacity-100 transition">Support</a>
-            </div>
-            <a href="https://discord.com/users/kyotouhq" target="_blank" class="glass px-6 py-3 rounded-full border border-purple-500/30 flex items-center gap-3 hover:bg-white/5 transition">
-                <i data-lucide="message-circle" class="w-4 h-4 text-[#a78bfa]"></i>
-                <span class="text-[10px] font-bold uppercase tracking-widest">Contact</span>
-            </a>
-        </div>
+        <div class="logo font-black text-2xl tracking-tighter">MM<span>X</span></div>
+        <a href="https://discord.com/users/kyotouhq" target="_blank" class="p-3 glass-feature !p-3 !rounded-xl border-purple-500/30">
+            <i data-lucide="message-circle" class="w-5 h-5 text-[#a78bfa]"></i>
+        </a>
     </nav>
 
-    <!-- HERO SECTION -->
-    <section class="hero-section">
-        <div class="product-card reveal">
-            <div class="flex-1">
-                <div class="flex items-center gap-3 mb-8">
-                    <div class="w-2 h-2 bg-purple-500 rounded-full animate-ping"></div>
-                    <span class="text-[10px] font-black tracking-[5px] uppercase opacity-40">External Access Only</span>
-                </div>
-                <h1 class="text-7xl font-black italic leading-[0.85] mb-6">PRIVATE<br><span class="text-[#a78bfa] text-glow">FORTNITE</span></h1>
-                <p class="text-gray-400 text-sm max-w-md mb-12 leading-relaxed">
-                    Unleash the full potential of your gameplay with our undetected memory suite. Designed for precision, speed, and absolute security.
-                </p>
-                <div class="flex items-center gap-4">
-                    <button onclick="openModal()" class="bg-white text-black px-12 py-5 rounded-2xl font-black uppercase text-xs hover:bg-[#a78bfa] hover:text-white transition duration-500 shadow-2xl">
-                        Purchase Now
-                    </button>
-                    <div class="glass p-5 rounded-2xl border border-white/5"><i data-lucide="shield-check" class="w-5 h-5 text-green-500"></i></div>
-                </div>
+    <!-- SECTION PRINCIPALE -->
+    <div class="product-frame reveal">
+        <div class="flex-1">
+            <div class="flex items-center gap-2 mb-4 opacity-40">
+                <div class="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                <span class="text-[10px] font-bold tracking-[4px] uppercase">Internal Project</span>
             </div>
-
-            <!-- CADRE À DROITE -->
-            <div class="img-frame">
-                <img src="fortnite.png" alt="Product Visual">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-            </div>
+            <h1 class="text-6xl font-black italic mb-6">PRIVATE<br>FORTNITE</h1>
+            <button onclick="playMusic(); window.open('https://discord.com/users/kyotouhq', '_blank')" class="btn-buy">Purchase</button>
         </div>
-    </section>
+        <div class="img-holder">
+            <!-- Remplacement par un lien placeholder si ton image locale n'est pas sur le serveur -->
+            <img src="fortnite.png" onerror="this.src='https://r2.community.xyz/b/657c96a793a6.png'" alt="Cheat Preview">
+        </div>
+    </div>
 
-    <!-- CORE FEATURES SECTION (Fidèle à image_67d81b.jpg) -->
-    <section class="py-32 px-8 max-w-7xl mx-auto">
-        <div class="text-center mb-20 reveal">
-            <span class="text-[#a78bfa] text-[10px] font-black tracking-[8px] uppercase">Reliability</span>
-            <h2 class="text-4xl font-bold mt-4">What you receive with every product</h2>
-            <p class="text-gray-500 mt-4">Secure delivery, consistent updates, reliable support, and instant access.</p>
+    <!-- FEATURES PAGE (GRID ANIMÉ) -->
+    <div class="max-w-7xl mx-auto px-6 py-20">
+        <div class="mb-16 text-center reveal">
+            <h2 class="text-4xl font-black italic">SOFTWARE FEATURES</h2>
+            <div class="w-20 h-1 bg-purple-500 mx-auto mt-4"></div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 reveal">
-            <div class="glass core-card">
-                <div class="feature-icon"><i data-lucide="lock" class="w-5 h-5 glow-purple"></i></div>
-                <h3 class="text-sm font-bold mb-3">Safe & Undetected</h3>
-                <p class="text-[11px] text-gray-500 leading-relaxed">The most secure & discrete products on the market.</p>
-            </div>
-            <div class="glass core-card">
-                <div class="feature-icon"><i data-lucide="shield" class="w-5 h-5 glow-purple"></i></div>
-                <h3 class="text-sm font-bold mb-3">Battle-Tested</h3>
-                <p class="text-[11px] text-gray-500 leading-relaxed">Stable, reliable releases with constant updates.</p>
-            </div>
-            <div class="glass core-card">
-                <div class="feature-icon"><i data-lucide="upload-cloud" class="w-5 h-5 glow-purple"></i></div>
-                <h3 class="text-sm font-bold mb-3">Cloud Configs</h3>
-                <p class="text-[11px] text-gray-500 leading-relaxed">Store your setups or import configs in seconds.</p>
-            </div>
-            <div class="glass core-card">
-                <div class="feature-icon"><i data-lucide="credit-card" class="w-5 h-5 glow-purple"></i></div>
-                <h3 class="text-sm font-bold mb-3">Secure Payments</h3>
-                <p class="text-[11px] text-gray-500 leading-relaxed">All transactions go through trusted encryption.</p>
-            </div>
-            <div class="glass core-card">
-                <div class="feature-icon"><i data-lucide="zap" class="w-5 h-5 glow-purple"></i></div>
-                <h3 class="text-sm font-bold mb-3">Instant Delivery</h3>
-                <p class="text-[11px] text-gray-500 leading-relaxed">Download immediately after payment confirmation.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer>
-        <div class="flex flex-col md:flex-row justify-between items-center gap-10">
-            <div class="logo">MM<span>X</span></div>
-            <div class="flex gap-8">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" class="pay-icon" alt="Paypal">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" class="pay-icon" alt="BTC">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Visa_2021.svg" class="pay-icon" alt="Visa">
-            </div>
-            <p class="text-[9px] font-bold opacity-20 uppercase tracking-[4px]">© 2026 MMX PRIVATE PROTOCOL</p>
-        </div>
-    </footer>
-
-    <!-- PURCHASE MODAL -->
-    <div id="buy-modal">
-        <div class="glass p-16 rounded-[50px] text-center max-w-xl border-purple-500/20 relative animate-scale">
-            <button onclick="closeModal()" class="absolute top-8 right-10 text-white/20 hover:text-white text-2xl">&times;</button>
-            <div class="flex justify-center mb-10">
-                <div class="w-20 h-20 bg-purple-500/10 rounded-3xl border border-purple-500/30 flex items-center justify-center">
-                    <i data-lucide="command" class="w-10 h-10 text-[#a78bfa]"></i>
-                </div>
-            </div>
-            <h2 class="text-4xl font-black mb-6 uppercase italic">Order Protocol</h2>
-            <p class="text-gray-400 text-sm mb-12">Private slots are limited. To ensure security, all transactions are handled via manual verification.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
-            <a href="https://discord.com/users/kyotouhq" target="_blank" class="block w-full bg-white text-black py-6 rounded-2xl font-black uppercase text-xs hover:bg-[#a78bfa] hover:text-white transition duration-500">
-                Send A private message to kyotouhq
-            </a>
-            <p class="mt-8 text-[9px] opacity-30 font-bold uppercase tracking-[3px]">Redirecting to secure discord session</p>
+            <!-- AIMBOT -->
+            <div class="glass-feature reveal">
+                <div class="category-title"><i data-lucide="target" class="w-5 h-5 text-[#a78bfa]"></i> Aimbot</div>
+                <ul class="feature-list">
+                    <li>Enable + Keybind</li>
+                    <li>Enable Predictions</li>
+                    <li>Target Line (+ Color)</li>
+                    <li>Visible Check</li>
+                    <li>Bullet Drop Comp.</li>
+                    <li>Humanization (0.1-25)</li>
+                    <li>Kernel / Memory / Silent</li>
+                    <li>Heads / Chest / Pelvis</li>
+                    <li>FOV & Smooth (Per Weapon)</li>
+                </ul>
+            </div>
+
+            <!-- VISUALS -->
+            <div class="glass-feature reveal">
+                <div class="category-title"><i data-lucide="eye" class="w-5 h-5 text-[#a78bfa]"></i> Player ESP</div>
+                <ul class="feature-list">
+                    <li>Box (Corner, Filled, Round)</li>
+                    <li>Skeleton + Head ESP</li>
+                    <li>Snaplines</li>
+                    <li>Weapon & Distance ESP</li>
+                    <li>Username & Ranked ESP</li>
+                    <li>Reload Bar / Spec Counts</li>
+                    <li>Arrow ESP (Out of FOV)</li>
+                </ul>
+            </div>
+
+            <!-- WORLD ESP -->
+            <div class="glass-feature reveal">
+                <div class="category-title"><i data-lucide="globe" class="w-5 h-5 text-[#a78bfa]"></i> World ESP</div>
+                <ul class="feature-list">
+                    <li>Enable World ESP</li>
+                    <li>Show Item Distance</li>
+                    <li>Common to Mythic Filter</li>
+                    <li>Vehicle / Llama ESP</li>
+                </ul>
+            </div>
+
+            <!-- RADAR -->
+            <div class="glass-feature reveal">
+                <div class="category-title"><i data-lucide="radar" class="w-5 h-5 text-[#a78bfa]"></i> Radar</div>
+                <ul class="feature-list">
+                    <li>Enable Radar (+ Color)</li>
+                    <li>Enemy Distance</li>
+                    <li>Alert Attack</li>
+                    <li>Glider Check</li>
+                    <li>World ESP Radar Integration</li>
+                </ul>
+            </div>
+
+            <!-- EXPLOITS -->
+            <div class="glass-feature reveal">
+                <div class="category-title"><i data-lucide="zap" class="w-5 h-5 text-[#a78bfa]"></i> Exploits</div>
+                <ul class="feature-list">
+                    <li>Magic Bullet (FOV 0.1-12)</li>
+                    <li>Pickaxe Teleports (Shift)</li>
+                    <li>Player Speed Hack</li>
+                </ul>
+            </div>
+
+            <!-- MISC -->
+            <div class="glass-feature reveal">
+                <div class="category-title"><i data-lucide="settings" class="w-5 h-5 text-[#a78bfa]"></i> Settings</div>
+                <ul class="feature-list">
+                    <li>Draw Watermark</li>
+                    <li>Ignore Bots / NPCs / Team</li>
+                    <li>Config Manager (Save/Load)</li>
+                </ul>
+            </div>
+
         </div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        // GSAP Animations
+        // BACKGROUND PARTICLES
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            for(let i=0; i<100; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2,
+                    speedX: Math.random() * 0.5 - 0.25,
+                    speedY: Math.random() * 0.5 - 0.25
+                });
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.x += p.speedX; p.y += p.speedY;
+                if(p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                ctx.fillStyle = 'rgba(167, 139, 250, 0.5)';
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        }
+        init(); animate();
+
+        // MUSIQUE
+        function playMusic() {
+            let audio = document.getElementById('bg-music');
+            audio.volume = 0.2;
+            audio.play();
+        }
+
+        // GSAP REVEAL
         gsap.registerPlugin(ScrollTrigger);
         gsap.utils.toArray(".reveal").forEach(el => {
             gsap.from(el, {
-                scrollTrigger: { trigger: el, start: "top 85%" },
-                y: 50, opacity: 0, duration: 1.2, ease: "power4.out"
+                scrollTrigger: { trigger: el, start: "top 90%" },
+                y: 30, opacity: 0, duration: 1, ease: "power3.out"
             });
-        });
-
-        // Modal Logic
-        function openModal() {
-            const modal = document.getElementById('buy-modal');
-            modal.style.display = 'flex';
-            gsap.from(".animate-scale", { scale: 0.8, opacity: 0, duration: 0.5, ease: "back.out(1.7)" });
-        }
-        function closeModal() {
-            document.getElementById('buy-modal').style.display = 'none';
-        }
-
-        // INSERT Key Listener
-        window.addEventListener('keydown', (e) => {
-            if(e.key === 'Insert') openModal();
         });
     </script>
 </body>
