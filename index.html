@@ -84,11 +84,12 @@
     <div class="grain"></div>
     <canvas id="bg-canvas"></canvas>
 
+    <!-- INITIALIZATION SCREEN -->
     <div id="enter-gateway">
         <button class="init-btn" onclick="startSystem()">Initialize</button>
     </div>
 
-    <!-- MODAL -->
+    <!-- PURCHASE MODAL -->
     <div id="purchase-modal">
         <div id="modal-content" class="text-center p-12 bg-[#050505] border border-white/10 rounded-[45px] max-w-lg shadow-2xl">
             <h2 class="text-[50px] font-black italic mb-4 tracking-tighter leading-none">SORRY...</h2>
@@ -109,14 +110,16 @@
     <audio id="main-audio" loop><source src="music.mp3" type="audio/mpeg"></audio>
 
     <div id="app" style="display: none;">
+        <!-- NAVIGATION -->
         <nav class="fixed top-0 w-full h-[110px] px-[8%] flex justify-between items-center z-[5000]">
             <div class="text-4xl font-black italic">MM<span class="logo-x">X</span></div>
             <div class="flex gap-10 text-[10px] font-black opacity-30 uppercase tracking-[5px]">
                 <span>V2.0.4</span>
-                <span class="text-green-500">● Status: Undetchecked</span>
+                <span class="text-green-500">● Status: Undetected</span>
             </div>
         </nav>
 
+        <!-- HERO SECTION -->
         <section class="min-h-screen flex items-center px-[8%] pt-20">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center w-full">
                 <div class="reveal">
@@ -143,14 +146,13 @@
                 </div>
                 <div class="reveal">
                     <div class="p-3 border border-white/5 bg-white/5 rounded-[40px] overflow-hidden shadow-2xl relative group">
-                        <!-- REMIS EN .jpg ICI -->
                         <img src="fortnite.jpg" class="w-full h-[580px] object-cover rounded-[30px] opacity-80 group-hover:scale-105 transition-transform duration-[2s]" alt="Preview">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- CORE CARDS & FEATURES (MÊMES QU'AVANT) -->
+        <!-- CORE FEATURES -->
         <section class="py-24 px-[8%] grid grid-cols-1 md:grid-cols-4 gap-8">
             <div class="core-card reveal">
                 <i data-lucide="shield-check" class="text-purple-400 mb-6 w-10 h-10"></i>
@@ -171,6 +173,37 @@
                 <i data-lucide="headset" class="text-purple-400 mb-6 w-10 h-10"></i>
                 <h3 class="font-black uppercase tracking-tighter mb-2 text-lg">24/7 Support</h3>
                 <p class="text-[11px] text-gray-500 leading-relaxed uppercase font-bold tracking-[2px]">Always here for you.</p>
+            </div>
+        </section>
+
+        <!-- DETAILED FEATURES -->
+        <section class="py-40 px-[8%] grid grid-cols-1 md:grid-cols-3 gap-12 pb-60">
+            <div class="reveal p-12 bg-white/[0.02] border border-white/5 rounded-[45px]">
+                <div class="font-black text-purple-400 mb-10 uppercase tracking-[5px] border-b border-white/5 pb-6 text-xs">Aimbot Suite</div>
+                <div class="space-y-4 opacity-50 text-[12px] font-black uppercase">
+                    <div>├─ Silent Aim (pSilent)</div>
+                    <div>├─ Humanized Smoothing</div>
+                    <div>├─ Visible Check Only</div>
+                    <div>├─ FOV & Recoil Control</div>
+                </div>
+            </div>
+            <div class="reveal p-12 bg-white/[0.02] border border-white/5 rounded-[45px]">
+                <div class="font-black text-purple-400 mb-10 uppercase tracking-[5px] border-b border-white/5 pb-6 text-xs">Visuals ESP</div>
+                <div class="space-y-4 opacity-50 text-[12px] font-black uppercase">
+                    <div>├─ Player Skeleton / Box</div>
+                    <div>├─ Weapon & Health Info</div>
+                    <div>├─ Radar 2D Overlay</div>
+                    <div>├─ Performance Loot ESP</div>
+                </div>
+            </div>
+            <div class="reveal p-12 bg-white/[0.02] border border-white/5 rounded-[45px]">
+                <div class="font-black text-purple-400 mb-10 uppercase tracking-[5px] border-b border-white/5 pb-6 text-xs">Exploits / Misc</div>
+                <div class="space-y-4 opacity-50 text-[12px] font-black uppercase">
+                    <div>├─ No Recoil & No Spread</div>
+                    <div>├─ Bullet Teleportation</div>
+                    <div>├─ Instant Revive Mod</div>
+                    <div>├─ Stream-Proof Overlay</div>
+                </div>
             </div>
         </section>
     </div>
@@ -207,11 +240,13 @@
         }
 
         function togglePrices() { document.getElementById('price-list').classList.toggle('active'); }
+
         function openModal() {
             const modal = document.getElementById('purchase-modal');
             modal.style.display = 'flex';
             gsap.fromTo("#modal-content", { scale: 0.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.4)" });
         }
+
         function closeModal() {
             gsap.to("#modal-content", { scale: 0.8, opacity: 0, duration: 0.4, onComplete: () => {
                 document.getElementById('purchase-modal').style.display = 'none';
