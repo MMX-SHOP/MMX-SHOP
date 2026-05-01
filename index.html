@@ -3,232 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMX | Elite Private External</title>
+    <title>MMX | Private Protocol</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Orbitron:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=Orbitron:wght@900&display=swap');
 
         :root { 
             --accent: #a78bfa; 
             --accent-glow: rgba(167, 139, 250, 0.4);
             --bg: #020104; 
-            --panel-bg: rgba(13, 13, 18, 0.95);
         }
 
-        * { cursor: crosshair !important; box-sizing: border-box; scroll-behavior: smooth; }
-        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        * { cursor: crosshair !important; box-sizing: border-box; }
+        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; }
 
-        /* --- GLOW EFFECTS --- */
-        .glow-text { text-shadow: 0 0 10px var(--accent-glow); }
-        .glow-icon { filter: drop-shadow(0 0 8px var(--accent)); }
-        .glass-premium { 
-            background: rgba(255, 255, 255, 0.03); 
-            backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
-        }
+        /* --- FOND NEBULA MYSTÉRIEUX --- */
+        #nebula { position: fixed; inset: 0; z-index: -1; filter: blur(1px); }
 
-        /* --- ANIMATIONS --- */
-        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 15px var(--accent-glow); } 50% { box-shadow: 0 0 30px var(--accent); } }
-        #nebula-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-
-        /* --- NAV --- */
-        #main-nav {
-            position: fixed; top: 0; width: 100%; height: 80px;
+        /* --- NAVBAR FANTÔME --- */
+        .nav {
+            position: fixed; top: 0; width: 100%; height: 90px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 5%; z-index: 1000; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 0 5%; z-index: 100;
+        }
+        .logo-container { display: flex; align-items: center; gap: 3px; }
+        .logo-text { font-size: 26px; font-weight: 900; letter-spacing: -2px; }
+        .logo-x { color: var(--accent); text-shadow: 0 0 20px var(--accent); }
+
+        /* --- CENTRAL CORE (GLASSED) --- */
+        .core-wrapper {
+            height: 100vh; display: flex; align-items: center; justify-content: center;
         }
 
-        /* --- PANEL 3D & CORE --- */
-        #panel-overlay { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); 
-            backdrop-filter: blur(15px); z-index: 9999; 
-            display: none; align-items: center; justify-content: center; 
-            perspective: 1500px; 
-        }
-        
-        .panel-container { 
-            width: 1000px; height: 680px; background: var(--panel-bg); 
-            border-radius: 40px; display: flex; border: 1px solid rgba(167, 139, 250, 0.2); 
-            overflow: hidden; transform: rotateY(-10deg) rotateX(5deg);
-            box-shadow: -20px 20px 50px rgba(0,0,0,0.5);
+        .glass-vault {
+            width: 700px; padding: 60px;
+            background: rgba(255, 255, 255, 0.01);
+            backdrop-filter: blur(50px);
+            border: 1px solid rgba(167, 139, 250, 0.1);
+            border-radius: 60px;
+            text-align: center;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5), inset 0 0 20px rgba(167, 139, 250, 0.05);
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .tab-btn { 
-            padding: 16px; border-radius: 15px; transition: 0.3s; 
-            color: rgba(255,255,255,0.2); font-weight: 800; font-size: 10px; 
-            display: flex; align-items: center; gap: 12px; width: 100%; 
+        .title-glow {
+            font-size: 85px; font-weight: 900; line-height: 0.8;
+            text-transform: uppercase; letter-spacing: -4px;
+            background: linear-gradient(to bottom, #fff 30%, var(--accent) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 30px rgba(167, 139, 250, 0.3));
         }
-        .tab-btn.active { 
-            background: rgba(167, 139, 250, 0.1); color: var(--accent); 
-            box-shadow: 0 0 15px rgba(167, 139, 250, 0.1);
+
+        /* --- ICONES GLOWED & GLASSED --- */
+        .icon-box {
+            width: 50px; height: 50px;
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid var(--accent);
+            border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px var(--accent-glow);
+            color: var(--accent);
         }
-        .tab-btn.active i { filter: drop-shadow(0 0 5px var(--accent)); }
 
-        /* --- INPUTS --- */
-        .switch { appearance: none; width: 38px; height: 18px; background: #1a1a24; border-radius: 20px; position: relative; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
-        .switch:checked { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
-        .switch::before { content: ''; position: absolute; width: 12px; height: 12px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: 0.3s; }
-        .switch:checked::before { transform: translateX(20px); }
+        /* --- PANEL 3D (MYSTERY PURPLE) --- */
+        #panel-overlay {
+            position: fixed; inset: 0; background: rgba(2, 1, 4, 0.98);
+            display: none; align-items: center; justify-content: center; z-index: 1000;
+            perspective: 2000px;
+        }
+        .panel-3d {
+            width: 950px; height: 650px;
+            background: #08080a; border-radius: 40px;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            display: flex; overflow: hidden;
+            transform: rotateY(-12deg) rotateX(4deg);
+            box-shadow: -40px 40px 80px rgba(0,0,0,0.8), 0 0 40px rgba(167, 139, 250, 0.1);
+        }
 
-        input[type="range"] { accent-color: var(--accent); height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; }
+        /* --- BUTTONS & INPUTS --- */
+        .btn-main {
+            background: white; color: black; padding: 18px 45px;
+            border-radius: 18px; font-weight: 900; font-size: 11px;
+            text-transform: uppercase; letter-spacing: 2px;
+            transition: 0.4s; margin-top: 30px;
+        }
+        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(255,255,255,0.2); }
+
+        .price-chip {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            padding: 15px 25px; border-radius: 20px; transition: 0.3s;
+        }
+        .price-chip:hover { border-color: var(--accent); background: rgba(167, 139, 250, 0.05); }
+
     </style>
 </head>
 <body>
 
-    <canvas id="nebula-canvas"></canvas>
+    <canvas id="nebula"></canvas>
 
-    <nav id="main-nav">
-        <div class="flex items-center gap-4">
-            <div class="w-10 h-10 bg-[#a78bfa] rounded-xl flex items-center justify-center shadow-[0_0_20px_#a78bfa]">
-                <i data-lucide="zap" class="text-black w-6 h-6 fill-current"></i>
-            </div>
-            <h1 class="text-2xl font-black italic tracking-tighter">MMX<span class="text-[#a78bfa]">PRIVATE</span></h1>
+    <!-- NAV -->
+    <nav class="nav">
+        <div class="logo-container">
+            <span class="logo-text">MM<span class="logo-x">X</span></span>
         </div>
-        <div class="flex gap-8 items-center">
-            <span class="text-[10px] font-black uppercase tracking-widest text-green-400 flex items-center gap-2">
-                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div> Undetected
-            </span>
-            <button class="bg-[#a78bfa] text-black px-6 py-2 rounded-lg font-black text-[10px] uppercase transition-transform hover:scale-110" onclick="window.open('https://discord.gg/kyotouhq')">Join Discord</button>
+        <div class="flex items-center gap-8">
+            <div class="flex items-center gap-2">
+                <div class="w-1.5 h-1.5 bg-purple-500 rounded-full animate-ping"></div>
+                <span class="text-[9px] font-black tracking-[3px] opacity-40 uppercase">Encrypted</span>
+            </div>
+            <div class="icon-box cursor-pointer" onclick="togglePanel()">
+                <i data-lucide="command" class="w-5 h-5"></i>
+            </div>
         </div>
     </nav>
 
-    <!-- HERO SECTION -->
-    <section class="h-screen flex items-center justify-center px-10">
-        <div class="glass-premium p-16 rounded-[50px] flex items-center gap-20 max-w-6xl">
-            <div class="w-1/2">
-                <span class="text-[#a78bfa] font-black text-[10px] tracking-[5px] uppercase opacity-50 mb-4 block">Professional Cheat Solutions</span>
-                <h2 class="text-7xl font-black italic mb-8 leading-[0.8] uppercase">Dominate<br><span class="text-[#a78bfa] glow-text">Every Lobby</span></h2>
-                
-                <div class="flex gap-4 mb-10">
-                    <div class="price-btn border border-white/10 p-4 rounded-2xl flex-1 text-center cursor-pointer hover:border-[#a78bfa]" onclick="updatePrice('4.99€')">1 DAY</div>
-                    <div class="price-btn border border-[#a78bfa] bg-[#a78bfa]/10 p-4 rounded-2xl flex-1 text-center cursor-pointer" onclick="updatePrice('24.99€')">1 MONTH</div>
+    <!-- CORE REVEAL -->
+    <div class="core-wrapper">
+        <div class="glass-vault" id="main-ui">
+            <div class="flex justify-center mb-8">
+                <div class="icon-box"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
+            </div>
+            <h1 class="title-glow">NEBULA<br>PROTOCOL</h1>
+            <p class="mt-6 text-[10px] tracking-[6px] opacity-30 font-bold uppercase">Advanced External Visuals & Aimbot</p>
+            
+            <div id="reveal-area" class="hidden animate-in fade-in duration-1000 mt-12">
+                <div class="flex justify-center gap-4 mb-8">
+                    <div class="price-chip">
+                        <p class="text-[8px] opacity-30 font-black mb-1">24 HOURS</p>
+                        <p class="text-xl font-black italic">4.99€</p>
+                    </div>
+                    <div class="price-chip border-purple-500/50 bg-purple-500/5">
+                        <p class="text-[8px] text-purple-400 font-black mb-1">30 DAYS</p>
+                        <p class="text-xl font-black italic">24.99€</p>
+                    </div>
+                    <div class="price-chip">
+                        <p class="text-[8px] opacity-30 font-black mb-1">LIFETIME</p>
+                        <p class="text-xl font-black italic">69.99€</p>
+                    </div>
                 </div>
+                <button class="btn-main">Initialize Purchase</button>
+            </div>
 
-                <div class="flex items-center gap-6">
-                    <span id="price-display" class="text-5xl font-bold font-['Orbitron']">24.99€</span>
-                    <button class="flex-1 bg-white text-black py-5 rounded-2xl font-black uppercase text-xs hover:bg-[#a78bfa] hover:text-white transition">Get Access Now</button>
-                </div>
-                <p class="mt-8 text-[9px] font-bold opacity-30 tracking-[4px] text-center animate-pulse">PRESS INSERT TO OPEN PANEL</p>
-            </div>
-            <div class="w-1/2 relative">
-                <img src="https://media.discordapp.net/attachments/1188544994276184135/1188545084931870811/fortnite.jpg" class="rounded-3xl shadow-2xl opacity-80 border border-white/10">
-                <div class="absolute -bottom-10 -left-10 glass-premium p-6 rounded-2xl animate-bounce" style="animation-duration: 5s">
-                    <i data-lucide="shield-check" class="text-green-400 w-8 h-8 glow-icon"></i>
-                </div>
-            </div>
+            <button id="btn-reveal" class="btn-main" onclick="revealContent()">Unlock Access</button>
         </div>
-    </section>
+    </div>
 
-    <!-- THE PANEL (FIXED & GLOWED) -->
+    <!-- PANEL (INSERT) -->
     <div id="panel-overlay">
-        <div class="panel-container glass-premium">
+        <div class="panel-3d">
             <!-- Sidebar -->
-            <div class="w-[260px] bg-black/40 border-r border-white/5 p-10 flex flex-col gap-2">
-                <div class="mb-10 flex items-center gap-3">
-                    <i data-lucide="activity" class="text-[#a78bfa] glow-icon"></i>
-                    <h2 class="text-xl font-black italic tracking-tighter">NEBULA<span class="text-[#a78bfa]">V2</span></h2>
+            <div class="w-72 bg-black/50 border-r border-white/5 p-12 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-2xl font-black italic tracking-tighter mb-12">NEBULA<span class="text-[#a78bfa]">V2</span></h2>
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-4 text-[#a78bfa] font-black text-[10px] tracking-widest"><i data-lucide="target" class="w-4 h-4"></i> COMBAT</div>
+                        <div class="flex items-center gap-4 opacity-20 font-black text-[10px] tracking-widest"><i data-lucide="eye" class="w-4 h-4"></i> VISUALS</div>
+                        <div class="flex items-center gap-4 opacity-20 font-black text-[10px] tracking-widest"><i data-lucide="zap" class="w-4 h-4"></i> EXPLOITS</div>
+                    </div>
                 </div>
-                <button class="tab-btn active" onclick="openTab(event, 'aim')"><i data-lucide="target" class="w-4 h-4"></i> AIMBOT</button>
-                <button class="tab-btn" onclick="openTab(event, 'vis')"><i data-lucide="eye" class="w-4 h-4"></i> VISUALS</button>
-                <button class="tab-btn" onclick="openTab(event, 'exp')"><i data-lucide="zap" class="w-4 h-4"></i> EXPLOITS</button>
-                <button class="tab-btn" onclick="openTab(event, 'misc')"><i data-lucide="shield" class="w-4 h-4"></i> PROTECTION</button>
+                <div class="text-[8px] opacity-20 font-bold uppercase tracking-widest">Build: 04.2026.FN</div>
             </div>
-
-            <!-- Content Area -->
-            <div class="flex-1 p-14 overflow-y-auto bg-gradient-to-br from-transparent to-black/40">
-                
-                <!-- AIMBOT SECTION -->
-                <div id="aim" class="tab-content space-y-10">
-                    <h4 class="text-[#a78bfa] text-[10px] font-black uppercase tracking-[4px] glow-text">Aimbot Engine</h4>
-                    <div class="grid grid-cols-2 gap-10">
-                        <div class="space-y-6 bg-white/5 p-6 rounded-2xl border border-white/5">
-                            <div class="flex justify-between items-center text-[11px] font-bold"><span>Enable Memory Aim</span> <input type="checkbox" class="switch" checked></div>
-                            <div class="flex justify-between items-center text-[11px] font-bold"><span>Draw FOV Circle</span> <input type="checkbox" class="switch"></div>
-                            <div class="space-y-3">
-                                <div class="flex justify-between text-[9px] font-black opacity-40 uppercase"><span>Smoothness</span><span>12.4</span></div>
-                                <input type="range" class="w-full">
-                            </div>
+            <!-- Main Settings -->
+            <div class="flex-1 p-20">
+                <div class="grid grid-cols-1 gap-8">
+                    <div class="flex justify-between items-center p-6 bg-white/5 rounded-2xl border border-white/5">
+                        <div>
+                            <p class="text-xs font-black uppercase">Silent Aim</p>
+                            <p class="text-[9px] opacity-30 uppercase">Perfect Accuracy Protocol</p>
                         </div>
-                        <div class="space-y-6 bg-white/5 p-6 rounded-2xl border border-white/5">
-                            <div class="flex justify-between items-center text-[11px] font-bold"><span>Target Bone</span> 
-                                <select class="bg-black text-[10px] p-1 rounded border border-white/20"><option>Head</option><option>Neck</option></select>
-                            </div>
-                            <div class="flex justify-between items-center text-[11px] font-bold"><span>Visible Check</span> <input type="checkbox" class="switch" checked></div>
+                        <div class="w-12 h-6 bg-purple-600 rounded-full flex items-center justify-end px-1 shadow-[0_0_15px_rgba(167,139,250,0.5)]"><div class="w-4 h-4 bg-white rounded-full"></div></div>
+                    </div>
+                    <div class="flex justify-between items-center p-6 bg-white/5 rounded-2xl border border-white/5 opacity-40">
+                        <div>
+                            <p class="text-xs font-black uppercase">Visual Check</p>
+                            <p class="text-[9px] opacity-30 uppercase">Raytrace Filtering</p>
                         </div>
+                        <div class="w-12 h-6 bg-white/10 rounded-full flex items-center justify-start px-1"><div class="w-4 h-4 bg-white/20 rounded-full"></div></div>
                     </div>
                 </div>
-
-                <!-- VISUALS SECTION -->
-                <div id="vis" class="tab-content hidden space-y-10">
-                    <h4 class="text-[#a78bfa] text-[10px] font-black uppercase tracking-[4px] glow-text">Visuals & ESP</h4>
-                    <div class="grid grid-cols-2 gap-6">
-                        <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center"><span>Box ESP (2D/3D)</span> <input type="checkbox" class="switch" checked></div>
-                        <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center"><span>Skeleton</span> <input type="checkbox" class="switch" checked></div>
-                        <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center"><span>Distance</span> <input type="checkbox" class="switch"></div>
-                        <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center"><span>Snaplines</span> <input type="checkbox" class="switch"></div>
-                    </div>
-                </div>
-
-                <!-- EXPLOITS SECTION -->
-                <div id="exp" class="tab-content hidden space-y-6">
-                    <h4 class="text-red-500 text-[10px] font-black uppercase tracking-[4px]">Risk Features</h4>
-                    <div class="grid grid-cols-1 gap-4">
-                        <div class="bg-red-500/5 p-5 rounded-2xl border border-red-500/20 flex justify-between items-center">
-                            <div><p class="text-xs font-bold">Instant Reload</p><p class="text-[9px] opacity-40">Risky on some anti-cheats</p></div>
-                            <input type="checkbox" class="switch">
-                        </div>
-                        <div class="bg-red-500/5 p-5 rounded-2xl border border-red-500/20 flex justify-between items-center">
-                            <div><p class="text-xs font-bold">No Recoil / Spread</p><p class="text-[9px] opacity-40">100% Accuracy</p></div>
-                            <input type="checkbox" class="switch" checked>
-                        </div>
-                    </div>
-                </div>
-
             </div>
-            <button onclick="togglePanel(false)" class="absolute top-8 right-10 text-white/20 hover:text-white text-3xl transition">&times;</button>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        // Nebula Background
-        const canvas = document.getElementById('nebula-canvas');
+        // Nebula Animation (Lente et profonde)
+        const canvas = document.getElementById('nebula');
         const ctx = canvas.getContext('2d');
-        let particles = [];
-        let w = canvas.width = window.innerWidth;
-        let h = canvas.height = window.innerHeight;
+        let stars = [];
 
         function init() {
-            for(let i=0; i<80; i++) particles.push({x:Math.random()*w, y:Math.random()*h, s:Math.random()*2, vx:Math.random()*0.5-0.25, vy:Math.random()*0.5-0.25});
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            stars = [];
+            for(let i=0; i<180; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 1.5,
+                    speed: Math.random() * 0.05 + 0.02,
+                    opacity: Math.random()
+                });
+            }
         }
+
         function draw() {
-            ctx.fillStyle = '#020104'; ctx.fillRect(0,0,w,h);
-            particles.forEach(p => {
-                p.x+=p.vx; p.y+=p.vy;
-                if(p.x<0 || p.x>w) p.vx*=-1; if(p.y<0 || p.y>h) p.vy*=-1;
-                ctx.fillStyle = 'rgba(167, 139, 250, 0.5)';
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#020104'; ctx.fillRect(0,0,canvas.width,canvas.height);
+            stars.forEach(s => {
+                s.y -= s.speed;
+                if(s.y < 0) s.y = canvas.height;
+                ctx.fillStyle = `rgba(167, 139, 250, ${s.opacity})`;
+                ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
             });
             requestAnimationFrame(draw);
         }
         init(); draw();
 
-        // UI Logic
-        function togglePanel(show) { document.getElementById('panel-overlay').style.display = show ? 'flex' : 'none'; }
-        window.addEventListener('keydown', (e) => { if(e.key === 'Insert') togglePanel(document.getElementById('panel-overlay').style.display !== 'flex'); });
-        
-        function openTab(evt, tabName) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabName).classList.remove('hidden');
-            evt.currentTarget.classList.add('active');
+        // Reveal Logic
+        function revealContent() {
+            document.getElementById('btn-reveal').style.display = 'none';
+            document.getElementById('reveal-area').classList.remove('hidden');
+            document.getElementById('main-ui').style.width = "850px";
         }
 
-        function updatePrice(val) { document.getElementById('price-display').innerText = val; }
+        // Panel Toggle
+        function togglePanel() {
+            const p = document.getElementById('panel-overlay');
+            p.style.display = (p.style.display === 'flex') ? 'none' : 'flex';
+        }
+        window.addEventListener('keydown', (e) => { if(e.key === 'Insert') togglePanel(); });
     </script>
 </body>
 </html>
