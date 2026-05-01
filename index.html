@@ -10,284 +10,232 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        :root { --accent: #a78bfa; --bg: #020202; }
-        * { cursor: crosshair !important; box-sizing: border-box; }
-        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        
+        :root { --accent: #a78bfa; --bg: #010101; }
+        * { cursor: crosshair !important; box-sizing: border-box; scroll-behavior: smooth; }
+        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow: hidden; }
 
-        /* --- LOADER STYLE --- */
-        #loader {
-            position: fixed; inset: 0; background: #000; z-index: 9999;
+        /* --- ÉCRAN D'ENTRÉE --- */
+        #enter-gateway {
+            position: fixed; inset: 0; background: #000; z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .load-bar { width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 20px; overflow: hidden; }
-        .load-progress { width: 0%; height: 100%; background: var(--accent); box-shadow: 0 0 15px var(--accent); }
+        .gateway-btn {
+            padding: 20px 40px; border: 1px solid var(--accent); border-radius: 2px;
+            text-transform: uppercase; letter-spacing: 10px; font-weight: 900;
+            transition: 0.5s; position: relative; overflow: hidden;
+        }
+        .gateway-btn:hover { background: var(--accent); color: black; box-shadow: 0 0 50px var(--accent); transform: scale(1.1); }
 
-        /* --- BACKGROUND & GLASS --- */
+        /* --- BACKGROUND --- */
         #bg-canvas { position: fixed; inset: 0; z-index: -1; }
-        .glass { background: rgba(255, 255, 255, 0.01); backdrop-filter: blur(25px); border: 1px solid rgba(167, 139, 250, 0.1); }
-        
-        .feature-card {
-            padding: 40px; border-radius: 35px; transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            position: relative; overflow: hidden;
-        }
-        .feature-card:hover {
-            border-color: var(--accent); transform: translateY(-10px);
-            background: rgba(167, 139, 250, 0.03);
-        }
 
-        /* --- TEXT STYLING --- */
-        .f-title { font-weight: 900; font-size: 14px; color: var(--accent); letter-spacing: 3px; display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-        .f-list { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #666; }
-        .f-item { margin-bottom: 5px; display: flex; align-items: center; gap: 8px; opacity: 0; transform: translateX(-10px); }
-        .f-item::before { content: "├─"; color: var(--accent); opacity: 0.5; }
+        /* --- CARTES CORE --- */
+        .core-card {
+            background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 40px; border-radius: 20px; transition: 0.6s cubic-bezier(0.2, 1, 0.2, 1);
+            position: relative;
+        }
+        .core-card::before {
+            content: ""; position: absolute; inset: 0; border-radius: 20px;
+            padding: 1px; background: linear-gradient(45deg, transparent, var(--accent), transparent);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: 0.5s;
+        }
+        .core-card:hover { transform: translateY(-15px) scale(1.02); background: rgba(167, 139, 250, 0.05); }
+        .core-card:hover::before { opacity: 1; }
 
-        .hero-img-container {
-            perspective: 1000px; transition: 0.5s;
-        }
-        .hero-img {
-            transform-style: preserve-3d;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
+        /* --- FEATURES --- */
+        .feature-box { background: rgba(5,5,5,0.6); backdrop-filter: blur(10px); padding: 40px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.03); }
+        .f-item { font-family: monospace; font-size: 11px; color: #666; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }
+        .f-item::before { content: "├─"; color: var(--accent); }
+        .f-item.last::before { content: "└─"; }
+        .f-title { font-weight: 900; font-size: 13px; color: var(--accent); letter-spacing: 3px; margin-bottom: 20px; text-transform: uppercase; }
 
-        nav {
-            position: fixed; top: 0; width: 100%; height: 100px;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 10%; z-index: 1000; transition: 0.4s;
-        }
-        .nav-active { background: rgba(0,0,0,0.8); height: 70px; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        nav { position: fixed; top: 0; width: 100%; height: 100px; padding: 0 10%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
+        .reveal { opacity: 0; transform: translateY(50px); filter: blur(10px); }
     </style>
 </head>
 <body>
 
-    <!-- SCREEN LOADER -->
-    <div id="loader">
-        <div class="text-[10px] font-black tracking-[10px] uppercase animate-pulse">Initializing MMX Protocol</div>
-        <div class="load-bar"><div class="load-progress" id="progress"></div></div>
+    <div id="enter-gateway">
+        <button class="gateway-btn" onclick="initMMX()">Initialize</button>
+        <span class="text-[9px] mt-8 opacity-30 tracking-[10px] uppercase italic">Secure Connection Required</span>
     </div>
 
     <canvas id="bg-canvas"></canvas>
     <audio id="bg-music" loop><source src="music.mp3" type="audio/mpeg"></audio>
 
-    <nav id="navbar">
-        <div class="text-2xl font-black italic tracking-tighter">MMX <span class="text-[#a78bfa]">SHOP</span></div>
-        <div class="flex items-center gap-8">
-            <span class="text-[9px] font-bold opacity-30 tracking-[5px] uppercase hidden md:block">System Status: Online</span>
-            <button onclick="window.open('https://discord.com/users/kyotouhq')" class="glass px-6 py-3 rounded-full text-[10px] font-black tracking-widest uppercase hover:bg-white hover:text-black transition duration-500">
-                Contact
-            </button>
-        </div>
-    </nav>
+    <div id="app" style="display: none;">
+        <nav>
+            <div class="text-3xl font-black italic tracking-tighter">MMX</div>
+            <div class="flex gap-10 text-[10px] font-bold tracking-[5px] uppercase opacity-40">
+                <span>Protocol: V2</span>
+                <span>Status: Undetected</span>
+            </div>
+        </nav>
 
-    <!-- HERO SECTION -->
-    <section class="min-h-screen flex items-center justify-center px-10 pt-20">
-        <div class="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            <div class="reveal">
-                <div class="inline-block px-4 py-1 border border-purple-500/30 rounded-full mb-6">
-                    <span class="text-[#a78bfa] text-[9px] font-black tracking-[4px] uppercase">Private Internal v2.4</span>
+        <section class="h-screen flex items-center justify-center px-10">
+            <div class="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                <div class="reveal">
+                    <h1 class="text-[120px] font-black italic leading-[0.8] mb-10">PRIVATE<br><span class="text-[#a78bfa]">FORTNITE</span></h1>
+                    <p class="text-gray-500 text-sm max-w-sm mb-12 leading-relaxed">
+                        Le sommet de l'ingénierie logicielle. Un avantage injuste, une discrétion absolue.
+                    </p>
+                    <button class="bg-white text-black px-16 py-6 rounded-sm font-black uppercase text-xs hover:bg-[#a78bfa] hover:text-white transition duration-500">Purchase</button>
                 </div>
-                <h1 class="text-[100px] font-black italic leading-[0.9] mb-8 tracking-tighter">ULTIMATE<br><span class="text-[#a78bfa]">CHEAT</span></h1>
-                <p class="text-gray-500 text-sm max-w-md mb-12 leading-relaxed">
-                    Dominez la concurrence avec une précision chirurgicale. Notre moteur interne contourne les dernières protections pour une expérience fluide et indétectable.
-                </p>
-                <div class="flex items-center gap-6">
-                    <button onclick="document.getElementById('bg-music').play();" class="bg-white text-black px-12 py-5 rounded-full font-black uppercase text-xs hover:scale-105 transition shadow-[0_0_30px_rgba(255,255,255,0.2)]">Purchase</button>
-                    <div class="text-left">
-                        <div class="text-[10px] font-bold text-purple-400">Available for</div>
-                        <div class="text-xs font-black uppercase">Windows 10 / 11</div>
-                    </div>
+                <div class="reveal relative">
+                    <div class="absolute -inset-10 bg-purple-500/10 blur-[120px] rounded-full"></div>
+                    <img src="fortnite.jpg" class="relative w-full h-[500px] object-cover rounded-2xl border border-white/5" alt="Preview">
                 </div>
             </div>
-            <div class="hero-img-container reveal">
-                <div class="hero-img relative rounded-[40px] overflow-hidden border border-white/10 glass p-2">
-                    <img src="fortnite.jpg" class="w-full h-[450px] object-cover rounded-[35px] opacity-80" id="parallax-img">
+        </section>
+
+        <section class="py-40 px-10 max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <!-- CORE 1 -->
+                <div class="core-card reveal">
+                    <i data-lucide="shield" class="text-purple-400 mb-6 w-8 h-8"></i>
+                    <h3 class="font-black text-xs uppercase mb-3">Safe & Undetected</h3>
+                    <p class="text-[10px] text-gray-500 leading-relaxed">Security is our priority since day one.</p>
+                </div>
+                <!-- CORE 2 -->
+                <div class="core-card reveal">
+                    <i data-lucide="zap" class="text-purple-400 mb-6 w-8 h-8"></i>
+                    <h3 class="font-black text-xs uppercase mb-3">Instant Delivery</h3>
+                    <p class="text-[10px] text-gray-500 leading-relaxed">Get your key immediately after purchase.</p>
+                </div>
+                <!-- CORE 3 -->
+                <div class="core-card reveal">
+                    <i data-lucide="cpu" class="text-purple-400 mb-6 w-8 h-8"></i>
+                    <h3 class="font-black text-xs uppercase mb-3">Optimization</h3>
+                    <p class="text-[10px] text-gray-500 leading-relaxed">Built for performance, zero FPS loss.</p>
+                </div>
+                <!-- CORE 4 -->
+                <div class="core-card reveal">
+                    <i data-lucide="cloud" class="text-purple-400 mb-6 w-8 h-8"></i>
+                    <h3 class="font-black text-xs uppercase mb-3">Cloud Configs</h3>
+                    <p class="text-[10px] text-gray-500 leading-relaxed">Save and load your settings online.</p>
+                </div>
+                <!-- CORE 5 -->
+                <div class="core-card reveal">
+                    <i data-lucide="heart" class="text-purple-400 mb-6 w-8 h-8"></i>
+                    <h3 class="font-black text-xs uppercase mb-3">24/7 Support</h3>
+                    <p class="text-[10px] text-gray-500 leading-relaxed">Dedicated team on Discord for help.</p>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- CORE FEATURES (REPRODUCTION) -->
-    <section class="py-32 px-10 max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
-            <div class="glass p-8 rounded-3xl reveal border-b-2 border-purple-500/20">
-                <i data-lucide="shield-check" class="text-[#a78bfa] mb-6"></i>
-                <h3 class="font-black text-xs uppercase mb-3 tracking-widest">Safe</h3>
-                <p class="text-[10px] text-gray-500 leading-relaxed">Le plus haut standard de sécurité du marché.</p>
-            </div>
-            <!-- ... Répéter pour les 4 autres ... -->
-            <div class="glass p-8 rounded-3xl reveal border-b-2 border-purple-500/20">
-                <i data-lucide="zap" class="text-[#a78bfa] mb-6"></i>
-                <h3 class="font-black text-xs uppercase mb-3 tracking-widest">Instant</h3>
-                <p class="text-[10px] text-gray-500 leading-relaxed">Livraison immédiate après confirmation.</p>
-            </div>
-            <div class="glass p-8 rounded-3xl reveal border-b-2 border-purple-500/20">
-                <i data-lucide="cpu" class="text-[#a78bfa] mb-6"></i>
-                <h3 class="font-black text-xs uppercase mb-3 tracking-widest">Performant</h3>
-                <p class="text-[10px] text-gray-500 leading-relaxed">Zéro perte de FPS, optimisation maximale.</p>
-            </div>
-            <div class="glass p-8 rounded-3xl reveal border-b-2 border-purple-500/20">
-                <i data-lucide="refresh-cw" class="text-[#a78bfa] mb-6"></i>
-                <h3 class="font-black text-xs uppercase mb-3 tracking-widest">Updates</h3>
-                <p class="text-[10px] text-gray-500 leading-relaxed">Mises à jour automatiques via le launcher.</p>
-            </div>
-            <div class="glass p-8 rounded-3xl reveal border-b-2 border-purple-500/20">
-                <i data-lucide="headphones" class="text-[#a78bfa] mb-6"></i>
-                <h3 class="font-black text-xs uppercase mb-3 tracking-widest">Support</h3>
-                <p class="text-[10px] text-gray-500 leading-relaxed">Aide technique disponible 24/7 sur Discord.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- FULL FEATURES GRID -->
-    <section class="py-20 px-10 max-w-7xl mx-auto">
-        <h2 class="text-4xl font-black italic mb-20 text-center tracking-[10px] uppercase reveal">Specifications</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            
-            <!-- AIMBOT -->
-            <div class="glass feature-card reveal">
-                <span class="f-title"><i data-lucide="target" class="w-4 h-4"></i> AIMBOT</span>
-                <div class="f-list">
+        <section class="py-20 px-10 max-w-7xl mx-auto pb-60">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- AIMBOT -->
+                <div class="feature-box reveal">
+                    <div class="f-title">Aimbot System</div>
+                    <div class="f-item">Enable + Keybind</div>
                     <div class="f-item">Enable Predictions</div>
-                    <div class="f-item">Target Line (+ Color)</div>
                     <div class="f-item">Visible Check</div>
-                    <div class="f-item">Bullet Drop Comp.</div>
+                    <div class="f-item">Target Line (+ Color)</div>
                     <div class="f-item">Humanization (0.1-25)</div>
-                    <div class="f-item">Kernel / Memory / Silent</div>
+                    <div class="f-item">Aimbot Type: Kernel / Memory</div>
                     <div class="f-item">Hitbox: Head / Chest / Pelvis</div>
-                    <div class="f-item">Aimbot Distance (10-500)</div>
                     <div class="f-item">FOV (10-500)</div>
                     <div class="f-item last">Smooth (1-50)</div>
                 </div>
-            </div>
-
-            <!-- VISUALS -->
-            <div class="glass feature-card reveal">
-                <span class="f-title"><i data-lucide="eye" class="w-4 h-4"></i> VISUALS</span>
-                <div class="f-list">
-                    <div class="f-item">Box (Corner, Filled, Outlined)</div>
-                    <div class="f-item">Skeleton ESP + Head ESP</div>
+                <!-- VISUALS -->
+                <div class="feature-box reveal">
+                    <div class="f-title">Visuals Player</div>
+                    <div class="f-item">Box ESP (Corner, Filled)</div>
+                    <div class="f-item">Skeleton & Head ESP</div>
                     <div class="f-item">Reload Bar & Snaplines</div>
                     <div class="f-item">Weapon & Username ESP</div>
                     <div class="f-item">Ranked & Platform ESP</div>
+                    <div class="f-item">Distance ESP</div>
                     <div class="f-item">Spectator Counts</div>
-                    <div class="f-item">Arrow ESP (Out of FOV)</div>
-                    <div class="f-item last">Invisible Color Picker</div>
+                    <div class="f-item last">Arrow ESP (Radius 500)</div>
                 </div>
-            </div>
-
-            <!-- EXPLOITS & RADAR -->
-            <div class="glass feature-card reveal">
-                <span class="f-title"><i data-lucide="zap" class="w-4 h-4"></i> EXPLOITS & RADAR</span>
-                <div class="f-list">
-                    <div class="f-item">Magic Bullet (FOV 0.1-12)</div>
+                <!-- EXPLOITS -->
+                <div class="feature-box reveal">
+                    <div class="f-title">Exploits & Misc</div>
+                    <div class="f-item">Magic Bullet (FOV 12)</div>
                     <div class="f-item">Pickaxe Teleport (Shift)</div>
                     <div class="f-item">Player Speed Controller</div>
-                    <div class="f-item">2D Radar (+ Scale/Size)</div>
-                    <div class="f-item">Enemy Distance & Alert</div>
-                    <div class="f-item">Glider Check</div>
-                    <div class="f-item last">World ESP Radar</div>
+                    <div class="f-item">Radar 2D (+ Size)</div>
+                    <div class="f-item">Item Rarity Filter</div>
+                    <div class="f-item">Ignore Bots / Team</div>
+                    <div class="f-item last">Config Manager</div>
                 </div>
             </div>
-
-        </div>
-    </section>
-
-    <footer class="py-20 text-center opacity-20 text-[9px] font-black tracking-[8px] uppercase">
-        MMX Private Protocol — Restricted Access
-    </footer>
+        </section>
+    </div>
 
     <script>
         lucide.createIcons();
         gsap.registerPlugin(ScrollTrigger);
 
-        // 1. LOADER ANIMATION
-        let prog = 0;
-        let interval = setInterval(() => {
-            prog += Math.random() * 15;
-            document.getElementById('progress').style.width = prog + '%';
-            if(prog >= 100) {
-                clearInterval(interval);
-                gsap.to("#loader", { opacity: 0, duration: 1, onComplete: () => {
-                    document.getElementById('loader').style.display = 'none';
-                    animateHero();
-                }});
-            }
-        }, 150);
+        function initMMX() {
+            document.getElementById('bg-music').play();
+            gsap.to("#enter-gateway", { 
+                opacity: 0, duration: 1, onComplete: () => {
+                    document.getElementById('enter-gateway').style.display = 'none';
+                    document.getElementById('app').style.display = 'block';
+                    document.body.style.overflow = 'auto';
+                    startAnims();
+                } 
+            });
+        }
 
-        // 2. BACKGROUND PARTICLES (Interactive)
+        function startAnims() {
+            gsap.utils.toArray(".reveal").forEach((el, i) => {
+                gsap.to(el, {
+                    scrollTrigger: { trigger: el, start: "top 95%" },
+                    opacity: 1, y: 0, filter: "blur(0px)",
+                    duration: 1.5, ease: "power4.out", delay: i * 0.05
+                });
+            });
+        }
+
+        // --- PARTICLE SYSTEM ---
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
-        let mouse = { x: null, y: null };
-
-        window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
-
+        
         function initParticles() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            particles = [];
             for(let i=0; i<100; i++) {
                 particles.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    size: Math.random() * 2,
-                    baseX: Math.random() * canvas.width,
-                    baseY: Math.random() * canvas.height,
-                    density: (Math.random() * 30) + 1
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5
                 });
             }
         }
 
-        function drawParticles() {
+        function draw() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(167, 139, 250, 0.4)";
-            particles.forEach(p => {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-                ctx.fill();
+            ctx.fillStyle = "rgba(167, 139, 250, 0.5)";
+            
+            particles.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy;
+                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
                 
-                // Mouse interaction
-                let dx = mouse.x - p.x;
-                let dy = mouse.y - p.y;
-                let dist = Math.sqrt(dx*dx + dy*dy);
-                if(dist < 100) {
-                    p.x -= dx/10;
-                    p.y -= dy/10;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
+
+                for(let j=i+1; j<particles.length; j++) {
+                    let p2 = particles[j];
+                    let dist = Math.sqrt((p.x-p2.x)**2 + (p.y-p2.y)**2);
+                    if(dist < 100) {
+                        ctx.strokeStyle = `rgba(167, 139, 250, ${1 - dist/100})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                    }
                 }
             });
-            requestAnimationFrame(drawParticles);
+            requestAnimationFrame(draw);
         }
-        initParticles(); drawParticles();
-
-        // 3. PARALLAX EFFECT
-        const img = document.getElementById('parallax-img');
-        window.addEventListener('mousemove', (e) => {
-            let x = (e.clientX - window.innerWidth/2) / 25;
-            let y = (e.clientY - window.innerHeight/2) / 25;
-            img.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
-        });
-
-        // 4. GSAP REVEALS
-        function animateHero() {
-            gsap.utils.toArray(".reveal").forEach(el => {
-                gsap.from(el, {
-                    scrollTrigger: { trigger: el, start: "top 90%" },
-                    y: 60, opacity: 0, duration: 1.5, ease: "power4.out"
-                });
-            });
-
-            // Feature items staggered reveal
-            gsap.utils.toArray(".feature-card").forEach(card => {
-                gsap.to(card.querySelectorAll(".f-item"), {
-                    scrollTrigger: { trigger: card, start: "top 80%" },
-                    opacity: 1, x: 0, stagger: 0.1, duration: 0.8
-                });
-            });
-        }
-
-        // 5. NAV SCROLL
-        window.addEventListener('scroll', () => {
-            if(window.scrollY > 50) document.getElementById('navbar').classList.add('nav-active');
-            else document.getElementById('navbar').classList.remove('nav-active');
-        });
+        initParticles(); draw();
     </script>
 </body>
 </html>
