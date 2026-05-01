@@ -10,224 +10,283 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-
         :root { --accent: #a78bfa; --bg: #020202; }
         * { cursor: crosshair !important; box-sizing: border-box; }
         body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
 
-        /* --- BACKGROUND ANIMÉ --- */
-        #bg-canvas { position: fixed; inset: 0; z-index: -1; opacity: 0.6; }
-
-        /* --- GLASS EFFECT --- */
-        .glass-feature {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(167, 139, 250, 0.1);
-            border-radius: 30px;
-            padding: 35px;
-            transition: all 0.4s ease;
+        /* --- LOADER STYLE --- */
+        #loader {
+            position: fixed; inset: 0; background: #000; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .glass-feature:hover {
-            border-color: var(--accent);
-            background: rgba(167, 139, 250, 0.05);
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        .load-bar { width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 20px; overflow: hidden; }
+        .load-progress { width: 0%; height: 100%; background: var(--accent); box-shadow: 0 0 15px var(--accent); }
+
+        /* --- BACKGROUND & GLASS --- */
+        #bg-canvas { position: fixed; inset: 0; z-index: -1; }
+        .glass { background: rgba(255, 255, 255, 0.01); backdrop-filter: blur(25px); border: 1px solid rgba(167, 139, 250, 0.1); }
+        
+        .feature-card {
+            padding: 40px; border-radius: 35px; transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative; overflow: hidden;
+        }
+        .feature-card:hover {
+            border-color: var(--accent); transform: translateY(-10px);
+            background: rgba(167, 139, 250, 0.03);
         }
 
-        .feature-list { list-style: none; font-size: 11px; color: #888; margin-top: 15px; }
-        .feature-list li { margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
-        .feature-list li::before { content: "├"; color: var(--accent); opacity: 0.5; }
-        .feature-list li:last-child::before { content: "└"; }
+        /* --- TEXT STYLING --- */
+        .f-title { font-weight: 900; font-size: 14px; color: var(--accent); letter-spacing: 3px; display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .f-list { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #666; }
+        .f-item { margin-bottom: 5px; display: flex; align-items: center; gap: 8px; opacity: 0; transform: translateX(-10px); }
+        .f-item::before { content: "├─"; color: var(--accent); opacity: 0.5; }
 
-        .category-title { font-weight: 900; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #fff; display: flex; align-items: center; gap: 10px; }
+        .hero-img-container {
+            perspective: 1000px; transition: 0.5s;
+        }
+        .hero-img {
+            transform-style: preserve-3d;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
 
-        /* --- NAVBAR --- */
         nav {
-            position: fixed; top: 0; width: 100%; height: 80px;
+            position: fixed; top: 0; width: 100%; height: 100px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 8%; z-index: 1000; background: rgba(2,2,2,0.8); backdrop-filter: blur(10px);
+            padding: 0 10%; z-index: 1000; transition: 0.4s;
         }
-        .logo span { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
-
-        /* --- HERO --- */
-        .product-frame {
-            background: #080808; border: 1px solid rgba(255,255,255,0.03);
-            border-radius: 40px; padding: 60px; display: flex; align-items: center; gap: 50px;
-            max-width: 1100px; margin: 120px auto 50px;
-        }
-        .img-holder { width: 450px; height: 280px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(167, 139, 250, 0.2); }
-        .img-holder img { width: 100%; height: 100%; object-fit: cover; }
-
-        .btn-buy { background: white; color: black; padding: 15px 40px; border-radius: 12px; font-weight: 900; text-transform: uppercase; font-size: 12px; transition: 0.3s; }
-        .btn-buy:hover { background: var(--accent); color: white; box-shadow: 0 0 20px var(--accent); }
+        .nav-active { background: rgba(0,0,0,0.8); height: 70px; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
 
-    <canvas id="bg-canvas"></canvas>
-
-    <!-- MUSIQUE DISCRÈTE (Auto-play bloqué par nav, nécessite une interaction) -->
-    <audio id="bg-music" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
-
-    <nav>
-        <div class="logo font-black text-2xl tracking-tighter">MM<span>X</span></div>
-        <a href="https://discord.com/users/kyotouhq" target="_blank" class="p-3 glass-feature !p-3 !rounded-xl border-purple-500/30">
-            <i data-lucide="message-circle" class="w-5 h-5 text-[#a78bfa]"></i>
-        </a>
-    </nav>
-
-    <!-- SECTION PRINCIPALE -->
-    <div class="product-frame reveal">
-        <div class="flex-1">
-            <div class="flex items-center gap-2 mb-4 opacity-40">
-                <div class="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                <span class="text-[10px] font-bold tracking-[4px] uppercase">Internal Project</span>
-            </div>
-            <h1 class="text-6xl font-black italic mb-6">PRIVATE<br>FORTNITE</h1>
-            <button onclick="playMusic(); window.open('https://discord.com/users/kyotouhq', '_blank')" class="btn-buy">Purchase</button>
-        </div>
-        <div class="img-holder">
-            <!-- Remplacement par un lien placeholder si ton image locale n'est pas sur le serveur -->
-            <img src="fortnite.png" onerror="this.src='https://r2.community.xyz/b/657c96a793a6.png'" alt="Cheat Preview">
-        </div>
+    <!-- SCREEN LOADER -->
+    <div id="loader">
+        <div class="text-[10px] font-black tracking-[10px] uppercase animate-pulse">Initializing MMX Protocol</div>
+        <div class="load-bar"><div class="load-progress" id="progress"></div></div>
     </div>
 
-    <!-- FEATURES PAGE (GRID ANIMÉ) -->
-    <div class="max-w-7xl mx-auto px-6 py-20">
-        <div class="mb-16 text-center reveal">
-            <h2 class="text-4xl font-black italic">SOFTWARE FEATURES</h2>
-            <div class="w-20 h-1 bg-purple-500 mx-auto mt-4"></div>
-        </div>
+    <canvas id="bg-canvas"></canvas>
+    <audio id="bg-music" loop><source src="music.mp3" type="audio/mpeg"></audio>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <nav id="navbar">
+        <div class="text-2xl font-black italic tracking-tighter">MMX <span class="text-[#a78bfa]">SHOP</span></div>
+        <div class="flex items-center gap-8">
+            <span class="text-[9px] font-bold opacity-30 tracking-[5px] uppercase hidden md:block">System Status: Online</span>
+            <button onclick="window.open('https://discord.com/users/kyotouhq')" class="glass px-6 py-3 rounded-full text-[10px] font-black tracking-widest uppercase hover:bg-white hover:text-black transition duration-500">
+                Contact
+            </button>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="min-h-screen flex items-center justify-center px-10 pt-20">
+        <div class="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div class="reveal">
+                <div class="inline-block px-4 py-1 border border-purple-500/30 rounded-full mb-6">
+                    <span class="text-[#a78bfa] text-[9px] font-black tracking-[4px] uppercase">Private Internal v2.4</span>
+                </div>
+                <h1 class="text-[100px] font-black italic leading-[0.9] mb-8 tracking-tighter">ULTIMATE<br><span class="text-[#a78bfa]">CHEAT</span></h1>
+                <p class="text-gray-500 text-sm max-w-md mb-12 leading-relaxed">
+                    Dominez la concurrence avec une précision chirurgicale. Notre moteur interne contourne les dernières protections pour une expérience fluide et indétectable.
+                </p>
+                <div class="flex items-center gap-6">
+                    <button onclick="document.getElementById('bg-music').play();" class="bg-white text-black px-12 py-5 rounded-full font-black uppercase text-xs hover:scale-105 transition shadow-[0_0_30px_rgba(255,255,255,0.2)]">Purchase</button>
+                    <div class="text-left">
+                        <div class="text-[10px] font-bold text-purple-400">Available for</div>
+                        <div class="text-xs font-black uppercase">Windows 10 / 11</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-img-container reveal">
+                <div class="hero-img relative rounded-[40px] overflow-hidden border border-white/10 glass p-2">
+                    <img src="fortnite.jpg" class="w-full h-[450px] object-cover rounded-[35px] opacity-80" id="parallax-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CORE FEATURES (REPRODUCTION) -->
+    <section class="py-32 px-10 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+            <div class="glass p-8 rounded-3xl reveal border-b-2 border-purple-500/20">
+                <i data-lucide="shield-check" class="text-[#a78bfa] mb-6"></i>
+                <h3 class="font-black text-xs uppercase mb-3 tracking-widest">Safe</h3>
+                <p class="text-[10px] text-gray-500 leading-relaxed">Le plus haut standard de sécurité du marché.</p>
+            </div>
+            <!-- ... Répéter pour les 4 autres ... -->
+            <div class="glass p-8 rounded-3xl reveal border-b-2 border-purple-500/20">
+                <i data-lucide="zap" class="text-[#a78bfa] mb-6"></i>
+                <h3 class="font-black text-xs uppercase mb-3 tracking-widest">Instant</h3>
+                <p class="text-[10px] text-gray-500 leading-relaxed">Livraison immédiate après confirmation.</p>
+            </div>
+            <div class="glass p-8 rounded-3xl reveal border-b-2 border-purple-500/20">
+                <i data-lucide="cpu" class="text-[#a78bfa] mb-6"></i>
+                <h3 class="font-black text-xs uppercase mb-3 tracking-widest">Performant</h3>
+                <p class="text-[10px] text-gray-500 leading-relaxed">Zéro perte de FPS, optimisation maximale.</p>
+            </div>
+            <div class="glass p-8 rounded-3xl reveal border-b-2 border-purple-500/20">
+                <i data-lucide="refresh-cw" class="text-[#a78bfa] mb-6"></i>
+                <h3 class="font-black text-xs uppercase mb-3 tracking-widest">Updates</h3>
+                <p class="text-[10px] text-gray-500 leading-relaxed">Mises à jour automatiques via le launcher.</p>
+            </div>
+            <div class="glass p-8 rounded-3xl reveal border-b-2 border-purple-500/20">
+                <i data-lucide="headphones" class="text-[#a78bfa] mb-6"></i>
+                <h3 class="font-black text-xs uppercase mb-3 tracking-widest">Support</h3>
+                <p class="text-[10px] text-gray-500 leading-relaxed">Aide technique disponible 24/7 sur Discord.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FULL FEATURES GRID -->
+    <section class="py-20 px-10 max-w-7xl mx-auto">
+        <h2 class="text-4xl font-black italic mb-20 text-center tracking-[10px] uppercase reveal">Specifications</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
             <!-- AIMBOT -->
-            <div class="glass-feature reveal">
-                <div class="category-title"><i data-lucide="target" class="w-5 h-5 text-[#a78bfa]"></i> Aimbot</div>
-                <ul class="feature-list">
-                    <li>Enable + Keybind</li>
-                    <li>Enable Predictions</li>
-                    <li>Target Line (+ Color)</li>
-                    <li>Visible Check</li>
-                    <li>Bullet Drop Comp.</li>
-                    <li>Humanization (0.1-25)</li>
-                    <li>Kernel / Memory / Silent</li>
-                    <li>Heads / Chest / Pelvis</li>
-                    <li>FOV & Smooth (Per Weapon)</li>
-                </ul>
+            <div class="glass feature-card reveal">
+                <span class="f-title"><i data-lucide="target" class="w-4 h-4"></i> AIMBOT</span>
+                <div class="f-list">
+                    <div class="f-item">Enable Predictions</div>
+                    <div class="f-item">Target Line (+ Color)</div>
+                    <div class="f-item">Visible Check</div>
+                    <div class="f-item">Bullet Drop Comp.</div>
+                    <div class="f-item">Humanization (0.1-25)</div>
+                    <div class="f-item">Kernel / Memory / Silent</div>
+                    <div class="f-item">Hitbox: Head / Chest / Pelvis</div>
+                    <div class="f-item">Aimbot Distance (10-500)</div>
+                    <div class="f-item">FOV (10-500)</div>
+                    <div class="f-item last">Smooth (1-50)</div>
+                </div>
             </div>
 
             <!-- VISUALS -->
-            <div class="glass-feature reveal">
-                <div class="category-title"><i data-lucide="eye" class="w-5 h-5 text-[#a78bfa]"></i> Player ESP</div>
-                <ul class="feature-list">
-                    <li>Box (Corner, Filled, Round)</li>
-                    <li>Skeleton + Head ESP</li>
-                    <li>Snaplines</li>
-                    <li>Weapon & Distance ESP</li>
-                    <li>Username & Ranked ESP</li>
-                    <li>Reload Bar / Spec Counts</li>
-                    <li>Arrow ESP (Out of FOV)</li>
-                </ul>
+            <div class="glass feature-card reveal">
+                <span class="f-title"><i data-lucide="eye" class="w-4 h-4"></i> VISUALS</span>
+                <div class="f-list">
+                    <div class="f-item">Box (Corner, Filled, Outlined)</div>
+                    <div class="f-item">Skeleton ESP + Head ESP</div>
+                    <div class="f-item">Reload Bar & Snaplines</div>
+                    <div class="f-item">Weapon & Username ESP</div>
+                    <div class="f-item">Ranked & Platform ESP</div>
+                    <div class="f-item">Spectator Counts</div>
+                    <div class="f-item">Arrow ESP (Out of FOV)</div>
+                    <div class="f-item last">Invisible Color Picker</div>
+                </div>
             </div>
 
-            <!-- WORLD ESP -->
-            <div class="glass-feature reveal">
-                <div class="category-title"><i data-lucide="globe" class="w-5 h-5 text-[#a78bfa]"></i> World ESP</div>
-                <ul class="feature-list">
-                    <li>Enable World ESP</li>
-                    <li>Show Item Distance</li>
-                    <li>Common to Mythic Filter</li>
-                    <li>Vehicle / Llama ESP</li>
-                </ul>
-            </div>
-
-            <!-- RADAR -->
-            <div class="glass-feature reveal">
-                <div class="category-title"><i data-lucide="radar" class="w-5 h-5 text-[#a78bfa]"></i> Radar</div>
-                <ul class="feature-list">
-                    <li>Enable Radar (+ Color)</li>
-                    <li>Enemy Distance</li>
-                    <li>Alert Attack</li>
-                    <li>Glider Check</li>
-                    <li>World ESP Radar Integration</li>
-                </ul>
-            </div>
-
-            <!-- EXPLOITS -->
-            <div class="glass-feature reveal">
-                <div class="category-title"><i data-lucide="zap" class="w-5 h-5 text-[#a78bfa]"></i> Exploits</div>
-                <ul class="feature-list">
-                    <li>Magic Bullet (FOV 0.1-12)</li>
-                    <li>Pickaxe Teleports (Shift)</li>
-                    <li>Player Speed Hack</li>
-                </ul>
-            </div>
-
-            <!-- MISC -->
-            <div class="glass-feature reveal">
-                <div class="category-title"><i data-lucide="settings" class="w-5 h-5 text-[#a78bfa]"></i> Settings</div>
-                <ul class="feature-list">
-                    <li>Draw Watermark</li>
-                    <li>Ignore Bots / NPCs / Team</li>
-                    <li>Config Manager (Save/Load)</li>
-                </ul>
+            <!-- EXPLOITS & RADAR -->
+            <div class="glass feature-card reveal">
+                <span class="f-title"><i data-lucide="zap" class="w-4 h-4"></i> EXPLOITS & RADAR</span>
+                <div class="f-list">
+                    <div class="f-item">Magic Bullet (FOV 0.1-12)</div>
+                    <div class="f-item">Pickaxe Teleport (Shift)</div>
+                    <div class="f-item">Player Speed Controller</div>
+                    <div class="f-item">2D Radar (+ Scale/Size)</div>
+                    <div class="f-item">Enemy Distance & Alert</div>
+                    <div class="f-item">Glider Check</div>
+                    <div class="f-item last">World ESP Radar</div>
+                </div>
             </div>
 
         </div>
-    </div>
+    </section>
+
+    <footer class="py-20 text-center opacity-20 text-[9px] font-black tracking-[8px] uppercase">
+        MMX Private Protocol — Restricted Access
+    </footer>
 
     <script>
         lucide.createIcons();
+        gsap.registerPlugin(ScrollTrigger);
 
-        // BACKGROUND PARTICLES
+        // 1. LOADER ANIMATION
+        let prog = 0;
+        let interval = setInterval(() => {
+            prog += Math.random() * 15;
+            document.getElementById('progress').style.width = prog + '%';
+            if(prog >= 100) {
+                clearInterval(interval);
+                gsap.to("#loader", { opacity: 0, duration: 1, onComplete: () => {
+                    document.getElementById('loader').style.display = 'none';
+                    animateHero();
+                }});
+            }
+        }, 150);
+
+        // 2. BACKGROUND PARTICLES (Interactive)
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
+        let mouse = { x: null, y: null };
 
-        function init() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+
+        function initParticles() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            particles = [];
             for(let i=0; i<100; i++) {
                 particles.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
                     size: Math.random() * 2,
-                    speedX: Math.random() * 0.5 - 0.25,
-                    speedY: Math.random() * 0.5 - 0.25
+                    baseX: Math.random() * canvas.width,
+                    baseY: Math.random() * canvas.height,
+                    density: (Math.random() * 30) + 1
                 });
             }
         }
 
-        function animate() {
+        function drawParticles() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(167, 139, 250, 0.4)";
             particles.forEach(p => {
-                p.x += p.speedX; p.y += p.speedY;
-                if(p.x < 0 || p.x > canvas.width) p.speedX *= -1;
-                if(p.y < 0 || p.y > canvas.height) p.speedY *= -1;
-                ctx.fillStyle = 'rgba(167, 139, 250, 0.5)';
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+                ctx.fill();
+                
+                // Mouse interaction
+                let dx = mouse.x - p.x;
+                let dy = mouse.y - p.y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                if(dist < 100) {
+                    p.x -= dx/10;
+                    p.y -= dy/10;
+                }
             });
-            requestAnimationFrame(animate);
+            requestAnimationFrame(drawParticles);
         }
-        init(); animate();
+        initParticles(); drawParticles();
 
-        // MUSIQUE
-        function playMusic() {
-            let audio = document.getElementById('bg-music');
-            audio.volume = 0.2;
-            audio.play();
-        }
+        // 3. PARALLAX EFFECT
+        const img = document.getElementById('parallax-img');
+        window.addEventListener('mousemove', (e) => {
+            let x = (e.clientX - window.innerWidth/2) / 25;
+            let y = (e.clientY - window.innerHeight/2) / 25;
+            img.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+        });
 
-        // GSAP REVEAL
-        gsap.registerPlugin(ScrollTrigger);
-        gsap.utils.toArray(".reveal").forEach(el => {
-            gsap.from(el, {
-                scrollTrigger: { trigger: el, start: "top 90%" },
-                y: 30, opacity: 0, duration: 1, ease: "power3.out"
+        // 4. GSAP REVEALS
+        function animateHero() {
+            gsap.utils.toArray(".reveal").forEach(el => {
+                gsap.from(el, {
+                    scrollTrigger: { trigger: el, start: "top 90%" },
+                    y: 60, opacity: 0, duration: 1.5, ease: "power4.out"
+                });
             });
+
+            // Feature items staggered reveal
+            gsap.utils.toArray(".feature-card").forEach(card => {
+                gsap.to(card.querySelectorAll(".f-item"), {
+                    scrollTrigger: { trigger: card, start: "top 80%" },
+                    opacity: 1, x: 0, stagger: 0.1, duration: 0.8
+                });
+            });
+        }
+
+        // 5. NAV SCROLL
+        window.addEventListener('scroll', () => {
+            if(window.scrollY > 50) document.getElementById('navbar').classList.add('nav-active');
+            else document.getElementById('navbar').classList.remove('nav-active');
         });
     </script>
 </body>
