@@ -12,158 +12,150 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         
         :root { --accent: #a78bfa; --bg: #010101; }
-        * { cursor: crosshair !important; box-sizing: border-box; scroll-behavior: smooth; }
+        * { cursor: none !important; box-sizing: border-box; }
         body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow: hidden; }
 
-        /* --- ÉCRAN D'ENTRÉE --- */
+        /* --- CUSTOM CURSOR --- */
+        #cursor {
+            width: 12px; height: 12px; background: var(--accent); border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 10001;
+            box-shadow: 0 0 15px var(--accent), 0 0 30px var(--accent);
+            transition: transform 0.1s ease;
+        }
+
+        /* --- ENTER GATEWAY --- */
         #enter-gateway {
             position: fixed; inset: 0; background: #000; z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         .gateway-btn {
-            padding: 20px 40px; border: 1px solid var(--accent); border-radius: 2px;
+            padding: 20px 40px; border: 1px solid var(--accent); border-radius: 5px;
             text-transform: uppercase; letter-spacing: 10px; font-weight: 900;
-            transition: 0.5s; position: relative; overflow: hidden;
+            transition: 0.5s; background: transparent; color: white;
         }
-        .gateway-btn:hover { background: var(--accent); color: black; box-shadow: 0 0 50px var(--accent); transform: scale(1.1); }
+        .gateway-btn:hover { background: var(--accent); color: black; box-shadow: 0 0 50px var(--accent); }
 
-        /* --- BACKGROUND --- */
+        /* --- LOGO STYLE --- */
+        .logo-mm { color: white; }
+        .logo-x { color: var(--accent); text-shadow: 0 0 20px var(--accent); }
+
+        /* --- PRICE ANIMATION --- */
+        #price-display { transition: 0.5s filter, 0.5s opacity; filter: blur(10px); opacity: 0; }
+        .price-show { filter: blur(0px) !important; opacity: 1 !important; }
+
+        /* --- MODAL PURCHASE --- */
+        #purchase-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10002;
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(20px);
+        }
+
+        /* --- BACKGROUND CANVAS --- */
         #bg-canvas { position: fixed; inset: 0; z-index: -1; }
 
-        /* --- CARTES CORE --- */
         .core-card {
             background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.05);
             padding: 40px; border-radius: 20px; transition: 0.6s cubic-bezier(0.2, 1, 0.2, 1);
-            position: relative;
         }
-        .core-card::before {
-            content: ""; position: absolute; inset: 0; border-radius: 20px;
-            padding: 1px; background: linear-gradient(45deg, transparent, var(--accent), transparent);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: 0.5s;
-        }
-        .core-card:hover { transform: translateY(-15px) scale(1.02); background: rgba(167, 139, 250, 0.05); }
-        .core-card:hover::before { opacity: 1; }
+        .core-card:hover { transform: translateY(-10px); border-color: var(--accent); background: rgba(167, 139, 250, 0.05); }
 
-        /* --- FEATURES --- */
         .feature-box { background: rgba(5,5,5,0.6); backdrop-filter: blur(10px); padding: 40px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.03); }
         .f-item { font-family: monospace; font-size: 11px; color: #666; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }
         .f-item::before { content: "├─"; color: var(--accent); }
-        .f-item.last::before { content: "└─"; }
-        .f-title { font-weight: 900; font-size: 13px; color: var(--accent); letter-spacing: 3px; margin-bottom: 20px; text-transform: uppercase; }
-
-        nav { position: fixed; top: 0; width: 100%; height: 100px; padding: 0 10%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
-        .reveal { opacity: 0; transform: translateY(50px); filter: blur(10px); }
+        
+        .nav-active { background: rgba(0,0,0,0.8); height: 70px; backdrop-filter: blur(10px); }
+        .reveal { opacity: 0; transform: translateY(30px); }
     </style>
 </head>
 <body>
 
+    <div id="cursor"></div>
+
+    <!-- ENTER GATEWAY -->
     <div id="enter-gateway">
         <button class="gateway-btn" onclick="initMMX()">Initialize</button>
-        <span class="text-[9px] mt-8 opacity-30 tracking-[10px] uppercase italic">Secure Connection Required</span>
+    </div>
+
+    <!-- PURCHASE MODAL -->
+    <div id="purchase-modal">
+        <div class="text-center max-w-lg p-10 reveal">
+            <h2 class="text-3xl font-black italic mb-4">SORRY...</h2>
+            <p class="text-gray-400 mb-8 uppercase tracking-widest text-xs leading-relaxed">Our Website is Not Finished Yet.<br>But you can still order through one of us Private Message</p>
+            
+            <div class="space-y-4">
+                <a href="https://discord.com/users/kyotouhq" target="_blank" class="flex items-center justify-between glass border border-white/10 p-4 rounded-xl hover:bg-white hover:text-black transition duration-500">
+                    <span class="font-black text-sm tracking-tighter">KYOTOUHQ</span>
+                    <i data-lucide="message-square" class="w-5 h-5"></i>
+                </a>
+                <a href="https://discord.com/users/mtx93." target="_blank" class="flex items-center justify-between glass border border-white/10 p-4 rounded-xl hover:bg-white hover:text-black transition duration-500">
+                    <span class="font-black text-sm tracking-tighter">MTX93.</span>
+                    <i data-lucide="message-square" class="w-5 h-5"></i>
+                </a>
+            </div>
+            <button onclick="closeModal()" class="mt-10 text-[10px] opacity-30 hover:opacity-100 uppercase tracking-widest">Back to site</button>
+        </div>
     </div>
 
     <canvas id="bg-canvas"></canvas>
     <audio id="bg-music" loop><source src="music.mp3" type="audio/mpeg"></audio>
 
     <div id="app" style="display: none;">
-        <nav>
-            <div class="text-3xl font-black italic tracking-tighter">MMX</div>
+        <nav class="fixed top-0 w-full h-[100px] px-[10%] flex justify-between items-center z-[1000]">
+            <div class="text-3xl font-black italic tracking-tighter">MM<span class="logo-x">X</span></div>
             <div class="flex gap-10 text-[10px] font-bold tracking-[5px] uppercase opacity-40">
-                <span>Protocol: V2</span>
-                <span>Status: Undetected</span>
+                <span>PROTOCOL: V2</span>
+                <span>STATUS: UNDETECTED</span>
             </div>
         </nav>
 
         <section class="h-screen flex items-center justify-center px-10">
             <div class="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                 <div class="reveal">
-                    <h1 class="text-[120px] font-black italic leading-[0.8] mb-10">PRIVATE<br><span class="text-[#a78bfa]">FORTNITE</span></h1>
-                    <p class="text-gray-500 text-sm max-w-sm mb-12 leading-relaxed">
-                        Le sommet de l'ingénierie logicielle. Un avantage injuste, une discrétion absolue.
-                    </p>
-                    <button class="bg-white text-black px-16 py-6 rounded-sm font-black uppercase text-xs hover:bg-[#a78bfa] hover:text-white transition duration-500">Purchase</button>
+                    <div class="text-[10px] font-black tracking-[4px] text-purple-400 uppercase mb-4">Most Undetected & Safest External Cheats</div>
+                    <h1 class="text-[100px] font-black italic leading-[0.85] mb-10 tracking-tighter">DOMINATE<br>THE FIELD</h1>
+                    
+                    <div class="flex items-center gap-4">
+                        <button onclick="openModal()" class="bg-white text-black px-12 py-5 rounded-sm font-black uppercase text-xs hover:bg-[#a78bfa] hover:text-white transition duration-500">Purchase</button>
+                        <button onclick="togglePrice()" class="border border-white/10 px-8 py-5 rounded-sm flex items-center gap-4 hover:border-purple-500 transition">
+                            <i data-lucide="tag" class="w-4 h-4 text-purple-400"></i>
+                            <div id="price-display" class="font-black text-xs uppercase tracking-widest">35€ / Month</div>
+                        </button>
+                        <a href="https://discord.com/users/kyotouhq" target="_blank" class="p-5 border border-white/10 rounded-sm hover:shadow-[0_0_20px_rgba(167,139,250,0.3)] transition">
+                            <i data-lucide="disc" class="w-5 h-5 text-purple-400"></i>
+                        </a>
+                    </div>
                 </div>
-                <div class="reveal relative">
-                    <div class="absolute -inset-10 bg-purple-500/10 blur-[120px] rounded-full"></div>
-                    <img src="fortnite.jpg" class="relative w-full h-[500px] object-cover rounded-2xl border border-white/5" alt="Preview">
-                </div>
-            </div>
-        </section>
-
-        <section class="py-40 px-10 max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <!-- CORE 1 -->
-                <div class="core-card reveal">
-                    <i data-lucide="shield" class="text-purple-400 mb-6 w-8 h-8"></i>
-                    <h3 class="font-black text-xs uppercase mb-3">Safe & Undetected</h3>
-                    <p class="text-[10px] text-gray-500 leading-relaxed">Security is our priority since day one.</p>
-                </div>
-                <!-- CORE 2 -->
-                <div class="core-card reveal">
-                    <i data-lucide="zap" class="text-purple-400 mb-6 w-8 h-8"></i>
-                    <h3 class="font-black text-xs uppercase mb-3">Instant Delivery</h3>
-                    <p class="text-[10px] text-gray-500 leading-relaxed">Get your key immediately after purchase.</p>
-                </div>
-                <!-- CORE 3 -->
-                <div class="core-card reveal">
-                    <i data-lucide="cpu" class="text-purple-400 mb-6 w-8 h-8"></i>
-                    <h3 class="font-black text-xs uppercase mb-3">Optimization</h3>
-                    <p class="text-[10px] text-gray-500 leading-relaxed">Built for performance, zero FPS loss.</p>
-                </div>
-                <!-- CORE 4 -->
-                <div class="core-card reveal">
-                    <i data-lucide="cloud" class="text-purple-400 mb-6 w-8 h-8"></i>
-                    <h3 class="font-black text-xs uppercase mb-3">Cloud Configs</h3>
-                    <p class="text-[10px] text-gray-500 leading-relaxed">Save and load your settings online.</p>
-                </div>
-                <!-- CORE 5 -->
-                <div class="core-card reveal">
-                    <i data-lucide="heart" class="text-purple-400 mb-6 w-8 h-8"></i>
-                    <h3 class="font-black text-xs uppercase mb-3">24/7 Support</h3>
-                    <p class="text-[10px] text-gray-500 leading-relaxed">Dedicated team on Discord for help.</p>
+                <div class="reveal">
+                    <img src="fortnite.jpg" class="w-full h-[450px] object-cover rounded-2xl border border-white/5 shadow-2xl" alt="Preview">
                 </div>
             </div>
         </section>
 
-        <section class="py-20 px-10 max-w-7xl mx-auto pb-60">
+        <!-- FEATURES CLASSIQUES -->
+        <section class="py-20 px-10 max-w-7xl mx-auto pb-40">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- AIMBOT -->
                 <div class="feature-box reveal">
-                    <div class="f-title">Aimbot System</div>
-                    <div class="f-item">Enable + Keybind</div>
-                    <div class="f-item">Enable Predictions</div>
-                    <div class="f-item">Visible Check</div>
-                    <div class="f-item">Target Line (+ Color)</div>
-                    <div class="f-item">Humanization (0.1-25)</div>
-                    <div class="f-item">Aimbot Type: Kernel / Memory</div>
-                    <div class="f-item">Hitbox: Head / Chest / Pelvis</div>
-                    <div class="f-item">FOV (10-500)</div>
-                    <div class="f-item last">Smooth (1-50)</div>
+                    <div class="f-title italic">Aimbot Config</div>
+                    <div class="f-item">Advanced Predictions</div>
+                    <div class="f-item">Humanized Smooth</div>
+                    <div class="f-item">Visible Check Only</div>
+                    <div class="f-item">FOV Slider (10-500)</div>
+                    <div class="f-item">Custom Hitboxes</div>
                 </div>
-                <!-- VISUALS -->
                 <div class="feature-box reveal">
-                    <div class="f-title">Visuals Player</div>
-                    <div class="f-item">Box ESP (Corner, Filled)</div>
-                    <div class="f-item">Skeleton & Head ESP</div>
-                    <div class="f-item">Reload Bar & Snaplines</div>
-                    <div class="f-item">Weapon & Username ESP</div>
-                    <div class="f-item">Ranked & Platform ESP</div>
-                    <div class="f-item">Distance ESP</div>
-                    <div class="f-item">Spectator Counts</div>
-                    <div class="f-item last">Arrow ESP (Radius 500)</div>
+                    <div class="f-title italic">Visuals & ESP</div>
+                    <div class="f-item">Corner Box ESP</div>
+                    <div class="f-item">Full Skeleton</div>
+                    <div class="f-item">Weapon / Rank ESP</div>
+                    <div class="f-item">Snaplines</div>
+                    <div class="f-item">Spectator Tracker</div>
                 </div>
-                <!-- EXPLOITS -->
                 <div class="feature-box reveal">
-                    <div class="f-title">Exploits & Misc</div>
-                    <div class="f-item">Magic Bullet (FOV 12)</div>
-                    <div class="f-item">Pickaxe Teleport (Shift)</div>
-                    <div class="f-item">Player Speed Controller</div>
-                    <div class="f-item">Radar 2D (+ Size)</div>
-                    <div class="f-item">Item Rarity Filter</div>
-                    <div class="f-item">Ignore Bots / Team</div>
-                    <div class="f-item last">Config Manager</div>
+                    <div class="f-title italic">Miscellaneous</div>
+                    <div class="f-item">Magic Bullet v2</div>
+                    <div class="f-item">Speed Hack (Safe)</div>
+                    <div class="f-item">Instant Revive</div>
+                    <div class="f-item">Radar 2D</div>
+                    <div class="f-item">Config Cloud</div>
                 </div>
             </div>
         </section>
@@ -173,61 +165,77 @@
         lucide.createIcons();
         gsap.registerPlugin(ScrollTrigger);
 
+        // --- CURSOR LOGIC ---
+        const cursor = document.getElementById('cursor');
+        window.addEventListener('mousemove', e => {
+            gsap.to(cursor, { x: e.clientX - 6, y: e.clientY - 6, duration: 0.1 });
+        });
+
+        // --- CORE FUNCTIONS ---
         function initMMX() {
             document.getElementById('bg-music').play();
-            gsap.to("#enter-gateway", { 
-                opacity: 0, duration: 1, onComplete: () => {
-                    document.getElementById('enter-gateway').style.display = 'none';
-                    document.getElementById('app').style.display = 'block';
-                    document.body.style.overflow = 'auto';
-                    startAnims();
-                } 
-            });
+            gsap.to("#enter-gateway", { opacity: 0, duration: 1, onComplete: () => {
+                document.getElementById('enter-gateway').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                document.body.style.overflow = 'auto';
+                startAnimations();
+            }});
         }
 
-        function startAnims() {
-            gsap.utils.toArray(".reveal").forEach((el, i) => {
+        function startAnimations() {
+            gsap.utils.toArray(".reveal").forEach(el => {
                 gsap.to(el, {
-                    scrollTrigger: { trigger: el, start: "top 95%" },
-                    opacity: 1, y: 0, filter: "blur(0px)",
-                    duration: 1.5, ease: "power4.out", delay: i * 0.05
+                    scrollTrigger: { trigger: el, start: "top 90%" },
+                    opacity: 1, y: 0, duration: 1, ease: "power4.out"
                 });
             });
         }
 
-        // --- PARTICLE SYSTEM ---
+        function togglePrice() {
+            document.getElementById('price-display').classList.toggle('price-show');
+        }
+
+        function openModal() {
+            const modal = document.getElementById('purchase-modal');
+            modal.style.display = 'flex';
+            gsap.fromTo(modal.querySelector('.reveal'), { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5 });
+        }
+
+        function closeModal() {
+            gsap.to("#purchase-modal .reveal", { opacity: 0, scale: 0.8, duration: 0.3, onComplete: () => {
+                document.getElementById('purchase-modal').style.display = 'none';
+            }});
+        }
+
+        // --- NEURAL BACKGROUND ---
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
-        
         function initParticles() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            for(let i=0; i<100; i++) {
+            particles = [];
+            for(let i=0; i<80; i++) {
                 particles.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 0.5,
-                    vy: (Math.random() - 0.5) * 0.5
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4
                 });
             }
         }
-
         function draw() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(167, 139, 250, 0.5)";
-            
+            ctx.fillStyle = "rgba(167, 139, 250, 0.3)";
             particles.forEach((p, i) => {
                 p.x += p.vx; p.y += p.vy;
                 if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
                 if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
-                
-                ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
-
+                ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI*2); ctx.fill();
                 for(let j=i+1; j<particles.length; j++) {
                     let p2 = particles[j];
-                    let dist = Math.sqrt((p.x-p2.x)**2 + (p.y-p2.y)**2);
-                    if(dist < 100) {
-                        ctx.strokeStyle = `rgba(167, 139, 250, ${1 - dist/100})`;
+                    let d = Math.sqrt((p.x-p2.x)**2 + (p.y-p2.y)**2);
+                    if(d < 120) {
+                        ctx.strokeStyle = `rgba(167, 139, 250, ${1 - d/120})`;
                         ctx.lineWidth = 0.5;
                         ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
                     }
@@ -236,6 +244,7 @@
             requestAnimationFrame(draw);
         }
         initParticles(); draw();
+        window.onresize = initParticles;
     </script>
 </body>
 </html>
