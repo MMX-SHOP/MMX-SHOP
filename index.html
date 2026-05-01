@@ -1,192 +1,302 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MMX Shop • Fortnite Private Cheat</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
-    body { font-family: 'Inter', sans-serif; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMX | Private Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Orbitron:wght@700&display=swap');
 
-    .bicolor { background: linear-gradient(90deg, #ffffff, #c026d3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .glow { text-shadow: 0 0 40px #c026d3, 0 0 80px #c026d3; }
+        :root {
+            --accent: rgb(167, 139, 250); /* Le violet exact de l'inspecteur */
+            --bg: #000000;
+        }
 
-    .shooting-star {
-      position: absolute;
-      width: 4px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #c026d3, #fff);
-      box-shadow: 0 0 25px 8px #c026d3;
-      animation: shoot linear infinite;
-    }
-    @keyframes shoot {
-      from { transform: translateX(-300px) translateY(-300px); opacity: 0; }
-      to { transform: translateX(1200px) translateY(800px); opacity: 0; }
-    }
+        body {
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
 
-    .feature-card:hover {
-      transform: translateY(-10px);
-      border-color: #c026d3;
-    }
-  </style>
+        /* --- CANVAS PARTICLES (Code exact de image_82a17e.png) --- */
+        #particles-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* --- NAVIGATION --- */
+        #main-nav {
+            position: fixed;
+            top: 0; width: 100%;
+            height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10%;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        #main-nav.scrolled {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            height: 60px;
+            border-bottom: 1px solid rgba(167, 139, 250, 0.2);
+        }
+
+        .nav-logo { height: 24px; }
+
+        /* --- GLOW DIVIDER --- */
+        .glow-divider {
+            height: 1px;
+            width: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0.2;
+            margin: 40px 0;
+        }
+
+        /* --- SECTION STRUCTURE --- */
+        .section-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- PRODUCT CARD (Base de image_82a1e1.jpg) --- */
+        .product-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            border-radius: 4px;
+            overflow: hidden;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .product-left {
+            width: 45%;
+            background: #050505;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .product-right {
+            flex: 1;
+            padding: 50px;
+        }
+
+        .tag-line {
+            color: var(--accent);
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .product-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 12px;
+        }
+
+        .feature-item::before {
+            content: "";
+            width: 15px;
+            height: 1px;
+            background: var(--accent);
+            margin-right: 15px;
+        }
+
+        .price-container {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+        }
+
+        .btn-purchase {
+            background: white;
+            color: black;
+            padding: 12px 30px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .btn-purchase:hover {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 0 20px rgba(167, 139, 240, 0.4);
+        }
+
+        /* --- FADE UP ANIMATION --- */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #111;
+            border: 1px solid var(--accent);
+            padding: 15px 25px;
+            font-size: 0.8rem;
+            transform: translateY(200px);
+            transition: 0.5s ease;
+            z-index: 2000;
+        }
+    </style>
 </head>
-<body class="bg-black text-white">
+<body>
 
-  <!-- SPLASH -->
-  <div id="splash" class="fixed inset-0 z-50 flex items-center justify-center bg-black">
-    <div class="text-center relative">
-      <img src="logo.jpg" alt="MMX Logo" class="w-96 mx-auto" id="splash-logo">
-      <h1 class="text-8xl font-black tracking-tighter bicolor mt-10 glow" id="splash-title">MMX SHOP</h1>
-      <p class="text-3xl text-purple-400 mt-3">FORTNITE PRIVATE CHEAT</p>
-      <button onclick="enterSite()" class="mt-16 px-20 py-7 text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 rounded-3xl hover:scale-110 transition-all shadow-2xl shadow-purple-500/60">
-        ENTER THE MATRIX
-      </button>
-    </div>
-    <div id="stars-splash" class="absolute inset-0 pointer-events-none"></div>
-  </div>
+    <audio id="bgMusic" loop><source src="music.mp3" type="audio/mpeg"></audio>
 
-  <!-- MAIN SITE -->
-  <div id="main-site" class="hidden">
+    <canvas id="particles-canvas"></canvas>
 
-    <!-- NAVBAR -->
-    <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-xl border-b border-purple-500/20 z-50">
-      <div class="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
-        <img src="logo.jpg" class="h-12 cursor-pointer" onclick="window.location.reload()">
-        <div class="flex gap-10 text-lg font-medium">
-          <a href="#hero" class="hover:text-purple-400 transition">Accueil</a>
-          <a href="#features" class="hover:text-purple-400 transition">Features</a>
-          <a href="#pricing" class="hover:text-purple-400 transition">Prix</a>
-          <a href="#discord" class="hover:text-purple-400 transition">Discord</a>
+    <nav id="main-nav">
+        <img src="logo.jpg" class="nav-logo" alt="MMX">
+        <div class="flex gap-8 text-[11px] font-bold uppercase tracking-widest">
+            <a href="#platform" class="hover:text-purple-400">Products</a>
+            <a href="https://discord.com/users/kyotouhq" target="_blank" class="hover:text-purple-400">Support</a>
+            <a href="#" class="hover:text-purple-400">Status</a>
         </div>
-      </div>
     </nav>
 
-    <!-- HERO -->
-    <section id="hero" class="min-h-screen flex items-center justify-center pt-20 relative">
-      <div class="max-w-6xl mx-auto text-center px-8">
-        <img src="logo.jpg" class="w-80 mx-auto" id="hero-logo">
-        <h1 class="text-8xl font-black tracking-tighter bicolor mt-10 glow" id="hero-title">MMX PRIVATE FORTNITE</h1>
-        <p class="text-4xl text-purple-300 mt-4">Le cheat le plus propre du marché</p>
-      </div>
-      <div id="stars-hero" class="absolute inset-0 pointer-events-none"></div>
-    </section>
+    <section id="platform">
+        <div class="section-inner">
+            <!-- Product Card -->
+            <div class="product-card fade-up">
+                <div class="product-left">
+                    <img src="fortnite.png" alt="Fortnite" class="w-full h-full object-cover">
+                </div>
+                <div class="product-right">
+                    <p class="tag-line">Private Project — Undetected</p>
+                    <h2 class="product-title">Fortnite Internal</h2>
+                    
+                    <div class="feature-item">Kernel Mode Driver (Bypass EAC/BE)</div>
+                    <div class="feature-item">Advanced Vector Aimbot</div>
+                    <div class="feature-item">Player/Item ESP with VisCheck</div>
+                    <div class="feature-item">Highly Customizable FOV & Smoothing</div>
 
-    <!-- FEATURES -->
-    <section id="features" class="py-24 bg-zinc-950">
-      <div class="max-w-6xl mx-auto px-8">
-        <h2 class="text-6xl font-black text-center mb-16 bicolor">Features</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div class="feature-card bg-black/70 border border-purple-500/30 rounded-3xl p-8">
-            <h3 class="text-3xl font-bold mb-6 bicolor">AIMBOT</h3>
-            <ul class="space-y-3 text-lg">
-              <li>Enable + Keybind</li>
-              <li>Enable Predictions</li>
-              <li>Target Line + Color Picker</li>
-              <li>Visible Check</li>
-              <li>Draw FOV + Color Picker</li>
-              <li>Bullet Drop Compensation</li>
-              <li>Humanization (0.1 - 25)</li>
-              <li>Kernel / Memory / Silent Aim</li>
-              <li>Hitbox : Head / Chest / Pelvis</li>
-            </ul>
-          </div>
-
-          <div class="space-y-8">
-            <div class="feature-card bg-black/70 border border-purple-500/30 rounded-3xl p-8">
-              <h3 class="text-3xl font-bold mb-6 bicolor">WEAPON CONFIG</h3>
-              <ul class="space-y-3 text-lg">
-                <li>Rifle • Shotgun • SMG • Sniper • Pistol</li>
-                <li>Global & Per Weapon Settings</li>
-              </ul>
+                    <div class="price-container">
+                        <div class="price-text">€25.00</div>
+                        <button class="btn-purchase" onclick="showToast()">Purchase Access</button>
+                    </div>
+                </div>
             </div>
-            <div class="feature-card bg-black/70 border border-purple-500/30 rounded-3xl p-8">
-              <h3 class="text-3xl font-bold mb-6 bicolor">VISUALS & RADAR</h3>
-              <ul class="space-y-3 text-lg">
-                <li>Box • Skeleton • Snapline • Arrow ESP</li>
-                <li>World ESP • Item Rarity Filter</li>
-                <li>Radar + Magic Bullet</li>
-              </ul>
-            </div>
-          </div>
         </div>
-      </div>
     </section>
 
-    <!-- PRICING -->
-    <section id="pricing" class="py-24 bg-black">
-      <div class="max-w-6xl mx-auto px-8 text-center">
-        <h2 class="text-6xl font-black mb-12 bicolor">Prix</h2>
-        <div class="max-w-md mx-auto bg-zinc-950 border-2 border-purple-500 rounded-3xl p-12 hover:border-purple-400 transition-all">
-          <h3 class="text-5xl font-bold">LIFETIME</h3>
-          <div class="text-8xl font-black text-purple-400 mt-6">69.99€</div>
-          <p class="text-xl mt-4 text-purple-300">Accès à vie + Mises à jour permanentes</p>
-          <button onclick="alert('Paiement simulé - Merci pour votre achat !')" class="mt-12 w-full py-6 text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 rounded-3xl hover:scale-105 transition">
-            ACHETER MAINTENANT
-          </button>
-        </div>
-      </div>
-    </section>
+    <div class="glow-divider"></div>
 
-    <!-- DISCORD -->
-    <section id="discord" class="py-24 bg-zinc-950">
-      <div class="max-w-6xl mx-auto px-8 text-center">
-        <h2 class="text-6xl font-black mb-12 bicolor">Rejoins le Discord</h2>
-        <div class="flex flex-col md:flex-row gap-12 justify-center items-center">
-          <a href="https://discord.com/users/kyotouhq" target="_blank" class="flex flex-col items-center hover:scale-110 transition">
-            <i class="fab fa-discord text-8xl text-purple-400 mb-4"></i>
-            <p class="text-xl">kyotouhq</p>
-          </a>
-          <a href="https://discord.com/users/mtx93" target="_blank" class="flex flex-col items-center hover:scale-110 transition">
-            <i class="fab fa-discord text-8xl text-purple-400 mb-4"></i>
-            <p class="text-xl">mtx93</p>
-          </a>
-        </div>
-      </div>
-    </section>
-  </div>
+    <!-- Toast Notification -->
+    <div id="toast">API pas ajoutée pour le Moment</div>
 
-  <!-- AUDIO -->
-  <audio id="bgMusic" loop>
-    <source src="music.mp3" type="audio/mpeg">
-  </audio>
+    <script>
+        /* ---- PARTICLES (Recréé depuis image_82a17e.png) ---- */
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let W, H, flakes = [];
 
-  <script>
-    function createShootingStar(container) {
-      const star = document.createElement('div');
-      star.className = 'shooting-star';
-      star.style.left = Math.random() * 100 + 'vw';
-      star.style.top = Math.random() * 60 + 'vh';
-      star.style.animationDuration = (3 + Math.random() * 4) + 's';
-      container.appendChild(star);
-      setTimeout(() => star.remove(), 10000);
-    }
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+        }
 
-    function startStars(id) {
-      const container = document.getElementById(id);
-      setInterval(() => createShootingStar(container), 280);
-    }
+        function initFlakes() {
+            flakes = [];
+            for (let i = 0; i < 80; i++) {
+                flakes.push({
+                    x: Math.random() * W,
+                    y: Math.random() * H,
+                    r: Math.random() * 1.8 + 0.4,
+                    speed: Math.random() * 0.6 + 0.15,
+                    drift: (Math.random() - 0.5) * 0.3,
+                    opacity: Math.random() * 0.45 + 0.08
+                });
+            }
+        }
 
-    function enterSite() {
-      const splash = document.getElementById('splash');
-      splash.style.transition = 'opacity 1.2s';
-      splash.style.opacity = '0';
+        function drawFlakes() {
+            ctx.clearRect(0, 0, W, H);
+            for (const f of flakes) {
+                ctx.beginPath();
+                ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(167, 139, 250, ${f.opacity})`;
+                ctx.fill();
+                
+                f.y += f.speed;
+                f.x += f.drift;
 
-      setTimeout(() => {
-        splash.classList.add('hidden');
-        document.getElementById('main-site').classList.remove('hidden');
-        document.getElementById('bgMusic').play();
-        startStars('stars-hero');
+                if (f.y > H + 4) { f.y = -4; f.x = Math.random() * W; }
+                if (f.x > W + 4) f.x = -4;
+                if (f.x < -4) f.x = W + 4;
+            }
+            requestAnimationFrame(drawFlakes);
+        }
 
-        // GSAP Animations
-        gsap.from("#hero-logo", { y: -120, opacity: 0, duration: 1.8, ease: "bounce.out" });
-        gsap.from("#hero-title", { y: 80, opacity: 0, duration: 1.4, delay: 0.6 });
-      }, 1200);
-    }
+        window.addEventListener('resize', () => { resize(); initFlakes(); });
+        resize(); initFlakes(); drawFlakes();
 
-    window.onload = () => startStars('stars-splash');
-  </script>
+        /* ---- NAV SCROLL (Depuis image_82a17e.png) ---- */
+        const nav = document.getElementById('main-nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 24);
+        });
+
+        /* ---- FADE UP OBSERVER (Depuis image_82a17e.png) ---- */
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    io.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.12 });
+
+        document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+
+        /* --- AUDIO & TOAST --- */
+        window.onclick = () => { document.getElementById('bgMusic').play(); };
+
+        function showToast() {
+            const t = document.getElementById('toast');
+            t.style.transform = "translateY(0)";
+            setTimeout(() => { t.style.transform = "translateY(200px)"; }, 3000);
+        }
+    </script>
 </body>
 </html>
