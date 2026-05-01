@@ -3,236 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMX | Private Protocol</title>
+    <title>MMX | Elite Private Access</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=Orbitron:wght@900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Orbitron:wght@900&display=swap');
 
         :root { 
             --accent: #a78bfa; 
             --accent-glow: rgba(167, 139, 250, 0.4);
-            --bg: #020104; 
+            --bg: #030303; 
+            --card-bg: #080808;
         }
 
-        * { cursor: crosshair !important; box-sizing: border-box; }
-        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; }
+        * { cursor: crosshair !important; box-sizing: border-box; scroll-behavior: smooth; }
+        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
 
-        /* --- FOND NEBULA MYSTÉRIEUX --- */
-        #nebula { position: fixed; inset: 0; z-index: -1; filter: blur(1px); }
+        /* --- UTILS --- */
+        .glass { 
+            background: rgba(255, 255, 255, 0.02); 
+            backdrop-filter: blur(25px); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+        }
+        .glow-purple { color: var(--accent); filter: drop-shadow(0 0 10px var(--accent)); }
+        .text-glow { text-shadow: 0 0 20px rgba(167, 139, 250, 0.5); }
 
-        /* --- NAVBAR FANTÔME --- */
-        .nav {
+        /* --- NAVBAR --- */
+        nav {
             position: fixed; top: 0; width: 100%; height: 90px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 5%; z-index: 100;
+            padding: 0 8%; z-index: 1000; background: rgba(3, 3, 3, 0.8);
+            backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.03);
         }
-        .logo-container { display: flex; align-items: center; gap: 3px; }
-        .logo-text { font-size: 26px; font-weight: 900; letter-spacing: -2px; }
-        .logo-x { color: var(--accent); text-shadow: 0 0 20px var(--accent); }
+        .logo { font-size: 26px; font-weight: 900; letter-spacing: -1px; }
+        .logo span { color: var(--accent); }
 
-        /* --- CENTRAL CORE (GLASSED) --- */
-        .core-wrapper {
-            height: 100vh; display: flex; align-items: center; justify-content: center;
-        }
-
-        .glass-vault {
-            width: 700px; padding: 60px;
-            background: rgba(255, 255, 255, 0.01);
-            backdrop-filter: blur(50px);
-            border: 1px solid rgba(167, 139, 250, 0.1);
-            border-radius: 60px;
-            text-align: center;
-            box-shadow: 0 0 100px rgba(0,0,0,0.5), inset 0 0 20px rgba(167, 139, 250, 0.05);
-            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        /* --- HERO & PRODUCT SECTION --- */
+        .hero-section { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding-top: 100px; }
+        .product-card {
+            background: var(--card-bg); border-radius: 50px; border: 1px solid rgba(255,255,255,0.03);
+            padding: 80px; width: 90%; max-width: 1250px; display: flex; align-items: center; gap: 60px;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
         }
 
-        .title-glow {
-            font-size: 85px; font-weight: 900; line-height: 0.8;
-            text-transform: uppercase; letter-spacing: -4px;
-            background: linear-gradient(to bottom, #fff 30%, var(--accent) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px rgba(167, 139, 250, 0.3));
+        .img-frame {
+            flex: 1; height: 350px; border-radius: 30px; overflow: hidden;
+            border: 1px solid rgba(167, 139, 250, 0.2); position: relative;
+            box-shadow: 0 0 40px rgba(167, 139, 250, 0.1);
+        }
+        .img-frame img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .img-frame:hover img { transform: scale(1.05); }
+
+        /* --- CORE FEATURES (image_67d81b.jpg) --- */
+        .core-card { 
+            padding: 40px 30px; border-radius: 24px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            height: 100%; border: 1px solid rgba(255,255,255,0.03);
+        }
+        .core-card:hover { transform: translateY(-10px); border-color: var(--accent); background: rgba(167, 139, 250, 0.03); }
+        .feature-icon { 
+            width: 50px; height: 50px; background: rgba(167, 139, 250, 0.1); 
+            border: 1px solid var(--accent); border-radius: 14px; 
+            display: flex; align-items: center; justify-content: center; margin-bottom: 25px;
         }
 
-        /* --- ICONES GLOWED & GLASSED --- */
-        .icon-box {
-            width: 50px; height: 50px;
-            background: rgba(167, 139, 250, 0.1);
-            border: 1px solid var(--accent);
-            border-radius: 15px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 20px var(--accent-glow);
-            color: var(--accent);
+        /* --- MODAL PURCHASE --- */
+        #buy-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.98);
+            display: none; align-items: center; justify-content: center; z-index: 2000;
         }
 
-        /* --- PANEL 3D (MYSTERY PURPLE) --- */
-        #panel-overlay {
-            position: fixed; inset: 0; background: rgba(2, 1, 4, 0.98);
-            display: none; align-items: center; justify-content: center; z-index: 1000;
-            perspective: 2000px;
-        }
-        .panel-3d {
-            width: 950px; height: 650px;
-            background: #08080a; border-radius: 40px;
-            border: 1px solid rgba(167, 139, 250, 0.2);
-            display: flex; overflow: hidden;
-            transform: rotateY(-12deg) rotateX(4deg);
-            box-shadow: -40px 40px 80px rgba(0,0,0,0.8), 0 0 40px rgba(167, 139, 250, 0.1);
-        }
-
-        /* --- BUTTONS & INPUTS --- */
-        .btn-main {
-            background: white; color: black; padding: 18px 45px;
-            border-radius: 18px; font-weight: 900; font-size: 11px;
-            text-transform: uppercase; letter-spacing: 2px;
-            transition: 0.4s; margin-top: 30px;
-        }
-        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(255,255,255,0.2); }
-
-        .price-chip {
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
-            padding: 15px 25px; border-radius: 20px; transition: 0.3s;
-        }
-        .price-chip:hover { border-color: var(--accent); background: rgba(167, 139, 250, 0.05); }
-
+        /* --- FOOTER --- */
+        footer { border-top: 1px solid rgba(255,255,255,0.03); padding: 60px 8%; background: #050505; }
+        .pay-icon { opacity: 0.3; filter: grayscale(1); transition: 0.3s; width: 40px; }
+        .pay-icon:hover { opacity: 1; filter: grayscale(0); }
     </style>
 </head>
 <body>
 
-    <canvas id="nebula"></canvas>
-
-    <!-- NAV -->
-    <nav class="nav">
-        <div class="logo-container">
-            <span class="logo-text">MM<span class="logo-x">X</span></span>
-        </div>
-        <div class="flex items-center gap-8">
-            <div class="flex items-center gap-2">
-                <div class="w-1.5 h-1.5 bg-purple-500 rounded-full animate-ping"></div>
-                <span class="text-[9px] font-black tracking-[3px] opacity-40 uppercase">Encrypted</span>
+    <nav>
+        <div class="logo">MM<span>X</span></div>
+        <div class="flex items-center gap-10">
+            <div class="flex gap-8 text-[10px] font-black uppercase tracking-[2px] opacity-40">
+                <a href="#" class="hover:text-[#a78bfa] hover:opacity-100 transition">Store</a>
+                <a href="#" class="hover:text-[#a78bfa] hover:opacity-100 transition">Support</a>
             </div>
-            <div class="icon-box cursor-pointer" onclick="togglePanel()">
-                <i data-lucide="command" class="w-5 h-5"></i>
-            </div>
+            <a href="https://discord.com/users/kyotouhq" target="_blank" class="glass px-6 py-3 rounded-full border border-purple-500/30 flex items-center gap-3 hover:bg-white/5 transition">
+                <i data-lucide="message-circle" class="w-4 h-4 text-[#a78bfa]"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest">Contact</span>
+            </a>
         </div>
     </nav>
 
-    <!-- CORE REVEAL -->
-    <div class="core-wrapper">
-        <div class="glass-vault" id="main-ui">
-            <div class="flex justify-center mb-8">
-                <div class="icon-box"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
-            </div>
-            <h1 class="title-glow">NEBULA<br>PROTOCOL</h1>
-            <p class="mt-6 text-[10px] tracking-[6px] opacity-30 font-bold uppercase">Advanced External Visuals & Aimbot</p>
-            
-            <div id="reveal-area" class="hidden animate-in fade-in duration-1000 mt-12">
-                <div class="flex justify-center gap-4 mb-8">
-                    <div class="price-chip">
-                        <p class="text-[8px] opacity-30 font-black mb-1">24 HOURS</p>
-                        <p class="text-xl font-black italic">4.99€</p>
-                    </div>
-                    <div class="price-chip border-purple-500/50 bg-purple-500/5">
-                        <p class="text-[8px] text-purple-400 font-black mb-1">30 DAYS</p>
-                        <p class="text-xl font-black italic">24.99€</p>
-                    </div>
-                    <div class="price-chip">
-                        <p class="text-[8px] opacity-30 font-black mb-1">LIFETIME</p>
-                        <p class="text-xl font-black italic">69.99€</p>
-                    </div>
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div class="product-card reveal">
+            <div class="flex-1">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-2 h-2 bg-purple-500 rounded-full animate-ping"></div>
+                    <span class="text-[10px] font-black tracking-[5px] uppercase opacity-40">External Access Only</span>
                 </div>
-                <button class="btn-main">Initialize Purchase</button>
+                <h1 class="text-7xl font-black italic leading-[0.85] mb-6">PRIVATE<br><span class="text-[#a78bfa] text-glow">FORTNITE</span></h1>
+                <p class="text-gray-400 text-sm max-w-md mb-12 leading-relaxed">
+                    Unleash the full potential of your gameplay with our undetected memory suite. Designed for precision, speed, and absolute security.
+                </p>
+                <div class="flex items-center gap-4">
+                    <button onclick="openModal()" class="bg-white text-black px-12 py-5 rounded-2xl font-black uppercase text-xs hover:bg-[#a78bfa] hover:text-white transition duration-500 shadow-2xl">
+                        Purchase Now
+                    </button>
+                    <div class="glass p-5 rounded-2xl border border-white/5"><i data-lucide="shield-check" class="w-5 h-5 text-green-500"></i></div>
+                </div>
             </div>
 
-            <button id="btn-reveal" class="btn-main" onclick="revealContent()">Unlock Access</button>
+            <!-- CADRE À DROITE -->
+            <div class="img-frame">
+                <img src="fortnite.png" alt="Product Visual">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            </div>
         </div>
-    </div>
+    </section>
 
-    <!-- PANEL (INSERT) -->
-    <div id="panel-overlay">
-        <div class="panel-3d">
-            <!-- Sidebar -->
-            <div class="w-72 bg-black/50 border-r border-white/5 p-12 flex flex-col justify-between">
-                <div>
-                    <h2 class="text-2xl font-black italic tracking-tighter mb-12">NEBULA<span class="text-[#a78bfa]">V2</span></h2>
-                    <div class="space-y-6">
-                        <div class="flex items-center gap-4 text-[#a78bfa] font-black text-[10px] tracking-widest"><i data-lucide="target" class="w-4 h-4"></i> COMBAT</div>
-                        <div class="flex items-center gap-4 opacity-20 font-black text-[10px] tracking-widest"><i data-lucide="eye" class="w-4 h-4"></i> VISUALS</div>
-                        <div class="flex items-center gap-4 opacity-20 font-black text-[10px] tracking-widest"><i data-lucide="zap" class="w-4 h-4"></i> EXPLOITS</div>
-                    </div>
-                </div>
-                <div class="text-[8px] opacity-20 font-bold uppercase tracking-widest">Build: 04.2026.FN</div>
+    <!-- CORE FEATURES SECTION (Fidèle à image_67d81b.jpg) -->
+    <section class="py-32 px-8 max-w-7xl mx-auto">
+        <div class="text-center mb-20 reveal">
+            <span class="text-[#a78bfa] text-[10px] font-black tracking-[8px] uppercase">Reliability</span>
+            <h2 class="text-4xl font-bold mt-4">What you receive with every product</h2>
+            <p class="text-gray-500 mt-4">Secure delivery, consistent updates, reliable support, and instant access.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 reveal">
+            <div class="glass core-card">
+                <div class="feature-icon"><i data-lucide="lock" class="w-5 h-5 glow-purple"></i></div>
+                <h3 class="text-sm font-bold mb-3">Safe & Undetected</h3>
+                <p class="text-[11px] text-gray-500 leading-relaxed">The most secure & discrete products on the market.</p>
             </div>
-            <!-- Main Settings -->
-            <div class="flex-1 p-20">
-                <div class="grid grid-cols-1 gap-8">
-                    <div class="flex justify-between items-center p-6 bg-white/5 rounded-2xl border border-white/5">
-                        <div>
-                            <p class="text-xs font-black uppercase">Silent Aim</p>
-                            <p class="text-[9px] opacity-30 uppercase">Perfect Accuracy Protocol</p>
-                        </div>
-                        <div class="w-12 h-6 bg-purple-600 rounded-full flex items-center justify-end px-1 shadow-[0_0_15px_rgba(167,139,250,0.5)]"><div class="w-4 h-4 bg-white rounded-full"></div></div>
-                    </div>
-                    <div class="flex justify-between items-center p-6 bg-white/5 rounded-2xl border border-white/5 opacity-40">
-                        <div>
-                            <p class="text-xs font-black uppercase">Visual Check</p>
-                            <p class="text-[9px] opacity-30 uppercase">Raytrace Filtering</p>
-                        </div>
-                        <div class="w-12 h-6 bg-white/10 rounded-full flex items-center justify-start px-1"><div class="w-4 h-4 bg-white/20 rounded-full"></div></div>
-                    </div>
+            <div class="glass core-card">
+                <div class="feature-icon"><i data-lucide="shield" class="w-5 h-5 glow-purple"></i></div>
+                <h3 class="text-sm font-bold mb-3">Battle-Tested</h3>
+                <p class="text-[11px] text-gray-500 leading-relaxed">Stable, reliable releases with constant updates.</p>
+            </div>
+            <div class="glass core-card">
+                <div class="feature-icon"><i data-lucide="upload-cloud" class="w-5 h-5 glow-purple"></i></div>
+                <h3 class="text-sm font-bold mb-3">Cloud Configs</h3>
+                <p class="text-[11px] text-gray-500 leading-relaxed">Store your setups or import configs in seconds.</p>
+            </div>
+            <div class="glass core-card">
+                <div class="feature-icon"><i data-lucide="credit-card" class="w-5 h-5 glow-purple"></i></div>
+                <h3 class="text-sm font-bold mb-3">Secure Payments</h3>
+                <p class="text-[11px] text-gray-500 leading-relaxed">All transactions go through trusted encryption.</p>
+            </div>
+            <div class="glass core-card">
+                <div class="feature-icon"><i data-lucide="zap" class="w-5 h-5 glow-purple"></i></div>
+                <h3 class="text-sm font-bold mb-3">Instant Delivery</h3>
+                <p class="text-[11px] text-gray-500 leading-relaxed">Download immediately after payment confirmation.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="flex flex-col md:flex-row justify-between items-center gap-10">
+            <div class="logo">MM<span>X</span></div>
+            <div class="flex gap-8">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" class="pay-icon" alt="Paypal">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" class="pay-icon" alt="BTC">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Visa_2021.svg" class="pay-icon" alt="Visa">
+            </div>
+            <p class="text-[9px] font-bold opacity-20 uppercase tracking-[4px]">© 2026 MMX PRIVATE PROTOCOL</p>
+        </div>
+    </footer>
+
+    <!-- PURCHASE MODAL -->
+    <div id="buy-modal">
+        <div class="glass p-16 rounded-[50px] text-center max-w-xl border-purple-500/20 relative animate-scale">
+            <button onclick="closeModal()" class="absolute top-8 right-10 text-white/20 hover:text-white text-2xl">&times;</button>
+            <div class="flex justify-center mb-10">
+                <div class="w-20 h-20 bg-purple-500/10 rounded-3xl border border-purple-500/30 flex items-center justify-center">
+                    <i data-lucide="command" class="w-10 h-10 text-[#a78bfa]"></i>
                 </div>
             </div>
+            <h2 class="text-4xl font-black mb-6 uppercase italic">Order Protocol</h2>
+            <p class="text-gray-400 text-sm mb-12">Private slots are limited. To ensure security, all transactions are handled via manual verification.</p>
+            
+            <a href="https://discord.com/users/kyotouhq" target="_blank" class="block w-full bg-white text-black py-6 rounded-2xl font-black uppercase text-xs hover:bg-[#a78bfa] hover:text-white transition duration-500">
+                Send A private message to kyotouhq
+            </a>
+            <p class="mt-8 text-[9px] opacity-30 font-bold uppercase tracking-[3px]">Redirecting to secure discord session</p>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        // Nebula Animation (Lente et profonde)
-        const canvas = document.getElementById('nebula');
-        const ctx = canvas.getContext('2d');
-        let stars = [];
-
-        function init() {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            stars = [];
-            for(let i=0; i<180; i++) {
-                stars.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 1.5,
-                    speed: Math.random() * 0.05 + 0.02,
-                    opacity: Math.random()
-                });
-            }
-        }
-
-        function draw() {
-            ctx.fillStyle = '#020104'; ctx.fillRect(0,0,canvas.width,canvas.height);
-            stars.forEach(s => {
-                s.y -= s.speed;
-                if(s.y < 0) s.y = canvas.height;
-                ctx.fillStyle = `rgba(167, 139, 250, ${s.opacity})`;
-                ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.utils.toArray(".reveal").forEach(el => {
+            gsap.from(el, {
+                scrollTrigger: { trigger: el, start: "top 85%" },
+                y: 50, opacity: 0, duration: 1.2, ease: "power4.out"
             });
-            requestAnimationFrame(draw);
-        }
-        init(); draw();
+        });
 
-        // Reveal Logic
-        function revealContent() {
-            document.getElementById('btn-reveal').style.display = 'none';
-            document.getElementById('reveal-area').classList.remove('hidden');
-            document.getElementById('main-ui').style.width = "850px";
+        // Modal Logic
+        function openModal() {
+            const modal = document.getElementById('buy-modal');
+            modal.style.display = 'flex';
+            gsap.from(".animate-scale", { scale: 0.8, opacity: 0, duration: 0.5, ease: "back.out(1.7)" });
+        }
+        function closeModal() {
+            document.getElementById('buy-modal').style.display = 'none';
         }
 
-        // Panel Toggle
-        function togglePanel() {
-            const p = document.getElementById('panel-overlay');
-            p.style.display = (p.style.display === 'flex') ? 'none' : 'flex';
-        }
-        window.addEventListener('keydown', (e) => { if(e.key === 'Insert') togglePanel(); });
+        // INSERT Key Listener
+        window.addEventListener('keydown', (e) => {
+            if(e.key === 'Insert') openModal();
+        });
     </script>
 </body>
 </html>
