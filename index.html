@@ -3,214 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMX PRIVATE | Elite FN External</title>
+    <title>MMX | Elite Private External</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Orbitron:wght@700&display=swap');
 
-        :root { --accent: #a78bfa; --bg: #030207; }
-        * { cursor: crosshair !important; box-sizing: border-box; }
-        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; }
+        :root { 
+            --accent: #a78bfa; 
+            --accent-glow: rgba(167, 139, 250, 0.4);
+            --bg: #020104; 
+            --panel-bg: rgba(13, 13, 18, 0.95);
+        }
 
-        /* --- FOND & ANIMATIONS --- */
-        #nebula { position: fixed; inset: 0; z-index: -1; background: radial-gradient(circle at 50% 50%, #0f081d 0%, #030207 100%); }
+        * { cursor: crosshair !important; box-sizing: border-box; scroll-behavior: smooth; }
+        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+        /* --- GLOW EFFECTS --- */
+        .glow-text { text-shadow: 0 0 10px var(--accent-glow); }
+        .glow-icon { filter: drop-shadow(0 0 8px var(--accent)); }
+        .glass-premium { 
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 15px var(--accent-glow); } 50% { box-shadow: 0 0 30px var(--accent); } }
+        #nebula-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        /* --- NAV --- */
+        #main-nav {
+            position: fixed; top: 0; width: 100%; height: 80px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 5%; z-index: 1000; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* --- PANEL 3D & CORE --- */
+        #panel-overlay { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); 
+            backdrop-filter: blur(15px); z-index: 9999; 
+            display: none; align-items: center; justify-content: center; 
+            perspective: 1500px; 
+        }
         
-        .viewport {
-            perspective: 2000px;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding-top: 40px;
-            padding-bottom: 80px;
+        .panel-container { 
+            width: 1000px; height: 680px; background: var(--panel-bg); 
+            border-radius: 40px; display: flex; border: 1px solid rgba(167, 139, 250, 0.2); 
+            overflow: hidden; transform: rotateY(-10deg) rotateX(5deg);
+            box-shadow: -20px 20px 50px rgba(0,0,0,0.5);
         }
 
-        /* --- GLASS NAV (TON ANCIENNE NAV) --- */
-        .glass-nav {
-            position: fixed; top: 20px; width: 90%; max-width: 1200px;
-            height: 60px; background: rgba(255,255,255,0.03); backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
-            display: flex; justify-content: space-between; align-items: center; padding: 0 30px; z-index: 1000;
+        .tab-btn { 
+            padding: 16px; border-radius: 15px; transition: 0.3s; 
+            color: rgba(255,255,255,0.2); font-weight: 800; font-size: 10px; 
+            display: flex; align-items: center; gap: 12px; width: 100%; 
         }
-
-        /* --- PANEL 3D INCLINÉ (FIXÉ) --- */
-        .mmx-panel {
-            width: 1000px; height: 580px;
-            background: rgba(10, 10, 15, 0.95);
-            border-radius: 35px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            transform: rotateY(-12deg) rotateX(5deg);
-            box-shadow: -40px 40px 80px rgba(0,0,0,0.8), 0 0 50px rgba(167, 139, 250, 0.05);
-            transition: 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-            position: relative;
+        .tab-btn.active { 
+            background: rgba(167, 139, 250, 0.1); color: var(--accent); 
+            box-shadow: 0 0 15px rgba(167, 139, 250, 0.1);
         }
-        .mmx-panel:hover { transform: rotateY(-3deg) rotateX(2deg) scale(1.01); }
+        .tab-btn.active i { filter: drop-shadow(0 0 5px var(--accent)); }
 
-        /* --- BARRE DE STATS (BAS DE PAGE MMX) --- */
-        .stats-bar {
-            position: fixed; bottom: 30px; width: 90%; max-width: 1100px;
-            background: rgba(167, 139, 250, 0.03); backdrop-filter: blur(25px);
-            border: 1px solid rgba(167, 139, 250, 0.15); border-radius: 25px;
-            padding: 20px 40px; display: flex; justify-content: space-between; align-items: center;
-            animation: slideUp 1s ease-out;
-        }
-
-        .stat-val { font-family: 'Orbitron'; font-size: 18px; color: white; display: block; }
-        .stat-lbl { font-size: 8px; font-weight: 900; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; opacity: 0.6; }
-
-        /* --- TABS --- */
-        .tab-btn {
-            padding: 14px 20px; border-radius: 12px; font-size: 10px; font-weight: 900;
-            text-transform: uppercase; color: #444; display: flex; align-items: center; gap: 12px;
-            transition: 0.3s; width: 100%;
-        }
-        .tab-btn.active { background: rgba(167, 139, 250, 0.1); color: var(--accent); }
-
-        /* --- UI ELEMENTS --- */
-        .switch { appearance: none; width: 34px; height: 18px; background: #1a1a20; border-radius: 20px; position: relative; cursor: pointer; }
+        /* --- INPUTS --- */
+        .switch { appearance: none; width: 38px; height: 18px; background: #1a1a24; border-radius: 20px; position: relative; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
         .switch:checked { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
-        .switch::before { content: ''; position: absolute; width: 12px; height: 12px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: 0.2s; }
-        .switch:checked::before { transform: translateX(16px); }
+        .switch::before { content: ''; position: absolute; width: 12px; height: 12px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: 0.3s; }
+        .switch:checked::before { transform: translateX(20px); }
 
-        @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        /* --- ÉTOILES --- */
-        .star { position: absolute; background: linear-gradient(90deg, var(--accent), transparent); height: 1px; pointer-events: none; animation: fly 4s linear infinite; }
-        @keyframes fly { 0% { transform: translateX(-200px) rotate(45deg); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateX(1200px) translateY(1200px) rotate(45deg); opacity: 0; } }
+        input[type="range"] { accent-color: var(--accent); height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="nebula"></div>
-    <audio id="bgMusic" loop><source src="music.mp3" type="audio/mpeg"></audio>
+    <canvas id="nebula-canvas"></canvas>
 
-    <!-- NAVIGATION (TON ANCIENNE BARRE) -->
-    <div class="flex justify-center">
-        <nav class="glass-nav">
-            <div class="flex items-center gap-2">
-                <div class="w-2 h-2 bg-[#a78bfa] rounded-full animate-pulse shadow-[0_0_10px_#a78bfa]"></div>
-                <span class="text-[10px] font-black tracking-[4px] uppercase">MMX STATUS: <span class="text-green-500">UNDETECTED</span></span>
+    <nav id="main-nav">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-[#a78bfa] rounded-xl flex items-center justify-center shadow-[0_0_20px_#a78bfa]">
+                <i data-lucide="zap" class="text-black w-6 h-6 fill-current"></i>
             </div>
-            <div class="flex gap-8 text-[9px] font-bold uppercase tracking-widest opacity-40">
-                <a href="#" class="hover:text-[#a78bfa] hover:opacity-100 transition">Dashboard</a>
-                <a href="#" class="hover:text-[#a78bfa] hover:opacity-100 transition">Store</a>
-            </div>
-            <button class="bg-[#a78bfa] text-black px-5 py-2 rounded-lg font-black text-[9px] uppercase tracking-tighter hover:scale-105 transition" onclick="window.open('https://discord.gg/votrelien')">Discord Access</button>
-        </nav>
-    </div>
+            <h1 class="text-2xl font-black italic tracking-tighter">MMX<span class="text-[#a78bfa]">PRIVATE</span></h1>
+        </div>
+        <div class="flex gap-8 items-center">
+            <span class="text-[10px] font-black uppercase tracking-widest text-green-400 flex items-center gap-2">
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div> Undetected
+            </span>
+            <button class="bg-[#a78bfa] text-black px-6 py-2 rounded-lg font-black text-[10px] uppercase transition-transform hover:scale-110" onclick="window.open('https://discord.gg/kyotouhq')">Join Discord</button>
+        </div>
+    </nav>
 
-    <div class="viewport">
-        
-        <!-- LE PANEL 3D INTEGRÉ -->
-        <div class="mmx-panel">
+    <!-- HERO SECTION -->
+    <section class="h-screen flex items-center justify-center px-10">
+        <div class="glass-premium p-16 rounded-[50px] flex items-center gap-20 max-w-6xl">
+            <div class="w-1/2">
+                <span class="text-[#a78bfa] font-black text-[10px] tracking-[5px] uppercase opacity-50 mb-4 block">Professional Cheat Solutions</span>
+                <h2 class="text-7xl font-black italic mb-8 leading-[0.8] uppercase">Dominate<br><span class="text-[#a78bfa] glow-text">Every Lobby</span></h2>
+                
+                <div class="flex gap-4 mb-10">
+                    <div class="price-btn border border-white/10 p-4 rounded-2xl flex-1 text-center cursor-pointer hover:border-[#a78bfa]" onclick="updatePrice('4.99€')">1 DAY</div>
+                    <div class="price-btn border border-[#a78bfa] bg-[#a78bfa]/10 p-4 rounded-2xl flex-1 text-center cursor-pointer" onclick="updatePrice('24.99€')">1 MONTH</div>
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <span id="price-display" class="text-5xl font-bold font-['Orbitron']">24.99€</span>
+                    <button class="flex-1 bg-white text-black py-5 rounded-2xl font-black uppercase text-xs hover:bg-[#a78bfa] hover:text-white transition">Get Access Now</button>
+                </div>
+                <p class="mt-8 text-[9px] font-bold opacity-30 tracking-[4px] text-center animate-pulse">PRESS INSERT TO OPEN PANEL</p>
+            </div>
+            <div class="w-1/2 relative">
+                <img src="https://media.discordapp.net/attachments/1188544994276184135/1188545084931870811/fortnite.jpg" class="rounded-3xl shadow-2xl opacity-80 border border-white/10">
+                <div class="absolute -bottom-10 -left-10 glass-premium p-6 rounded-2xl animate-bounce" style="animation-duration: 5s">
+                    <i data-lucide="shield-check" class="text-green-400 w-8 h-8 glow-icon"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- THE PANEL (FIXED & GLOWED) -->
+    <div id="panel-overlay">
+        <div class="panel-container glass-premium">
             <!-- Sidebar -->
-            <div class="w-64 bg-black/40 border-r border-white/5 p-8 flex flex-col">
-                <div class="mb-10">
-                    <h1 class="text-2xl font-black italic tracking-tighter">MMX<span class="text-[#a78bfa]">PRIVATE</span></h1>
-                    <p class="text-[8px] font-bold opacity-20 uppercase tracking-[3px]">External v2.4</p>
+            <div class="w-[260px] bg-black/40 border-r border-white/5 p-10 flex flex-col gap-2">
+                <div class="mb-10 flex items-center gap-3">
+                    <i data-lucide="activity" class="text-[#a78bfa] glow-icon"></i>
+                    <h2 class="text-xl font-black italic tracking-tighter">NEBULA<span class="text-[#a78bfa]">V2</span></h2>
                 </div>
-                
-                <div class="space-y-1">
-                    <button class="tab-btn active" onclick="show('aim')"><i data-lucide="crosshair" class="w-4 h-4"></i> Combat</button>
-                    <button class="tab-btn" onclick="show('vis')"><i data-lucide="eye" class="w-4 h-4"></i> Visuals</button>
-                    <button class="tab-btn" onclick="show('exp')"><i data-lucide="zap" class="w-4 h-4"></i> Exploits</button>
-                </div>
-
-                <div class="mt-auto p-4 bg-white/5 border border-white/5 rounded-2xl">
-                    <span class="text-[8px] font-black opacity-40 uppercase">User: Elite Member</span>
-                    <div class="w-full h-1 bg-white/10 rounded-full mt-2 overflow-hidden">
-                        <div class="w-3/4 h-full bg-[#a78bfa]"></div>
-                    </div>
-                </div>
+                <button class="tab-btn active" onclick="openTab(event, 'aim')"><i data-lucide="target" class="w-4 h-4"></i> AIMBOT</button>
+                <button class="tab-btn" onclick="openTab(event, 'vis')"><i data-lucide="eye" class="w-4 h-4"></i> VISUALS</button>
+                <button class="tab-btn" onclick="openTab(event, 'exp')"><i data-lucide="zap" class="w-4 h-4"></i> EXPLOITS</button>
+                <button class="tab-btn" onclick="openTab(event, 'misc')"><i data-lucide="shield" class="w-4 h-4"></i> PROTECTION</button>
             </div>
 
-            <!-- Content (Fixed Features) -->
-            <div class="flex-1 p-12 bg-gradient-to-br from-transparent to-[#0a0616]">
-                <div id="aim" class="tab-content">
-                    <h3 class="text-2xl font-black italic uppercase mb-8">Aimbot <span class="text-[#a78bfa]">Config</span></h3>
-                    <div class="grid grid-cols-2 gap-8">
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-center p-4 bg-white/5 border border-white/5 rounded-xl">
-                                <span class="text-[10px] font-black uppercase">Enable Aim</span>
-                                <input type="checkbox" class="switch" checked>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="flex justify-between text-[9px] font-black uppercase opacity-40"><span>Smoothing</span><span>8.5</span></div>
-                                <input type="range" class="w-full accent-[#a78bfa]">
+            <!-- Content Area -->
+            <div class="flex-1 p-14 overflow-y-auto bg-gradient-to-br from-transparent to-black/40">
+                
+                <!-- AIMBOT SECTION -->
+                <div id="aim" class="tab-content space-y-10">
+                    <h4 class="text-[#a78bfa] text-[10px] font-black uppercase tracking-[4px] glow-text">Aimbot Engine</h4>
+                    <div class="grid grid-cols-2 gap-10">
+                        <div class="space-y-6 bg-white/5 p-6 rounded-2xl border border-white/5">
+                            <div class="flex justify-between items-center text-[11px] font-bold"><span>Enable Memory Aim</span> <input type="checkbox" class="switch" checked></div>
+                            <div class="flex justify-between items-center text-[11px] font-bold"><span>Draw FOV Circle</span> <input type="checkbox" class="switch"></div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between text-[9px] font-black opacity-40 uppercase"><span>Smoothness</span><span>12.4</span></div>
+                                <input type="range" class="w-full">
                             </div>
                         </div>
-                        <div class="space-y-4">
-                            <select class="w-full bg-white/5 p-4 rounded-xl text-[10px] font-black uppercase border border-white/10">
-                                <option>Bone: Head</option>
-                                <option>Bone: Chest</option>
-                            </select>
+                        <div class="space-y-6 bg-white/5 p-6 rounded-2xl border border-white/5">
+                            <div class="flex justify-between items-center text-[11px] font-bold"><span>Target Bone</span> 
+                                <select class="bg-black text-[10px] p-1 rounded border border-white/20"><option>Head</option><option>Neck</option></select>
+                            </div>
+                            <div class="flex justify-between items-center text-[11px] font-bold"><span>Visible Check</span> <input type="checkbox" class="switch" checked></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Autres sections cachées par défaut -->
-                <div id="vis" class="tab-content hidden">
-                    <h3 class="text-2xl font-black italic uppercase mb-8">Visual <span class="text-[#a78bfa]">Engine</span></h3>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="flex justify-between items-center p-4 bg-white/5 rounded-xl text-[10px] font-black uppercase"><span>Box ESP</span> <input type="checkbox" class="switch" checked></div>
-                        <div class="flex justify-between items-center p-4 bg-white/5 rounded-xl text-[10px] font-black uppercase"><span>Skeleton</span> <input type="checkbox" class="switch" checked></div>
+                <!-- VISUALS SECTION -->
+                <div id="vis" class="tab-content hidden space-y-10">
+                    <h4 class="text-[#a78bfa] text-[10px] font-black uppercase tracking-[4px] glow-text">Visuals & ESP</h4>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center"><span>Box ESP (2D/3D)</span> <input type="checkbox" class="switch" checked></div>
+                        <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center"><span>Skeleton</span> <input type="checkbox" class="switch" checked></div>
+                        <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center"><span>Distance</span> <input type="checkbox" class="switch"></div>
+                        <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center"><span>Snaplines</span> <input type="checkbox" class="switch"></div>
                     </div>
                 </div>
-                
-                <div id="exp" class="tab-content hidden">
-                    <h3 class="text-2xl font-black italic uppercase mb-8 text-red-500">Dangerous <span class="text-white">Exploits</span></h3>
-                    <div class="p-4 bg-red-500/5 border border-red-500/20 rounded-xl text-[10px] font-black uppercase flex justify-between items-center">
-                        <span>No Recoil / Spread</span> <input type="checkbox" class="switch">
+
+                <!-- EXPLOITS SECTION -->
+                <div id="exp" class="tab-content hidden space-y-6">
+                    <h4 class="text-red-500 text-[10px] font-black uppercase tracking-[4px]">Risk Features</h4>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="bg-red-500/5 p-5 rounded-2xl border border-red-500/20 flex justify-between items-center">
+                            <div><p class="text-xs font-bold">Instant Reload</p><p class="text-[9px] opacity-40">Risky on some anti-cheats</p></div>
+                            <input type="checkbox" class="switch">
+                        </div>
+                        <div class="bg-red-500/5 p-5 rounded-2xl border border-red-500/20 flex justify-between items-center">
+                            <div><p class="text-xs font-bold">No Recoil / Spread</p><p class="text-[9px] opacity-40">100% Accuracy</p></div>
+                            <input type="checkbox" class="switch" checked>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- FOOTER STATS (LE BAS DU SITE) -->
-        <div class="stats-bar">
-            <div class="flex gap-16">
-                <div class="stat-item"><span class="stat-val">128</span><span class="stat-lbl">Clés Totales</span></div>
-                <div class="stat-item"><span class="stat-val">84</span><span class="stat-lbl">HWID Liés</span></div>
-                <div class="stat-item"><span class="stat-val">12ms</span><span class="stat-lbl">Latence API</span></div>
             </div>
-            <div class="flex items-center gap-6">
-                <div class="text-right">
-                    <span class="text-[10px] font-black text-green-400 uppercase">System Secure</span>
-                    <p class="text-[8px] opacity-30 font-bold uppercase">Kernel Bypass v4.2</p>
-                </div>
-                <button class="bg-[#a78bfa] text-black px-8 py-3 rounded-xl font-black uppercase text-[10px] hover:scale-105 transition shadow-[0_0_20px_rgba(167,139,250,0.3)]">Ouvrir Panel</button>
-            </div>
+            <button onclick="togglePanel(false)" class="absolute top-8 right-10 text-white/20 hover:text-white text-3xl transition">&times;</button>
         </div>
-
     </div>
 
     <script>
         lucide.createIcons();
 
-        function show(id) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+        // Nebula Background
+        const canvas = document.getElementById('nebula-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let w = canvas.width = window.innerWidth;
+        let h = canvas.height = window.innerHeight;
+
+        function init() {
+            for(let i=0; i<80; i++) particles.push({x:Math.random()*w, y:Math.random()*h, s:Math.random()*2, vx:Math.random()*0.5-0.25, vy:Math.random()*0.5-0.25});
+        }
+        function draw() {
+            ctx.fillStyle = '#020104'; ctx.fillRect(0,0,w,h);
+            particles.forEach(p => {
+                p.x+=p.vx; p.y+=p.vy;
+                if(p.x<0 || p.x>w) p.vx*=-1; if(p.y<0 || p.y>h) p.vy*=-1;
+                ctx.fillStyle = 'rgba(167, 139, 250, 0.5)';
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill();
+            });
+            requestAnimationFrame(draw);
+        }
+        init(); draw();
+
+        // UI Logic
+        function togglePanel(show) { document.getElementById('panel-overlay').style.display = show ? 'flex' : 'none'; }
+        window.addEventListener('keydown', (e) => { if(e.key === 'Insert') togglePanel(document.getElementById('panel-overlay').style.display !== 'flex'); });
+        
+        function openTab(evt, tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.remove('hidden');
-            event.currentTarget.classList.add('active');
+            document.getElementById(tabName).classList.remove('hidden');
+            evt.currentTarget.classList.add('active');
         }
 
-        function createStar() {
-            const s = document.createElement('div');
-            s.className = 'star';
-            s.style.top = Math.random() * window.innerHeight + 'px';
-            s.style.left = '-100px';
-            s.style.width = Math.random() * 100 + 50 + 'px';
-            document.body.appendChild(s);
-            setTimeout(() => s.remove(), 4000);
-        }
-        setInterval(createStar, 1500);
-
-        window.addEventListener('click', () => { 
-            document.getElementById('bgMusic').play().catch(()=>{}); 
-        }, { once: true });
+        function updatePrice(val) { document.getElementById('price-display').innerText = val; }
     </script>
 </body>
 </html>
