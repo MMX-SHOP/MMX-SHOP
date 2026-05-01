@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMX | Fortnite  Private </title>
+    <title>MMX | Fortnite Private External</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -16,29 +16,29 @@
             --panel-bg: #0d0d12;
         }
 
-        * { cursor: crosshair !important; box-sizing: border-box; scroll-behavior: smooth; }
+        * { cursor: crosshair !important; box-sizing: border-box; }
         body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
 
-        /* --- BACKGROUND & PARTICULES --- */
+        /* --- BACKGROUND NEBULA --- */
         #nebula-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 50% 50%, var(--nebula) 0%, var(--bg) 100%); }
 
-        /* --- NAVIGATION (Design image_7344e2.png) --- */
+        /* --- NAV (Logo sans cadre) --- */
         #main-nav {
             position: fixed; top: 0; width: 100%; height: 80px;
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 5%; z-index: 1000; background: #000;
             border-bottom: 1px solid rgba(255,255,255,0.03);
         }
-        .logo-img { height: 42px; width: auto; } /* Pas d'encadré ici */
+        .logo-img { height: 40px; width: auto; }
 
         .btn-discord {
             background: transparent; border: 1.5px solid #7c5dfa; padding: 10px 20px;
             border-radius: 10px; color: #a78bfa; font-weight: 800; font-size: 12px;
             display: flex; gap: 10px; align-items: center; transition: 0.3s;
         }
-        .btn-discord:hover { background: #7c5dfa; color: white; box-shadow: 0 0 20px rgba(124, 93, 250, 0.3); }
+        .btn-discord:hover { background: #7c5dfa; color: white; }
 
-        /* --- HERO & PRICE --- */
+        /* --- HERO & GLASS CARDS --- */
         .glass-card { background: rgba(10, 10, 15, 0.6); backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 40px; }
         
         .price-btn {
@@ -47,29 +47,29 @@
         }
         .price-btn.active { border-color: var(--accent); background: rgba(167, 139, 250, 0.1); color: var(--accent); }
 
-        /* --- INTERNAL PANEL ELEMENTS --- */
-        #internal-overlay {
+        /* --- EXTERNAL PANEL OVERLAY --- */
+        #panel-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
             z-index: 9999; display: none; align-items: center; justify-content: center;
         }
-        .panel-box { width: 950px; height: 680px; background: var(--panel-bg); border-radius: 24px; display: flex; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; }
+        .panel-container { width: 950px; height: 680px; background: var(--panel-bg); border-radius: 24px; display: flex; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; position: relative; }
         
-        .tab-btn { padding: 14px; border-radius: 10px; transition: 0.3s; color: #555; font-weight: 800; text-transform: uppercase; font-size: 10px; display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; }
+        .tab-btn { padding: 14px; border-radius: 10px; transition: 0.3s; color: #555; font-weight: 800; text-transform: uppercase; font-size: 10px; display: flex; align-items: center; gap: 12px; width: 100%; }
         .tab-btn.active { background: rgba(167, 139, 250, 0.1); color: var(--accent); }
 
-        .switch {
-            appearance: none; width: 38px; height: 20px; background: #1e1e24;
-            border-radius: 20px; position: relative; cursor: pointer; transition: 0.3s;
-        }
+        /* --- INPUTS --- */
+        .switch { appearance: none; width: 38px; height: 20px; background: #1e1e24; border-radius: 20px; position: relative; cursor: pointer; transition: 0.3s; }
         .switch:checked { background: var(--accent); }
         .switch::before { content: ''; position: absolute; width: 14px; height: 14px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: 0.3s; }
         .switch:checked::before { transform: translateX(18px); }
-
-        input[type="range"] { appearance: none; height: 4px; background: #2a2a35; border-radius: 5px; outline: none; width: 120px; }
+        input[type="range"] { appearance: none; height: 4px; background: #2a2a35; border-radius: 5px; width: 120px; }
         input[type="range"]::-webkit-slider-thumb { appearance: none; width: 14px; height: 14px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 2px solid white; }
-
         .color-p { appearance: none; width: 22px; height: 22px; border: none; background: transparent; cursor: pointer; }
         .color-p::-webkit-color-swatch { border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); }
+
+        /* --- FEATURES GRID --- */
+        .feature-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 30px; border-radius: 25px; transition: 0.3s; }
+        .feature-card:hover { border-color: var(--accent); transform: translateY(-5px); }
     </style>
 </head>
 <body>
@@ -77,26 +77,28 @@
     <canvas id="nebula-canvas"></canvas>
     <audio id="bgMusic" loop><source src="music.mp3" type="audio/mpeg"></audio>
 
+    <!-- NAVBAR -->
     <nav id="main-nav">
         <img src="logo.jpg" class="logo-img" alt="MMX" onclick="location.reload()">
         <div class="flex gap-12 text-[10px] font-black uppercase tracking-[4px]">
-            <a href="#" class="opacity-40 hover:opacity-100 transition">Status: Online</a>
+            <span class="text-[#a78bfa]">Status: Undetected</span>
+            <a href="#features" class="opacity-40 hover:opacity-100 transition">Features</a>
         </div>
         <button class="btn-discord" onclick="window.open('https://discord.gg/kyotouhq', '_blank')">
             <i data-lucide="message-circle" class="w-5 h-5"></i> DISCORD
         </button>
     </nav>
 
-    <!-- MAIN HERO -->
+    <!-- HERO SECTION -->
     <section class="mt-[150px] flex justify-center px-5 relative z-10">
-        <div class="glass-card w-[1100px] flex overflow-hidden shadow-2xl">
+        <div class="glass-card w-[1100px] flex overflow-hidden shadow-2xl border border-white/5">
             <div class="w-1/2 bg-black relative">
                 <img src="fortnite.jpg" class="w-full h-full object-cover opacity-30">
                 <div class="absolute inset-0 bg-gradient-to-r from-transparent to-[#0a0a0f]"></div>
             </div>
             <div class="w-1/2 p-20">
-                <span class="text-[#a78bfa] font-black text-[10px] tracking-[6px] uppercase opacity-60">Elite Kernel Software</span>
-                <h1 class="text-7xl font-black italic mt-4 mb-10 tracking-tighter">PRIVATE  <span class="text-[#a78bfa]">GOONING EXTERNAL</span></h1>
+                <span class="text-[#a78bfa] font-black text-[10px] tracking-[6px] uppercase opacity-60">Premier Security</span>
+                <h1 class="text-6xl font-black italic mt-4 mb-10 tracking-tighter uppercase leading-none">FORTNITE <br><span class="text-[#a78bfa]">PRIVATE EXTERNAL</span></h1>
                 
                 <div class="grid grid-cols-4 gap-3 mb-10">
                     <div class="price-btn cursor-pointer" onclick="updatePrice(this, '4.99€')">DAY</div>
@@ -107,97 +109,71 @@
 
                 <div class="flex items-center justify-between">
                     <span id="display-price" class="text-5xl font-bold font-['Orbitron']">24.99€</span>
-                    <button class="bg-white text-black px-12 py-5 font-black uppercase text-[11px] rounded-xl hover:bg-[#a78bfa] hover:text-white transition-all duration-300">Get Access</button>
+                    <button class="bg-white text-black px-12 py-5 font-black uppercase text-[11px] rounded-xl hover:bg-[#a78bfa] hover:text-white transition-all">Purchase</button>
                 </div>
 
                 <button onclick="togglePanel(true)" class="mt-14 text-[10px] tracking-[5px] text-[#a78bfa] block w-full text-center opacity-40 hover:opacity-100 transition">
-                    [ OPEN EXTERNAL  FEATURES PANEL ]
+                    [ OPEN EXTERNAL PANEL PREVIEW ]
                 </button>
             </div>
         </div>
     </section>
 
-    <!-- INTERNAL MENU OVERLAY -->
-    <div id="internal-overlay">
-        <div class="panel-box">
-            <!-- Sidebar -->
+    <!-- FEATURES LIST -->
+    <section id="features" class="max-w-[1200px] mx-auto py-32 px-5 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="feature-card">
+            <i data-lucide="shield" class="text-[#a78bfa] mb-6 w-8 h-8"></i>
+            <h3 class="text-xl font-bold mb-3">Kernel External</h3>
+            <p class="text-gray-500 text-sm">Runs outside the game process for maximum safety against EAC/BE.</p>
+        </div>
+        <div class="feature-card">
+            <i data-lucide="crosshair" class="text-[#a78bfa] mb-6 w-8 h-8"></i>
+            <h3 class="text-xl font-bold mb-3">Silent Aimbot</h3>
+            <p class="text-gray-500 text-sm">Perfect accuracy without moving your crosshair on screen.</p>
+        </div>
+        <div class="feature-card">
+            <i data-lucide="eye" class="text-[#a78bfa] mb-6 w-8 h-8"></i>
+            <h3 class="text-xl font-bold mb-3">Loot & Player ESP</h3>
+            <p class="text-gray-500 text-sm">See everything through walls with high-performance rendering.</p>
+        </div>
+    </section>
+
+    <!-- THE EXTERNAL PANEL -->
+    <div id="panel-overlay">
+        <div class="panel-container">
             <div class="w-[220px] bg-black/40 border-r border-white/5 p-8 flex flex-col gap-2">
-                <div class="mb-12">
-                    <h2 class="text-2xl font-black italic tracking-tighter">MMX PRIVATE FN <span class="text-[#a78bfa]">V2</span></h2>
-                </div>
+                <div class="mb-12"><h2 class="text-xl font-black italic">NEBULA<span class="text-[#a78bfa]">V2</span></h2></div>
                 <button class="tab-btn active" onclick="openTab(event, 'aimbot')"><i data-lucide="target"></i> Aimbot</button>
                 <button class="tab-btn" onclick="openTab(event, 'visuals')"><i data-lucide="eye"></i> Visuals</button>
-                <button class="tab-btn" onclick="openTab(event, 'radar')"><i data-lucide="map"></i> Radar</button>
                 <button class="tab-btn" onclick="openTab(event, 'exploits')"><i data-lucide="zap"></i> Exploits</button>
                 <button class="tab-btn" onclick="openTab(event, 'misc')"><i data-lucide="settings"></i> Misc</button>
-                
-                <div class="mt-auto pt-6 border-t border-white/5 opacity-30 text-[9px] uppercase font-bold tracking-widest">
-                    Press [INS] to toggle
-                </div>
             </div>
 
-            <!-- Content -->
-            <div class="flex-1 p-10 overflow-y-auto bg-gradient-to-br from-transparent to-[#161221]/30">
-                
-                <!-- AIMBOT TAB -->
-                <div id="aimbot" class="tab-content space-y-10">
-                    <div class="grid grid-cols-2 gap-12">
-                        <div class="space-y-5">
-                            <h3 class="text-[#a78bfa] text-[11px] font-black uppercase tracking-widest mb-4">Core Combat</h3>
+            <div class="flex-1 p-10 overflow-y-auto bg-gradient-to-br from-transparent to-[#0f0a1a]">
+                <!-- Contenu Aimbot (Extrait de ta liste) -->
+                <div id="aimbot" class="tab-content space-y-8">
+                    <h3 class="text-[#a78bfa] text-[11px] font-black uppercase tracking-widest">Aimbot Config</h3>
+                    <div class="grid grid-cols-2 gap-10">
+                        <div class="space-y-4">
                             <div class="flex justify-between items-center"><span>Enable Aimbot</span> <input type="checkbox" class="switch" checked></div>
                             <div class="flex justify-between items-center"><span>Predictions</span> <input type="checkbox" class="switch" checked></div>
                             <div class="flex justify-between items-center"><span>Target Line</span> <input type="color" class="color-p" value="#a78bfa"></div>
                             <div class="flex justify-between items-center"><span>Visible Check</span> <input type="checkbox" class="switch"></div>
-                            <div class="flex justify-between items-center"><span>Draw FOV</span> <div class="flex gap-3"><input type="color" class="color-p" value="#ffffff"><input type="checkbox" class="switch" checked></div></div>
+                            <div class="flex justify-between items-center"><span>Draw FOV</span> <div class="flex gap-2"><input type="color" class="color-p" value="#ffffff"><input type="checkbox" class="switch"></div></div>
                         </div>
-                        <div class="space-y-5">
-                            <h3 class="text-[#a78bfa] text-[11px] font-black uppercase tracking-widest mb-4">Aimbot Config</h3>
-                            <div class="flex flex-col gap-2">
+                        <div class="space-y-4">
+                            <div class="flex flex-col gap-1">
                                 <span class="text-xs opacity-40">Aimbot Type</span>
-                                <select class="bg-white/5 border border-white/10 rounded-lg p-3 text-xs outline-none"><option>Silent Aim</option><option>Memory</option><option>Kernel</option></select>
+                                <select class="bg-white/5 border border-white/10 rounded p-2 text-xs"><option>Silent Aim</option><option>Kernel</option><option>Memory</option></select>
                             </div>
-                            <div class="flex justify-between items-center"><span>FOV Radius</span> <div class="flex gap-3"><span class="text-[10px] opacity-40">150</span><input type="range" min="10" max="500" value="150"></div></div>
-                            <div class="flex justify-between items-center"><span>Smoothness</span> <div class="flex gap-3"><span class="text-[10px] opacity-40">12</span><input type="range" min="1" max="50" value="12"></div></div>
-                            <div class="flex justify-between items-center"><span>Humanization</span> <input type="range" min="0.1" max="25" value="5"></div>
+                            <div class="flex justify-between items-center"><span>FOV</span> <input type="range" min="10" max="500"></div>
+                            <div class="flex justify-between items-center"><span>Smooth</span> <input type="range" min="1" max="50"></div>
+                            <div class="flex justify-between items-center"><span>Humanization</span> <input type="range" min="0" max="25"></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- VISUALS TAB (Résumé) -->
-                <div id="visuals" class="tab-content hidden space-y-10">
-                    <div class="grid grid-cols-2 gap-12">
-                        <div class="space-y-5">
-                            <h3 class="text-[#a78bfa] text-[11px] font-black uppercase tracking-widest mb-4">Player ESP</h3>
-                            <div class="flex justify-between items-center"><span>Box ESP</span> <div class="flex gap-3"><input type="color" class="color-p" value="#a78bfa"><input type="checkbox" class="switch" checked></div></div>
-                            <div class="flex justify-between items-center"><span>Skeleton</span> <div class="flex gap-3"><input type="color" class="color-p" value="#ffffff"><input type="checkbox" class="switch" checked></div></div>
-                            <div class="flex justify-between items-center"><span>Snaplines</span> <input type="checkbox" class="switch"></div>
-                            <div class="flex justify-between items-center"><span>Distance ESP</span> <input type="checkbox" class="switch" checked></div>
-                        </div>
-                        <div class="space-y-5">
-                            <h3 class="text-[#a78bfa] text-[11px] font-black uppercase tracking-widest mb-4">Settings</h3>
-                            <div class="flex justify-between items-center"><span>Render Dist.</span> <input type="range" min="1" max="1255" value="500"></div>
-                            <div class="flex justify-between items-center"><span>Thickness</span> <input type="range" min="1" max="10" value="2"></div>
-                            <div class="flex justify-between items-center"><span>Rounding</span> <input type="range" min="1" max="10" value="5"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- EXPLOITS TAB -->
-                <div id="exploits" class="tab-content hidden space-y-10">
-                    <div class="max-w-md space-y-8">
-                        <div class="bg-red-500/5 border border-red-500/20 p-6 rounded-2xl">
-                            <h3 class="text-red-500 text-[10px] font-black uppercase tracking-widest mb-4">Risk Level: High</h3>
-                            <div class="space-y-6">
-                                <div class="flex justify-between items-center"><span>Magic Bullet</span> <input type="checkbox" class="switch"></div>
-                                <div class="flex justify-between items-center"><span>Player Speed</span> <input type="range" min="1" max="5" value="1"></div>
-                                <div class="flex justify-between items-center"><span>Pickaxe Teleport</span> <input type="checkbox" class="switch"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                <!-- Autres onglets ici (Visuals, etc) -->
             </div>
-            
             <button onclick="togglePanel(false)" class="absolute top-6 right-8 text-white/20 hover:text-white text-3xl">&times;</button>
         </div>
     </div>
@@ -205,7 +181,7 @@
     <script>
         lucide.createIcons();
 
-        // PARTICLE SYSTEM
+        // PARTICLES
         const canvas = document.getElementById('nebula-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -215,9 +191,9 @@
             w = canvas.width = window.innerWidth;
             h = canvas.height = window.innerHeight;
             particles = [];
-            for (let i = 0; i < 70; i++) particles.push({
+            for (let i = 0; i < 60; i++) particles.push({
                 x: Math.random() * w, y: Math.random() * h,
-                s: Math.random() * 1.5, vx: Math.random() * 0.15 - 0.07, vy: Math.random() * 0.15 - 0.07
+                s: Math.random() * 1.2, vx: Math.random() * 0.2 - 0.1, vy: Math.random() * 0.2 - 0.1
             });
         }
 
@@ -236,14 +212,8 @@
         window.addEventListener('resize', init);
         init(); draw();
 
-        // LOGIC
-        function updatePrice(btn, price) {
-            document.querySelectorAll('.price-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('display-price').innerText = price;
-        }
-
-        function togglePanel(show) { document.getElementById('internal-overlay').style.display = show ? 'flex' : 'none'; }
+        // PANEL LOGIC
+        function togglePanel(show) { document.getElementById('panel-overlay').style.display = show ? 'flex' : 'none'; }
         
         function openTab(evt, tabName) {
             let i, tabcontent, tablinks;
@@ -255,11 +225,12 @@
             evt.currentTarget.classList.add("active");
         }
 
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Insert') togglePanel(document.getElementById('internal-overlay').style.display !== 'flex');
-        });
-
-        window.addEventListener('click', () => { document.getElementById('bgMusic').play().catch(()=>{}); }, { once: true });
+        window.addEventListener('keydown', (e) => { if (e.key === 'Insert') togglePanel(document.getElementById('panel-overlay').style.display !== 'flex'); });
+        function updatePrice(btn, price) {
+            document.querySelectorAll('.price-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('display-price').innerText = price;
+        }
     </script>
 </body>
 </html>
