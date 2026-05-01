@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMX | Private Elite</title>
+    <title>MMX | Elite Private</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=Orbitron:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Orbitron:wght@700&display=swap');
 
         :root { 
             --accent: #a78bfa; 
@@ -25,57 +25,85 @@
             z-index: 1; pointer-events: none;
         }
 
-        /* --- NAVIGATION (ALIGNEMENT CORRIGÉ) --- */
+        /* --- NAVIGATION --- */
         #main-nav {
             position: fixed; top: 0; width: 100%; height: 90px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 4%; z-index: 1000; background: rgba(0,0,0,0.95);
+            padding: 0 4%; z-index: 1000; background: #000;
             border-bottom: 1px solid rgba(255,255,255,0.03);
         }
 
-        .logo-box { 
-            background: #000; width: 60px; height: 60px; 
-            display: flex; align-items: center; justify-content: center;
-            border: 1px solid rgba(255,255,255,0.05);
+        /* Logo Fixé : Fond noir, texte seul */
+        .logo-container {
+            background: #000;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .logo-img { max-width: 80%; height: auto; }
+        .logo-img {
+            height: 55px;
+            width: auto;
+            object-fit: contain;
+            /* On s'assure que le fond de l'image ne pollue pas */
+            mix-blend-mode: screen; 
+        }
 
         .nav-right { display: flex; align-items: center; gap: 15px; }
         
-        /* Style boutons image_743103.png */
         .btn-cart {
-            background: #0a0a0c; width: 45px; height: 45px; border-radius: 10px;
+            background: #0d0d0f; width: 48px; height: 48px; border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            border: 1px solid rgba(255,255,255,0.1); color: white;
+            border: 1px solid rgba(255,255,255,0.08); color: white; transition: 0.3s;
         }
 
         .btn-discord {
-            background: transparent; border: 2px solid #7c5dfa; padding: 8px 22px;
-            border-radius: 50px; display: flex; align-items: center; gap: 8px;
-            color: #a78bfa; font-weight: 700; font-size: 13px; transition: 0.3s;
+            background: transparent; border: 2px solid #7c5dfa; padding: 10px 24px;
+            border-radius: 50px; display: flex; align-items: center; gap: 10px;
+            color: #a78bfa; font-weight: 800; font-size: 14px; transition: 0.3s;
         }
-        .btn-discord:hover { background: #7c5dfa; color: white; box-shadow: 0 0 15px rgba(124, 93, 250, 0.4); }
+        .btn-discord:hover { background: #7c5dfa; color: white; box-shadow: 0 0 20px rgba(124, 93, 250, 0.4); }
 
-        /* --- STATUS PAGE --- */
-        #status-page {
-            position: fixed; inset: 0; background: var(--bg); z-index: 3000;
+        /* --- BENEFIT CARDS (REMIS COMME AVANT) --- */
+        .core-card {
+            background: #08080a;
+            border: 1px solid rgba(255,255,255,0.03);
+            padding: 40px 20px;
+            border-radius: 18px;
+            text-align: left;
+            transition: 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .core-card:hover {
+            border-color: var(--accent);
+            background: #0c0c0f;
+            transform: translateY(-5px);
+        }
+        .core-card i {
+            width: 24px;
+            height: 24px;
+            color: var(--accent);
+        }
+        .core-card h3 {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+        }
+
+        /* --- STATUS & FEATURES --- */
+        #status-page, #feature-overlay {
+            position: fixed; inset: 0; background: rgba(3,0,5,0.98); z-index: 3000;
             display: none; flex-direction: column; align-items: center; justify-content: center;
+            backdrop-filter: blur(15px);
         }
         .status-card {
             background: #08080a; border: 1px solid #7c5dfa;
             padding: 50px; border-radius: 25px; text-align: center;
-            width: 450px; box-shadow: 0 0 40px rgba(124, 93, 250, 0.1);
+            width: 480px;
         }
-
-        /* --- FEATURES OVERLAY --- */
-        #feature-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 4000;
-            display: none; padding: 60px; overflow-y: auto; backdrop-filter: blur(10px);
-        }
-        .feature-grid { display: grid; grid-cols: 2; gap: 30px; max-width: 900px; margin: 0 auto; }
-        .feature-item { background: rgba(255,255,255,0.02); padding: 25px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
-
-        /* iOS Toggle */
+        
         .switch { position: relative; width: 40px; height: 20px; appearance: none; background: #222; border-radius: 20px; cursor: pointer; transition: 0.3s; }
         .switch:checked { background: var(--accent); }
         .switch::before { content: ''; position: absolute; width: 16px; height: 16px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: 0.3s; }
@@ -86,87 +114,86 @@
             position: fixed; bottom: 30px; right: 30px; background: #0f0f12;
             border-left: 4px solid #facc15; padding: 18px 25px; border-radius: 12px;
             display: flex; align-items: center; gap: 15px; z-index: 5000;
-            transform: translateX(180%); transition: 0.5s;
+            transform: translateX(180%); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         #toast.active { transform: translateX(0); }
     </style>
 </head>
 <body>
 
-    <!-- Musique -->
     <audio id="bgMusic" loop><source src="music.mp3" type="audio/mpeg"></audio>
     <div class="bg-layer"></div>
     <canvas id="particles-canvas"></canvas>
 
     <!-- NAV -->
     <nav id="main-nav">
-        <div class="logo-box">
+        <div class="logo-container">
             <img src="logo.jpg" class="logo-img" alt="MMX" onclick="location.reload()">
         </div>
         
-        <div class="flex gap-10 text-[11px] font-bold uppercase tracking-[4px]">
+        <div class="flex gap-12 text-[12px] font-bold uppercase tracking-[4px]">
             <a href="#" onclick="showStatus()" class="hover:text-[#a78bfa] transition">Status</a>
         </div>
 
         <div class="nav-right">
-            <button class="btn-cart"><i data-lucide="shopping-cart" class="w-4 h-4"></i></button>
+            <button class="btn-cart"><i data-lucide="shopping-cart" class="w-5 h-5"></i></button>
             <button class="btn-discord" onclick="window.open('https://discord.gg/kyotouhq', '_blank')">
-                <i data-lucide="message-square" class="w-4 h-4"></i> Discord
+                <i data-lucide="message-square" class="w-5 h-5"></i> Discord
             </button>
         </div>
     </nav>
 
     <!-- HERO -->
     <section class="mt-[180px] flex justify-center px-5 relative z-10">
-        <div class="bg-[#08080a] border border-white/5 w-[1050px] flex rounded-3xl overflow-hidden shadow-2xl">
+        <div class="bg-[#08080a] border border-white/5 w-[1080px] flex rounded-[32px] overflow-hidden shadow-2xl">
             <div class="w-1/2 bg-black relative">
                 <img src="fortnite.jpg" class="w-full h-full object-cover opacity-60">
                 <div class="absolute inset-0 bg-gradient-to-r from-transparent to-[#08080a]"></div>
             </div>
             <div class="w-1/2 p-16">
-                <span class="text-[#a78bfa] font-black text-[10px] tracking-[6px] uppercase">Elite Security</span>
-                <h1 class="text-6xl font-black italic mt-4 mb-10 tracking-tighter">PRIVATE <span class="text-[#a78bfa]">V2</span></h1>
+                <span class="text-[#a78bfa] font-black text-[10px] tracking-[6px] uppercase opacity-80">Elite Security</span>
+                <h1 class="text-7xl font-black italic mt-4 mb-10 tracking-tighter">PRIVATE <span class="text-[#a78bfa]">V2</span></h1>
                 
                 <div class="grid grid-cols-4 gap-3 mb-12">
-                    <div class="p-4 border border-white/5 text-center text-[10px] font-black rounded-xl hover:border-[#a78bfa] cursor-pointer" onclick="setPrice('4.99€')">DAY</div>
-                    <div class="p-4 border border-white/5 text-center text-[10px] font-black rounded-xl hover:border-[#a78bfa] cursor-pointer" onclick="setPrice('14.99€')">WEEK</div>
-                    <div class="p-4 border border-[#a78bfa] bg-[#a78bfa]/10 text-[#a78bfa] text-center text-[10px] font-black rounded-xl" onclick="setPrice('24.99€')">MONTH</div>
-                    <div class="p-4 border border-white/5 text-center text-[10px] font-black rounded-xl hover:border-[#a78bfa] cursor-pointer" onclick="setPrice('69.99€')">LIFE</div>
+                    <div class="p-4 border border-white/5 text-center text-[10px] font-bold rounded-xl hover:border-[#a78bfa] cursor-pointer transition" onclick="setPrice('4.99€')">DAY</div>
+                    <div class="p-4 border border-white/5 text-center text-[10px] font-bold rounded-xl hover:border-[#a78bfa] cursor-pointer transition" onclick="setPrice('14.99€')">WEEK</div>
+                    <div class="p-4 border border-[#a78bfa] bg-[#a78bfa]/10 text-[#a78bfa] text-center text-[10px] font-bold rounded-xl" onclick="setPrice('24.99€')">MONTH</div>
+                    <div class="p-4 border border-white/5 text-center text-[10px] font-bold rounded-xl hover:border-[#a78bfa] cursor-pointer transition" onclick="setPrice('69.99€')">LIFE</div>
                 </div>
 
                 <div class="flex items-center justify-between">
                     <span id="price-display" class="text-5xl font-bold font-['Orbitron']">24.99€</span>
-                    <button onclick="triggerToast()" class="bg-white text-black px-12 py-4 font-black uppercase text-[11px] rounded-xl hover:bg-[#a78bfa] hover:text-white transition-all">Buy Now</button>
+                    <button onclick="triggerToast()" class="bg-white text-black px-12 py-5 font-black uppercase text-xs rounded-2xl hover:bg-[#a78bfa] hover:text-white transition-all duration-300">Buy Now</button>
                 </div>
 
-                <button onclick="toggleFeatures(true)" class="mt-12 text-[9px] tracking-[5px] text-[#a78bfa] block w-full text-center opacity-50 hover:opacity-100 transition">[ VIEW ALL FEATURES ]</button>
+                <button onclick="toggleFeatures(true)" class="mt-12 text-[10px] tracking-[5px] text-[#a78bfa] block w-full text-center opacity-40 hover:opacity-100 transition">[ VIEW ALL FEATURES ]</button>
             </div>
         </div>
     </section>
 
-    <!-- CORE -->
-    <section class="max-w-[1100px] mx-auto py-24 px-5 relative z-10">
-        <h2 class="text-3xl font-bold mb-12">What you receive with every product</h2>
-        <div class="grid grid-cols-5 gap-5">
-            <div class="bg-[#0a0a0c] p-8 border border-white/5 rounded-2xl">
-                <i data-lucide="shield-check" class="text-[#a78bfa] mb-5"></i>
-                <h3 class="font-bold text-xs">Safe & Undetected</h3>
+    <!-- CORE GRID (STYLE RECTIFIÉ SELON IMAGE) -->
+    <section class="max-w-[1100px] mx-auto py-28 px-5 relative z-10">
+        <h2 class="text-white font-bold text-2xl mb-12">What you receive with every product</h2>
+        <div class="grid grid-cols-5 gap-4">
+            <div class="core-card">
+                <i data-lucide="shield-check"></i>
+                <h3>Safe & Undetected</h3>
             </div>
-            <div class="bg-[#0a0a0c] p-8 border border-white/5 rounded-2xl">
-                <i data-lucide="award" class="text-[#a78bfa] mb-5"></i>
-                <h3 class="font-bold text-xs">Elite Quality</h3>
+            <div class="core-card">
+                <i data-lucide="award"></i>
+                <h3>Elite Quality</h3>
             </div>
-            <div class="bg-[#0a0a0c] p-8 border border-white/5 rounded-2xl">
-                <i data-lucide="save" class="text-[#a78bfa] mb-5"></i>
-                <h3 class="font-bold text-xs">Cloud Configs</h3>
+            <div class="core-card">
+                <i data-lucide="save"></i>
+                <h3>Cloud Configs</h3>
             </div>
-            <div class="bg-[#0a0a0c] p-8 border border-white/5 rounded-2xl">
-                <i data-lucide="credit-card" class="text-[#a78bfa] mb-5"></i>
-                <h3 class="font-bold text-xs">Secure Pay</h3>
+            <div class="core-card">
+                <i data-lucide="credit-card"></i>
+                <h3>Secure Pay</h3>
             </div>
-            <div class="bg-[#0a0a0c] p-8 border border-white/5 rounded-2xl">
-                <i data-lucide="zap" class="text-[#a78bfa] mb-5"></i>
-                <h3 class="font-bold text-xs">Instant Setup</h3>
+            <div class="core-card">
+                <i data-lucide="zap"></i>
+                <h3>Instant Setup</h3>
             </div>
         </div>
     </section>
@@ -174,38 +201,38 @@
     <!-- STATUS -->
     <div id="status-page">
         <div class="status-card">
-            <div class="w-20 h-20 bg-[#1a1a2e] rounded-full flex items-center justify-center mx-auto mb-8 border border-[#7c5dfa]/30">
+            <div class="w-20 h-20 bg-[#1a1a2e] rounded-full flex items-center justify-center mx-auto mb-8 border border-[#7c5dfa]/20">
                 <i data-lucide="activity" class="w-10 h-10 text-[#a78bfa]"></i>
             </div>
             <h1 class="text-4xl font-black mb-4">PRIVATE FORTNITE</h1>
             <p class="text-green-400 font-bold tracking-[4px] mb-2 text-xs uppercase">● UNDETECTED</p>
             <p class="text-gray-500 text-[10px] tracking-widest uppercase">UPDATED TO THE LATEST GAME VERSION</p>
-            <button onclick="hideStatus()" class="mt-12 text-[10px] text-white/30 hover:text-white transition uppercase tracking-[4px]">[ BACK TO STORE ]</button>
+            <button onclick="hideStatus()" class="mt-12 text-[10px] text-white/30 hover:text-white transition uppercase tracking-[5px]">[ BACK TO STORE ]</button>
         </div>
     </div>
 
     <!-- FEATURES -->
     <div id="feature-overlay">
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-4xl w-full p-10">
             <div class="flex justify-between items-center mb-16">
                 <h2 class="text-5xl font-black italic">MMX <span class="text-[#a78bfa]">V2</span></h2>
                 <button onclick="toggleFeatures(false)" class="text-5xl text-white/20 hover:text-white">&times;</button>
             </div>
-            <div class="grid grid-cols-2 gap-8">
-                <div class="feature-item">
-                    <h3 class="text-[#a78bfa] font-bold mb-6 uppercase text-sm tracking-widest">Combat</h3>
-                    <div class="space-y-4">
-                        <div class="flex justify-between"><span>Memory Aimbot</span> <input type="checkbox" class="switch" checked></div>
-                        <div class="flex justify-between"><span>Silent Aim</span> <input type="checkbox" class="switch" checked></div>
-                        <div class="flex justify-between"><span>Auto-Prediction</span> <input type="checkbox" class="switch" checked></div>
+            <div class="grid grid-cols-2 gap-10">
+                <div class="bg-white/5 p-10 rounded-3xl border border-white/5">
+                    <h3 class="text-[#a78bfa] font-bold mb-8 uppercase text-sm tracking-widest">Combat</h3>
+                    <div class="space-y-5">
+                        <div class="flex justify-between items-center"><span>Aimbot</span> <input type="checkbox" class="switch" checked></div>
+                        <div class="flex justify-between items-center"><span>Silent Aim</span> <input type="checkbox" class="switch" checked></div>
+                        <div class="flex justify-between items-center"><span>Prediction</span> <input type="checkbox" class="switch" checked></div>
                     </div>
                 </div>
-                <div class="feature-item">
-                    <h3 class="text-[#a78bfa] font-bold mb-6 uppercase text-sm tracking-widest">Visuals</h3>
-                    <div class="space-y-4">
-                        <div class="flex justify-between"><span>Box ESP</span> <input type="checkbox" class="switch" checked></div>
-                        <div class="flex justify-between"><span>Skeleton</span> <input type="checkbox" class="switch" checked></div>
-                        <div class="flex justify-between"><span>Items ESP</span> <input type="checkbox" class="switch"></div>
+                <div class="bg-white/5 p-10 rounded-3xl border border-white/5">
+                    <h3 class="text-[#a78bfa] font-bold mb-8 uppercase text-sm tracking-widest">Visuals</h3>
+                    <div class="space-y-5">
+                        <div class="flex justify-between items-center"><span>ESP Box</span> <input type="checkbox" class="switch" checked></div>
+                        <div class="flex justify-between items-center"><span>Skeletons</span> <input type="checkbox" class="switch" checked></div>
+                        <div class="flex justify-between items-center"><span>Loot ESP</span> <input type="checkbox" class="switch"></div>
                     </div>
                 </div>
             </div>
@@ -216,47 +243,47 @@
     <div id="toast">
         <i data-lucide="alert-triangle" class="text-yellow-400"></i>
         <div>
-            <p class="font-bold text-[11px] uppercase tracking-wider">API ERROR</p>
-            <p class="text-[10px] text-gray-500">System link failed. Contact kyotouhq.</p>
+            <p class="font-bold text-[11px] uppercase tracking-wider">SYSTEM ERROR</p>
+            <p class="text-[10px] text-gray-500">API not linked. Contact kyotouhq.</p>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        // Music (Start on click)
+        // Music Logic
         window.addEventListener('click', () => {
             const audio = document.getElementById('bgMusic');
-            if(audio.paused) audio.play();
+            if(audio.paused) audio.play().catch(e => console.log("Audio play blocked"));
         }, { once: true });
 
-        // Particules simples
+        // Particles
         const canvas = document.getElementById('particles-canvas');
         const ctx = canvas.getContext('2d');
-        let W, H, f = [];
+        let W, H, particles = [];
         function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-        function draw() {
+        window.addEventListener('resize', resize); resize();
+        for(let i=0; i<70; i++) particles.push({x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.5, s:Math.random()*0.4+0.1});
+        function animate() {
             ctx.clearRect(0,0,W,H);
-            f.forEach(p => {
+            particles.forEach(p => {
                 ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-                ctx.fillStyle = `rgba(167, 139, 250, 0.2)`; ctx.fill();
+                ctx.fillStyle = "rgba(167, 139, 250, 0.15)"; ctx.fill();
                 p.y += p.s; if(p.y > H) p.y = -5;
             });
-            requestAnimationFrame(draw);
+            requestAnimationFrame(animate);
         }
-        window.addEventListener('resize', resize); resize();
-        for(let i=0; i<60; i++) f.push({x:Math.random()*W, y:Math.random()*H, r:1, s:Math.random()*0.5+0.1});
-        draw();
+        animate();
 
-        // UI Logic
+        // UI
         function setPrice(p) { document.getElementById('price-display').innerText = p; }
         function showStatus() { document.getElementById('status-page').style.display = 'flex'; }
         function hideStatus() { document.getElementById('status-page').style.display = 'none'; }
-        function toggleFeatures(s) { document.getElementById('feature-overlay').style.display = s ? 'block' : 'none'; }
+        function toggleFeatures(s) { document.getElementById('feature-overlay').style.display = s ? 'flex' : 'none'; }
         function triggerToast() {
             const t = document.getElementById('toast');
             t.classList.add('active');
-            setTimeout(() => t.classList.remove('active'), 4000);
+            setTimeout(() => t.classList.remove('active'), 4500);
         }
     </script>
 </body>
