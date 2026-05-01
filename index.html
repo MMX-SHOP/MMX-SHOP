@@ -1,118 +1,317 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MMX Shop • Fortnite Private Cheat</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
-    body { font-family: 'Inter', sans-serif; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMX | Private Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Orbitron:wght@700&family=JetBrains+Mono&display=swap');
 
-    .neon-text { text-shadow: 0 0 40px #a855f7, 0 0 80px #a855f7, 0 0 120px #c026d3; }
-    .bicolor { background: linear-gradient(90deg, #ffffff, #c026d3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        :root {
+            --accent: rgb(167, 139, 250);
+            --bg: #000000;
+        }
 
-    .shooting-star {
-      position: absolute;
-      width: 4px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #c026d3, #fff);
-      box-shadow: 0 0 30px 10px #c026d3;
-      animation: shoot linear infinite;
-    }
-    @keyframes shoot {
-      from { transform: translateX(-400px) translateY(-400px); opacity: 0; }
-      to { transform: translateX(1400px) translateY(900px); opacity: 0; }
-    }
-  </style>
+        * { cursor: crosshair !important; }
+        body {
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- CANVAS PARTICLES --- */
+        #particles-canvas {
+            position: fixed; top: 0; left: 0; z-index: 0; pointer-events: none;
+        }
+
+        /* --- NAVIGATION --- */
+        #main-nav {
+            position: fixed; top: 0; width: 100%; height: 80px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 10%; transition: all 0.3s ease; z-index: 1000;
+        }
+        #main-nav.scrolled {
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);
+            height: 60px; border-bottom: 1px solid rgba(167, 139, 250, 0.2);
+        }
+        .nav-logo { height: 24px; filter: brightness(2); }
+
+        /* --- PRODUCT CARD --- */
+        .section-inner {
+            max-width: 1200px; margin: 0 auto; padding: 140px 20px;
+            display: flex; justify-content: center; position: relative; z-index: 10;
+        }
+        .product-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex; width: 900px; border-radius: 4px; overflow: hidden;
+        }
+        .product-left {
+            width: 40%; background: #020202;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+        }
+        .product-right { flex: 1; padding: 40px; position: relative; }
+
+        /* --- PRICING SELECTOR --- */
+        .price-selector {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0;
+        }
+        .price-btn {
+            background: transparent; border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 1px; transition: 0.3s;
+        }
+        .price-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(167, 139, 250, 0.05); }
+        .price-btn:hover { border-color: white; }
+
+        /* --- BUTTONS --- */
+        .btn-main {
+            background: white; color: black; padding: 14px; width: 100%;
+            font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 2px; transition: 0.3s; margin-top: 10px;
+        }
+        .btn-main:hover { background: var(--accent); color: white; box-shadow: 0 0 20px rgba(167, 139, 250, 0.3); }
+        
+        .view-features {
+            display: block; text-align: center; font-size: 0.65rem; color: #666;
+            text-transform: uppercase; letter-spacing: 2px; margin-top: 15px; transition: 0.3s;
+        }
+        .view-features:hover { color: var(--accent); }
+
+        /* --- MODAL FEATURES --- */
+        #features-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            z-index: 2000; display: none; padding: 60px; overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+        .modal-content { max-width: 800px; margin: 0 auto; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.4; color: #aaa; }
+        .modal-close { position: fixed; top: 30px; right: 40px; font-size: 2rem; transition: 0.3s; }
+        .modal-close:hover { color: var(--accent); transform: rotate(90deg); }
+        .feature-title { color: var(--accent); font-weight: bold; margin-top: 25px; display: block; font-size: 1rem; }
+
+        /* --- TOAST --- */
+        #toast {
+            position: fixed; bottom: 30px; right: 30px; background: #0a0a0a;
+            border: 1px solid var(--accent); padding: 15px 25px; font-size: 0.75rem;
+            transform: translateY(200px); transition: 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); z-index: 3000;
+        }
+        #toast.active { transform: translateY(0); }
+    </style>
 </head>
-<body class="bg-black text-white overflow-x-hidden">
+<body>
 
-  <!-- SPLASH -->
-  <div id="splash" class="fixed inset-0 z-50 flex items-center justify-center bg-black">
-    <div class="text-center relative z-10">
-      <img src="logo.jpg" alt="MMX" class="w-96 mx-auto" id="splash-logo">
-      <h1 class="text-8xl font-black tracking-tighter bicolor neon-text mt-10" id="splash-title">MMX SHOP</h1>
-      <p class="text-3xl text-purple-400 mt-4">FORTNITE PRIVATE CHEAT</p>
-      <button onclick="enterSite()" class="mt-16 px-24 py-8 text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 rounded-3xl hover:scale-110 transition-all shadow-2xl shadow-purple-500/70">
-        ENTER THE MATRIX
-      </button>
-    </div>
-    <div id="stars-splash" class="absolute inset-0 pointer-events-none"></div>
-  </div>
+    <audio id="bgMusic" loop><source src="music.mp3" type="audio/mpeg"></audio>
 
-  <!-- MAIN SITE -->
-  <div id="main-site" class="hidden">
+    <canvas id="particles-canvas"></canvas>
 
-    <!-- NAVBAR -->
-    <nav class="fixed top-0 w-full bg-black/95 backdrop-blur-2xl border-b border-purple-500/20 z-50">
-      <div class="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
-        <img src="logo.jpg" class="h-12 cursor-pointer" onclick="window.location.reload()">
-        <div class="flex gap-10 text-lg font-medium">
-          <a href="#hero" class="hover:text-purple-400 transition">Accueil</a>
-          <a href="#features" class="hover:text-purple-400 transition">Features</a>
-          <a href="#pricing" class="hover:text-purple-400 transition">Prix</a>
-          <a href="#discord" class="hover:text-purple-400 transition">Discord</a>
+    <nav id="main-nav">
+        <img src="image_82a1e1.jpg" class="nav-logo" alt="MMX">
+        <div class="flex gap-8 text-[10px] font-bold uppercase tracking-[3px]">
+            <a href="#" class="hover:text-purple-400">Products</a>
+            <a href="https://discord.com/users/kyotouhq" target="_blank" class="hover:text-purple-400">Support</a>
+            <a href="#" class="hover:text-purple-400">Status</a>
         </div>
-      </div>
     </nav>
 
-    <!-- HERO -->
-    <section id="hero" class="min-h-screen flex items-center justify-center relative pt-20">
-      <div class="max-w-6xl mx-auto text-center px-8">
-        <img src="logo.jpg" class="w-80 mx-auto" id="hero-logo">
-        <h1 class="text-8xl font-black tracking-tighter bicolor neon-text mt-12" id="hero-title">MMX PRIVATE FORTNITE</h1>
-        <p class="text-4xl text-purple-400 mt-6">Le cheat le plus propre et le plus avancé du marché</p>
-      </div>
-      <div id="stars-hero" class="absolute inset-0 pointer-events-none"></div>
-    </section>
+    <main class="section-inner">
+        <div class="product-card">
+            <div class="product-left">
+                <img src="fortnite.png" onerror="this.src='https://via.placeholder.com/350x450/000/fff?text=FORTNITE+PRIVATE'" class="w-full">
+            </div>
+            <div class="product-right">
+                <span class="text-[10px] text-purple-400 font-bold tracking-[4px] uppercase">Private Project — Undetected</span>
+                <h2 class="text-3xl font-black mt-2 mb-6">Fortnite Internal</h2>
+                
+                <div class="space-y-3 text-xs text-gray-400 mb-8">
+                    <div class="flex items-center"><span class="w-4 h-[1px] bg-purple-500 mr-3"></span> Kernel Mode Driver (Bypass EAC/BE)</div>
+                    <div class="flex items-center"><span class="w-4 h-[1px] bg-purple-500 mr-3"></span> Advanced Vector Aimbot</div>
+                    <div class="flex items-center"><span class="w-4 h-[1px] bg-purple-500 mr-3"></span> Player/Item ESP with VisCheck</div>
+                </div>
 
-    <!-- FEATURES, PRICING, DISCORD (gardé comme tu avais mais plus beau) -->
-    <!-- ... (le reste du code est identique à ta structure mais avec le nouveau style bicolore + GSAP) -->
+                <p class="text-[10px] uppercase tracking-widest text-gray-500">Select Plan</p>
+                <div class="price-selector">
+                    <button class="price-btn" onclick="setPrice('day', '4.99€', this)">Day</button>
+                    <button class="price-btn" onclick="setPrice('week', '14.99€', this)">Week</button>
+                    <button class="price-btn active" onclick="setPrice('month', '24.99€', this)">Month</button>
+                    <button class="price-btn" onclick="setPrice('lifetime', '69.99€', this)">Lifetime</button>
+                </div>
 
-  </div>
+                <div class="flex justify-between items-baseline mt-8">
+                    <span id="display-price" class="text-2xl font-bold font-['Orbitron']">24.99€</span>
+                    <button class="btn-main w-auto px-12" onclick="showToast()">Purchase Access</button>
+                </div>
 
-  <!-- AUDIO -->
-  <audio id="bgMusic" loop>
-    <source src="music.mp3" type="audio/mpeg">
-  </audio>
+                <a href="javascript:void(0)" class="view-features" onclick="toggleModal(true)">View Full Features</a>
+            </div>
+        </div>
+    </main>
 
-  <script>
-    function createShootingStar(container) {
-      const star = document.createElement('div');
-      star.className = 'shooting-star';
-      star.style.left = Math.random() * 100 + 'vw';
-      star.style.top = Math.random() * 60 + 'vh';
-      star.style.animationDuration = (3 + Math.random() * 4) + 's';
-      container.appendChild(star);
-      setTimeout(() => star.remove(), 12000);
-    }
+    <!-- FEATURES MODAL -->
+    <div id="features-modal">
+        <a href="javascript:void(0)" class="modal-close" onclick="toggleModal(false)">&times;</a>
+        <div class="modal-content">
+            <h1 class="text-3xl text-white font-bold mb-10">FEATURES /:</h1>
+            
+            <span class="feature-title">【 AIMBOT 】</span>
+            ├─ Enable + Keybind<br>
+            ├─ Enable Predictions<br>
+            ├─ Target Line (+ Color Picker)<br>
+            ├─ Visible Check<br>
+            ├─ Draw Aimbot FOV (+ Color Picker)<br>
+            ├─ No Aimbot While No Weapon<br>
+            ├─ Bullet Drop Compensation (+ Strength 0-2)<br>
+            ├─ Humanization (+ Strength 0.1-25)<br>
+            ├─ Aimbot Type: Kernel / Memory / Silent Aim<br>
+            ├─ Hitbox Type: Heads / Chest / Pelvis<br>
+            ├─ Aimbot Distance (10-500)<br>
+            ├─ FOV (10-500) - global or per weapon<br>
+            ├─ Smooth (1-50) - global or per weapon<br>
+            └─ Crosshair<br>
 
-    function startStars(id) {
-      const container = document.getElementById(id);
-      setInterval(() => createShootingStar(container), 250);
-    }
+            <span class="feature-title">【 WEAPON CONFIG 】</span>
+            ├─ Enable Weapon Configs<br>
+            └─ Weapon Types:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;├─ Rifle (FOV + Smooth)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;├─ Shotgun (FOV + Smooth)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;├─ SMG (FOV + Smooth)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;├─ Sniper (FOV + Smooth)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;├─ Pistol (FOV + Smooth)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;└─ All Weapons (global FOV + Smooth)<br>
 
-    function enterSite() {
-      const splash = document.getElementById('splash');
-      splash.style.transition = 'opacity 1.4s';
-      splash.style.opacity = '0';
+            <span class="feature-title">【 TRIGGERBOT 】</span>
+            ├─ Enable + Keybind<br>
+            ├─ No Triggerbot Key<br>
+            └─ Shotgun Only<br>
 
-      setTimeout(() => {
-        splash.classList.add('hidden');
-        document.getElementById('main-site').classList.remove('hidden');
-        document.getElementById('bgMusic').play();
-        startStars('stars-hero');
+            <div class="my-8 border-t border-white/10"></div>
 
-        // GSAP
-        gsap.from("#hero-logo", { y: -150, opacity: 0, duration: 1.8, ease: "bounce.out" });
-        gsap.from("#hero-title", { y: 100, opacity: 0, duration: 1.5, delay: 0.6 });
-      }, 1400);
-    }
+            <span class="feature-title">【 VISUALS - PLAYER ESP 】</span>
+            ├─ Render Distance (1-1255)<br>
+            ├─ Outlined<br>
+            ├─ Spectator Counts<br>
+            ├─ Reload Bar<br>
+            │<br>
+            ├─ Box ESP (+ Color Picker)<br>
+            │   ├─ Corner Box (+ Color Picker)<br>
+            │   ├─ Filled Box (+ Color Picker)<br>
+            │   ├─ Line Thickness (1-10)<br>
+            │   └─ Rounding (1-10)<br>
+            │<br>
+            ├─ Skeleton ESP (+ Color Picker)<br>
+            │   ├─ Head ESP (+ Color Picker)<br>
+            │   └─ Line Thickness (1-10)<br>
+            │<br>
+            ├─ Snapline ESP (+ Color Picker)<br>
+            │   └─ Line Thickness (1-10)<br>
+            │<br>
+            ├─ Weapon ESP (+ Color Picker)<br>
+            │   └─ Position: Bottom / Top<br>
+            │<br>
+            ├─ Platform ESP (+ Color Picker)<br>
+            │   └─ Position: Bottom / Top<br>
+            │<br>
+            ├─ Distance ESP (+ Color Picker)<br>
+            │   └─ Position: Bottom / Top<br>
+            │<br>
+            ├─ Username ESP (+ Color Picker)<br>
+            │   └─ Position: Bottom / Top<br>
+            │<br>
+            ├─ Ranked ESP<br>
+            │<br>
+            ├─ Arrow ESP (+ Color Picker)<br>
+            │   ├─ Arrow Radius (10-500)<br>
+            │   └─ Arrow Filled<br>
+            │<br>
+            └─ Invisible Color (unified color picker)<br>
 
-    window.onload = () => startStars('stars-splash');
-  </script>
+            <span class="feature-title">【 VISUALS - WORLD ESP 】</span>
+            ├─ Enable World ESP<br>
+            ├─ World ESP Distance (1-500)<br>
+            ├─ Show Item Distance<br>
+            └─ Item Rarity Filter:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;├─ Common Items<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;├─ Uncommon Items<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;├─ Rare Items<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;├─ Epic Items<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;├─ Legendary Items<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;└─ Mythic Items<br>
+
+            <span class="feature-title">【 EXPLOITS 】</span>
+            ├─ Magic Bullet (+ FOV 0.1-12)<br>
+            ├─ Pickaxe Teleports (SHIFT)<br>
+            └─ Player Speed<br>
+
+            <span class="feature-title">【 MISC / SETTINGS 】</span>
+            ├─ Draw Watermark<br>
+            ├─ Ignore Bots<br>
+            ├─ Ignore NPCs<br>
+            ├─ Ignore Teammates<br>
+            └─ Config Manager (Save / Load / Delete)<br>
+        </div>
+    </div>
+
+    <div id="toast">API pas ajoutée pour le Moment</div>
+
+    <script>
+        // --- CANVAS PARTICLES (theend.lat logic) ---
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let W, H, flakes = [];
+
+        function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+        function initFlakes() {
+            flakes = [];
+            for (let i = 0; i < 70; i++) {
+                flakes.push({
+                    x: Math.random() * W, y: Math.random() * H,
+                    r: Math.random() * 1.5 + 0.5,
+                    speed: Math.random() * 0.5 + 0.1,
+                    drift: (Math.random() - 0.5) * 0.2,
+                    opacity: Math.random() * 0.4 + 0.1
+                });
+            }
+        }
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+            flakes.forEach(f => {
+                ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(167, 139, 250, ${f.opacity})`; ctx.fill();
+                f.y += f.speed; f.x += f.drift;
+                if (f.y > H) f.y = -5;
+            });
+            requestAnimationFrame(draw);
+        }
+        window.addEventListener('resize', resize); resize(); initFlakes(); draw();
+
+        // --- INTERACTIVITY ---
+        function setPrice(type, price, btn) {
+            document.getElementById('display-price').innerText = price;
+            document.querySelectorAll('.price-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function toggleModal(show) {
+            document.getElementById('features-modal').style.display = show ? 'block' : 'none';
+            document.body.style.overflow = show ? 'hidden' : 'auto';
+        }
+
+        function showToast() {
+            const t = document.getElementById('toast');
+            t.classList.add('active');
+            setTimeout(() => t.classList.remove('active'), 3000);
+        }
+
+        window.onclick = () => document.getElementById('bgMusic').play();
+
+        // Nav Scroll effect
+        window.addEventListener('scroll', () => {
+            document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 30);
+        });
+    </script>
 </body>
 </html>
