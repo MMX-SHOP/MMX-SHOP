@@ -26,16 +26,23 @@
             z-index: 1; pointer-events: none;
         }
 
-        /* --- NAV & LOGO FIX --- */
+        /* --- NAV & LOGO (Fond Noir Pur) --- */
         #main-nav {
             position: fixed; top: 0; width: 100%; height: 100px;
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 8%; z-index: 1000;
-            background: linear-gradient(to right, #000 20%, transparent 100%); /* Zone noire sous le logo */
+        }
+        .logo-container {
+            background: #000; /* Fond noir derrière le logo */
+            padding: 10px 20px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
         }
         .logo-container img { 
-            height: 80px; width: auto; 
-            filter: contrast(1.1) brightness(1.2); transform: scale(1.6);
+            height: 60px; width: auto; 
+            filter: contrast(1.1) brightness(1.2); 
+            mix-blend-mode: screen;
         }
 
         /* --- PRODUCT CARD --- */
@@ -55,7 +62,7 @@
         }
         .price-item.active { border-color: var(--accent); color: var(--accent); background: rgba(167, 139, 250, 0.1); }
 
-        /* --- CORE FEATURES (Style image_7519dc.png) --- */
+        /* --- CORE FEATURES --- */
         .core-section { position: relative; z-index: 10; padding: 100px 8%; }
         .core-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
         .core-card {
@@ -98,6 +105,7 @@
             letter-spacing: 5px; color: var(--accent);
             text-shadow: 0 0 15px var(--accent-glow);
             transition: 0.3s;
+            background: none; border: none; cursor: pointer;
         }
         .btn-features:hover { text-shadow: 0 0 25px var(--accent); color: white; }
 
@@ -108,13 +116,17 @@
 </head>
 <body>
 
-    <audio id="bgMusic" loop><source src="music.mp3" type="audio/mpeg"></audio>
+    <!-- MUSIQUE (Assure-toi d'avoir music.mp3 dans ton dossier) -->
+    <audio id="bgMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
     <div class="bg-gradient-overlay"></div>
     <canvas id="particles-canvas"></canvas>
 
     <nav id="main-nav">
         <div class="logo-container">
-            <img src="logo.jpg" alt="MMX">
+            <img src="logo.jpg" alt="MMX Logo">
         </div>
         <div class="flex gap-12 text-[11px] font-bold uppercase tracking-[4px]">
             <a href="#" class="hover:violet-txt transition">Store</a>
@@ -150,7 +162,7 @@
 
                 <div class="flex items-center justify-between">
                     <div id="big-price" class="text-4xl font-bold font-['Orbitron'] tracking-tighter">24.99€</div>
-                    <button class="btn-purchase px-14 py-5 text-[12px]" onclick="showToast()">Purchase Now</button>
+                    <button class="btn-purchase px-14 py-5 text-[12px]">Purchase Now</button>
                 </div>
 
                 <button class="btn-features" onclick="toggleOverlay(true)">
@@ -160,7 +172,7 @@
         </div>
     </section>
 
-    <!-- SECTION CORE (image_7519dc.png style) -->
+    <!-- SECTION CORE -->
     <section class="core-section">
         <h2 class="text-[11px] violet-txt font-bold uppercase tracking-[6px] mb-4">Core Features</h2>
         <h3 class="text-4xl font-black mb-12 text-white">What you receive with every product</h3>
@@ -194,7 +206,7 @@
         </div>
     </section>
 
-    <!-- FEATURE PANEL COMPLET AVEC SWITCHES IOS -->
+    <!-- FEATURE PANEL -->
     <div id="feature-overlay">
         <div class="max-w-6xl mx-auto">
             <div class="flex justify-between items-center mb-16">
@@ -210,7 +222,6 @@
                         <div class="ios-switch"> <span class="text-[11px] text-gray-400">Silent Aim</span> <input type="checkbox" class="switch"> </div>
                         <div class="ios-switch"> <span class="text-[11px] text-gray-400">Visible Check</span> <input type="checkbox" class="switch" checked> </div>
                         <div class="ios-switch"> <span class="text-[11px] text-gray-400">Prediction</span> <input type="checkbox" class="switch" checked> </div>
-                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">Show FOV</span> <input type="checkbox" class="switch" checked> </div>
                     </div>
                 </div>
 
@@ -219,7 +230,6 @@
                     <div class="space-y-2">
                         <div class="ios-switch"> <span class="text-[11px] text-gray-400">Box ESP</span> <input type="checkbox" class="switch" checked> </div>
                         <div class="ios-switch"> <span class="text-[11px] text-gray-400">Skeleton</span> <input type="checkbox" class="switch" checked> </div>
-                        <div class="ios-switch"> <span class="text-[11px] text-gray-400">Lines</span> <input type="checkbox" class="switch"> </div>
                         <div class="ios-switch"> <span class="text-[11px] text-gray-400">Distance</span> <input type="checkbox" class="switch" checked> </div>
                         <div class="ios-switch"> <span class="text-[11px] text-gray-400">Radar 2D</span> <input type="checkbox" class="switch"> </div>
                     </div>
@@ -238,18 +248,10 @@
         </div>
     </div>
 
-    <!-- TOAST -->
-    <div id="toast">
-        <div class="w-10 h-10 bg-purple-900/30 rounded flex items-center justify-center violet-txt text-xl">⚠️</div>
-        <div>
-            <div class="font-bold text-sm uppercase tracking-wider">System</div>
-            <div class="text-[11px] text-gray-400">API connection pending...</div>
-        </div>
-    </div>
-
     <script>
         lucide.createIcons();
 
+        // --- Particles ---
         const canvas = document.getElementById('particles-canvas');
         const ctx = canvas.getContext('2d');
         let W, H, flakes = [];
@@ -269,16 +271,17 @@
         }
         window.addEventListener('resize', resize); resize(); init(); draw();
 
+        // --- Music Logic ---
+        const audio = document.getElementById('bgMusic');
+        window.addEventListener('click', () => {
+            if(audio.paused) audio.play();
+        }, { once: true }); // Ne s'exécute qu'au premier clic
+
+        // --- UI Logic ---
         function setPrice(p, el) {
             document.getElementById('big-price').innerText = p;
             document.querySelectorAll('.price-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
-        }
-
-        function showToast() {
-            const t = document.getElementById('toast');
-            t.classList.add('active');
-            setTimeout(() => t.classList.remove('active'), 4000);
         }
 
         function toggleOverlay(show) {
