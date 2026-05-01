@@ -18,17 +18,13 @@
         * { cursor: crosshair !important; box-sizing: border-box; }
         body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; margin: 0; }
 
-        /* --- NOUVEAU BACKGROUND --- */
+        /* --- BACKGROUND --- */
         #particles-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-        
         .bg-layer {
             position: fixed; inset: 0;
-            background: 
-                radial-gradient(circle at 50% -10%, rgba(167, 139, 250, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 0% 100%, rgba(88, 28, 135, 0.05) 0%, transparent 40%);
+            background: radial-gradient(circle at 50% -10%, rgba(167, 139, 250, 0.08) 0%, transparent 50%);
             z-index: 1; pointer-events: none;
         }
-
         .bg-dots {
             position: fixed; inset: 0;
             background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
@@ -39,38 +35,23 @@
         #main-nav {
             position: fixed; top: 0; width: 100%; height: 90px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 4%; z-index: 1000; background: rgba(5, 5, 8, 0.8); backdrop-filter: blur(15px);
+            padding: 0 4%; z-index: 1000; background: #000;
             border-bottom: 1px solid rgba(255,255,255,0.03);
         }
 
-        .logo-wrap { height: 100%; display: flex; align-items: center; width: 220px; }
-        .logo-img { 
-            height: 75px; width: auto; object-fit: contain;
-            filter: brightness(1.2) contrast(1.1);
-            mix-blend-mode: screen;
-        }
+        .logo-wrap { height: 100%; display: flex; align-items: center; background: #000; padding: 0 20px; }
+        .logo-img { height: 70px; width: auto; object-fit: contain; }
 
-        .nav-right-btns { display: flex; align-items: center; gap: 12px; }
-        
         .btn-cart-box {
-            background: rgba(255,255,255,0.03); padding: 14px; border-radius: 14px;
+            background: #111113; padding: 14px; border-radius: 14px;
             color: white; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s;
         }
-        .btn-cart-box:hover { background: rgba(255,255,255,0.08); border-color: var(--accent); transform: scale(1.05); }
-
         .btn-discord-pill {
             background: transparent; border: 2px solid #7c5dfa; padding: 10px 28px;
             border-radius: 50px; display: flex; align-items: center; gap: 10px;
             color: #a78bfa; font-weight: 800; font-size: 14px; transition: 0.3s;
         }
-        .btn-discord-pill:hover { background: #7c5dfa; color: white; box-shadow: 0 0 25px rgba(124, 93, 250, 0.4); }
-
-        /* --- PRODUCT CARD --- */
-        .hero-card {
-            background: rgba(10, 10, 15, 0.6); border: 1px solid rgba(255,255,255,0.05);
-            width: 1100px; border-radius: 30px; overflow: hidden; backdrop-filter: blur(20px);
-            display: flex; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
+        .btn-discord-pill:hover { background: #7c5dfa; color: white; box-shadow: 0 0 20px rgba(124, 93, 250, 0.4); }
 
         /* --- STATUS PAGE --- */
         #status-page {
@@ -78,10 +59,23 @@
             display: none; flex-direction: column; align-items: center; justify-content: center;
         }
         .status-card {
-            background: rgba(255,255,255,0.02); border: 1px solid var(--accent);
+            background: #0a0a0f; border: 1px solid #7c5dfa;
             padding: 60px; border-radius: 30px; text-align: center;
-            box-shadow: 0 0 80px rgba(167, 139, 250, 0.1);
+            width: 500px; box-shadow: 0 0 50px rgba(124, 93, 250, 0.1);
         }
+
+        /* --- FEATURES OVERLAY --- */
+        #feature-overlay {
+            position: fixed; inset: 0; background: rgba(5, 5, 8, 0.98); z-index: 4000;
+            display: none; padding: 60px; overflow-y: auto; backdrop-filter: blur(10px);
+        }
+        .feature-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; }
+        
+        /* iOS Switch */
+        .switch { position: relative; width: 44px; height: 22px; appearance: none; background: #222; border-radius: 20px; cursor: pointer; transition: 0.3s; }
+        .switch:checked { background: var(--accent); }
+        .switch::before { content: ''; position: absolute; width: 18px; height: 18px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: 0.3s; }
+        .switch:checked::before { transform: translateX(22px); }
 
         /* --- TOAST --- */
         #toast {
@@ -92,18 +86,8 @@
         }
         #toast.active { transform: translateX(0); }
 
-        /* --- CORE GRID --- */
-        .core-card {
-            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03);
-            padding: 40px 25px; border-radius: 20px; transition: 0.4s;
-        }
-        .core-card:hover { border-color: var(--accent); background: rgba(167, 139, 250, 0.05); transform: translateY(-10px); }
-
-        /* --- SWITCHES --- */
-        .switch { position: relative; width: 44px; height: 22px; appearance: none; background: #1a1a1a; border-radius: 20px; cursor: pointer; transition: 0.3s; }
-        .switch:checked { background: var(--accent); }
-        .switch::before { content: ''; position: absolute; width: 18px; height: 18px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: 0.3s; }
-        .switch:checked::before { transform: translateX(22px); }
+        .core-card { background: #0a0a0c; border: 1px solid rgba(255,255,255,0.03); padding: 35px 25px; border-radius: 18px; transition: 0.4s; }
+        .core-card:hover { border-color: var(--accent); transform: translateY(-8px); }
     </style>
 </head>
 <body>
@@ -126,17 +110,17 @@
         <div class="nav-right-btns">
             <button class="btn-cart-box"><i data-lucide="shopping-cart" class="w-5 h-5"></i></button>
             <button class="btn-discord-pill" onclick="window.open('https://discord.com/users/kyotouhq', '_blank')">
-                <i data-lucide="message-square" class="w-5 h-5"></i> Discord
+                <i data-lucide="message-circle" class="w-5 h-5"></i> Discord
             </button>
         </div>
     </nav>
 
-    <!-- HERO -->
+    <!-- HERO SECTION -->
     <section class="mt-[180px] flex justify-center px-5 relative z-10">
-        <div class="hero-card">
+        <div class="bg-[#08080a] border border-white/5 w-[1100px] flex rounded-3xl overflow-hidden shadow-2xl">
             <div class="w-1/2 bg-black relative">
                 <img src="fortnite.jpg" class="w-full h-full object-cover opacity-60">
-                <div class="absolute inset-0 bg-gradient-to-r from-transparent to-[#0a0a0f]"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent to-[#08080a]"></div>
             </div>
             <div class="w-1/2 p-16">
                 <span class="text-[#a78bfa] font-black text-[10px] tracking-[7px] uppercase">Elite Security</span>
@@ -151,7 +135,7 @@
 
                 <div class="flex items-center justify-between">
                     <span id="price-display" class="text-5xl font-bold font-['Orbitron']">24.99€</span>
-                    <button onclick="triggerToast()" class="bg-white text-black px-14 py-5 font-black uppercase text-xs rounded-2xl hover:bg-[#a78bfa] hover:text-white transition-all duration-500 shadow-xl">Buy Now</button>
+                    <button onclick="triggerToast()" class="bg-white text-black px-14 py-5 font-black uppercase text-xs rounded-2xl hover:bg-[#a78bfa] hover:text-white transition-all duration-500">Buy Now</button>
                 </div>
 
                 <button onclick="toggleFeatures(true)" class="mt-12 text-[9px] tracking-[6px] text-[#a78bfa] block w-full text-center opacity-50 hover:opacity-100 transition">[ VIEW ALL FEATURES ]</button>
@@ -159,82 +143,101 @@
         </div>
     </section>
 
-    <!-- CORE FEATURES -->
+    <!-- CORE GRID -->
     <section class="max-w-[1200px] mx-auto py-32 px-5 relative z-10">
-        <p class="text-[#a78bfa] font-bold text-[11px] uppercase tracking-[6px] mb-4">Core Excellence</p>
-        <h2 class="text-5xl font-bold mb-6">What you receive with MMX</h2>
-        <p class="text-gray-500 mb-16 text-xl max-w-2xl">Premium features designed for those who demand the highest level of security and performance.</p>
-
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+        <h2 class="text-4xl font-bold mb-16">What you receive with every product</h2>
+        <div class="grid grid-cols-5 gap-6">
             <div class="core-card">
-                <i data-lucide="shield-check" class="w-10 h-10 text-[#a78bfa] mb-8"></i>
-                <h3 class="font-bold text-sm mb-4 tracking-wide">Safe & Undetected</h3>
-                <p class="text-[12px] text-gray-500 leading-relaxed">The most secure products on the market today.</p>
+                <i data-lucide="shield-check" class="text-[#a78bfa] mb-6"></i>
+                <h3 class="font-bold text-sm mb-2">Safe & Undetected</h3>
+                <p class="text-xs text-gray-500">Secure & discrete products.</p>
             </div>
             <div class="core-card">
-                <i data-lucide="crosshair" class="w-10 h-10 text-[#a78bfa] mb-8"></i>
-                <h3 class="font-bold text-sm mb-4 tracking-wide">Battle-Tested</h3>
-                <p class="text-[12px] text-gray-500 leading-relaxed">Stable releases with comprehensive changelogs.</p>
+                <i data-lucide="award" class="text-[#a78bfa] mb-6"></i>
+                <h3 class="font-bold text-sm mb-2">Tested Quality</h3>
+                <p class="text-xs text-gray-500">Stable, reliable releases.</p>
             </div>
             <div class="core-card">
-                <i data-lucide="layers" class="w-10 h-10 text-[#a78bfa] mb-8"></i>
-                <h3 class="font-bold text-sm mb-4 tracking-wide">Config System</h3>
-                <p class="text-[12px] text-gray-500 leading-relaxed">Save your setups or import community ones.</p>
+                <i data-lucide="save" class="text-[#a78bfa] mb-6"></i>
+                <h3 class="font-bold text-sm mb-2">Cloud Configs</h3>
+                <p class="text-xs text-gray-500">Store your setups easily.</p>
             </div>
             <div class="core-card">
-                <i data-lucide="lock" class="w-10 h-10 text-[#a78bfa] mb-8"></i>
-                <h3 class="font-bold text-sm mb-4 tracking-wide">Secure Checkout</h3>
-                <p class="text-[12px] text-gray-500 leading-relaxed">Payments handled by trusted providers.</p>
+                <i data-lucide="credit-card" class="text-[#a78bfa] mb-6"></i>
+                <h3 class="font-bold text-sm mb-2">Secure Pay</h3>
+                <p class="text-xs text-gray-500">Trusted gateways only.</p>
             </div>
             <div class="core-card">
-                <i data-lucide="zap" class="w-10 h-10 text-[#a78bfa] mb-8"></i>
-                <h3 class="font-bold text-sm mb-4 tracking-wide">Instant Setup</h3>
-                <p class="text-[12px] text-gray-500 leading-relaxed">Automatic delivery immediately after purchase.</p>
+                <i data-lucide="zap" class="text-[#a78bfa] mb-6"></i>
+                <h3 class="font-bold text-sm mb-2">Instant Access</h3>
+                <p class="text-xs text-gray-500">Automatic delivery.</p>
             </div>
         </div>
     </section>
 
-    <!-- STATUS -->
+    <!-- STATUS PAGE -->
     <div id="status-page">
         <div class="status-card">
-            <div class="w-24 h-24 bg-[#a78bfa]/10 rounded-full flex items-center justify-center mx-auto mb-10">
-                <i data-lucide="activity" class="w-12 h-12 text-[#a78bfa]"></i>
+            <div class="w-20 h-20 bg-[#1a1a2e] rounded-full flex items-center justify-center mx-auto mb-8">
+                <i data-lucide="activity" class="w-10 h-10 text-[#a78bfa]"></i>
             </div>
-            <h1 class="text-5xl font-black mb-6 tracking-tighter">PRIVATE FORTNITE</h1>
-            <p class="text-green-400 font-bold tracking-[6px] mb-4 text-sm uppercase">● UNDETECTED</p>
-            <p class="text-gray-500 text-sm tracking-widest uppercase">UPDATED TO THE LATEST GAME VERSION</p>
-            <button onclick="hideStatus()" class="mt-16 text-[10px] text-white/30 hover:text-white transition uppercase tracking-[5px]">[ Back to Store ]</button>
+            <h1 class="text-4xl font-black mb-4">PRIVATE FORTNITE</h1>
+            <p class="text-green-400 font-bold tracking-[4px] mb-2 text-sm uppercase">● UNDETECTED</p>
+            <p class="text-gray-500 text-[10px] tracking-widest uppercase">UPDATED TO THE LATEST GAME VERSION</p>
+            <button onclick="hideStatus()" class="mt-12 text-[10px] text-white/30 hover:text-white transition uppercase tracking-[4px]">[ BACK TO STORE ]</button>
+        </div>
+    </div>
+
+    <!-- FEATURES PANEL -->
+    <div id="feature-overlay">
+        <div class="max-w-5xl mx-auto">
+            <div class="flex justify-between items-center mb-16">
+                <h2 class="text-5xl font-black italic tracking-tighter">MMX <span class="text-[#a78bfa]">V2 FEATURES</span></h2>
+                <button onclick="toggleFeatures(false)" class="text-5xl text-white/20 hover:text-white">&times;</button>
+            </div>
+            <div class="grid grid-cols-2 gap-8">
+                <div class="feature-box">
+                    <h3 class="text-[#a78bfa] font-black mb-8 uppercase tracking-[3px]">Aimbot</h3>
+                    <div class="space-y-6">
+                        <div class="flex justify-between"><span>Memory Aim</span> <input type="checkbox" class="switch" checked></div>
+                        <div class="flex justify-between"><span>Silent Aim</span> <input type="checkbox" class="switch" checked></div>
+                        <div class="flex justify-between"><span>Prediction</span> <input type="checkbox" class="switch" checked></div>
+                        <div class="flex justify-between"><span>Smoothness Control</span> <input type="checkbox" class="switch" checked></div>
+                    </div>
+                </div>
+                <div class="feature-box">
+                    <h3 class="text-[#a78bfa] font-black mb-8 uppercase tracking-[3px]">Visuals</h3>
+                    <div class="space-y-6">
+                        <div class="flex justify-between"><span>Player ESP (Box)</span> <input type="checkbox" class="switch" checked></div>
+                        <div class="flex justify-between"><span>Skeleton View</span> <input type="checkbox" class="switch" checked></div>
+                        <div class="flex justify-between"><span>Loot ESP</span> <input type="checkbox" class="switch" checked></div>
+                        <div class="flex justify-between"><span>Radar 2D</span> <input type="checkbox" class="switch"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- TOAST -->
     <div id="toast">
-        <div class="w-10 h-10 bg-yellow-400/10 rounded-full flex items-center justify-center">
-            <i data-lucide="alert-triangle" class="text-yellow-400 w-5 h-5"></i>
-        </div>
+        <i data-lucide="alert-triangle" class="text-yellow-400"></i>
         <div>
-            <p class="font-bold text-[12px] uppercase tracking-wider">System Linkage Error</p>
-            <p class="text-[10px] text-gray-500">API not linked. Please contact kyotouhq.</p>
+            <p class="font-bold text-[11px] uppercase tracking-wider">System Error</p>
+            <p class="text-[10px] text-gray-500">API not linked. Contact kyotouhq.</p>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        // Music
-        window.addEventListener('click', () => {
-            const audio = document.getElementById('bgMusic');
-            if(audio.paused) audio.play();
-        }, { once: true });
-
-        // Particles
+        // Background Particles
         const canvas = document.getElementById('particles-canvas');
         const ctx = canvas.getContext('2d');
         let W, H, flakes = [];
         function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
         function init() {
             flakes = [];
-            for (let i = 0; i < 100; i++) flakes.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.3, s: Math.random()*0.4+0.1, o: Math.random()*0.4 });
+            for (let i = 0; i < 80; i++) flakes.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.2, s: Math.random()*0.3+0.1, o: Math.random()*0.4 });
         }
         function draw() {
             ctx.clearRect(0,0,W,H);
@@ -251,12 +254,12 @@
         function setPrice(p) { document.getElementById('price-display').innerText = p; }
         function showStatus() { document.getElementById('status-page').style.display = 'flex'; }
         function hideStatus() { document.getElementById('status-page').style.display = 'none'; }
+        function toggleFeatures(s) { document.getElementById('feature-overlay').style.display = s ? 'block' : 'none'; }
         function triggerToast() {
             const t = document.getElementById('toast');
             t.classList.add('active');
-            setTimeout(() => t.classList.remove('active'), 4500);
+            setTimeout(() => t.classList.remove('active'), 4000);
         }
-        function toggleFeatures(s) { /* Overlay logic if needed */ }
     </script>
 </body>
 </html>
