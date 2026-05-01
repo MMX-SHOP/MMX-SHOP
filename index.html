@@ -88,6 +88,7 @@
         <button class="init-btn" onclick="startSystem()">Initialize</button>
     </div>
 
+    <!-- MODAL -->
     <div id="purchase-modal">
         <div id="modal-content" class="text-center p-12 bg-[#050505] border border-white/10 rounded-[45px] max-w-lg shadow-2xl">
             <h2 class="text-[50px] font-black italic mb-4 tracking-tighter leading-none">SORRY...</h2>
@@ -112,7 +113,7 @@
             <div class="text-4xl font-black italic">MM<span class="logo-x">X</span></div>
             <div class="flex gap-10 text-[10px] font-black opacity-30 uppercase tracking-[5px]">
                 <span>V2.0.4</span>
-                <span class="text-green-500">● Status: Undetected</span>
+                <span class="text-green-500">● Status: Undetchecked</span>
             </div>
         </nav>
 
@@ -142,13 +143,14 @@
                 </div>
                 <div class="reveal">
                     <div class="p-3 border border-white/5 bg-white/5 rounded-[40px] overflow-hidden shadow-2xl relative group">
-                        <!-- CHANGÉ ICI : .png AU LIEU DE .jpg -->
-                        <img src="fortnite.png" class="w-full h-[580px] object-cover rounded-[30px] opacity-80 group-hover:scale-105 transition-transform duration-[2s]" alt="Preview">
+                        <!-- REMIS EN .jpg ICI -->
+                        <img src="fortnite.jpg" class="w-full h-[580px] object-cover rounded-[30px] opacity-80 group-hover:scale-105 transition-transform duration-[2s]" alt="Preview">
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- CORE CARDS & FEATURES (MÊMES QU'AVANT) -->
         <section class="py-24 px-[8%] grid grid-cols-1 md:grid-cols-4 gap-8">
             <div class="core-card reveal">
                 <i data-lucide="shield-check" class="text-purple-400 mb-6 w-10 h-10"></i>
@@ -169,36 +171,6 @@
                 <i data-lucide="headset" class="text-purple-400 mb-6 w-10 h-10"></i>
                 <h3 class="font-black uppercase tracking-tighter mb-2 text-lg">24/7 Support</h3>
                 <p class="text-[11px] text-gray-500 leading-relaxed uppercase font-bold tracking-[2px]">Always here for you.</p>
-            </div>
-        </section>
-
-        <section class="py-40 px-[8%] grid grid-cols-1 md:grid-cols-3 gap-12 pb-60">
-            <div class="reveal p-12 bg-white/[0.02] border border-white/5 rounded-[45px]">
-                <div class="font-black text-purple-400 mb-10 uppercase tracking-[5px] border-b border-white/5 pb-6 text-xs">Aimbot Suite</div>
-                <div class="space-y-4 opacity-50 text-[12px] font-black uppercase">
-                    <div>├─ Silent Aim (pSilent)</div>
-                    <div>├─ Humanized Smoothing</div>
-                    <div>├─ Visible Check Only</div>
-                    <div>├─ FOV & Recoil Control</div>
-                </div>
-            </div>
-            <div class="reveal p-12 bg-white/[0.02] border border-white/5 rounded-[45px]">
-                <div class="font-black text-purple-400 mb-10 uppercase tracking-[5px] border-b border-white/5 pb-6 text-xs">Visuals ESP</div>
-                <div class="space-y-4 opacity-50 text-[12px] font-black uppercase">
-                    <div>├─ Player Skeleton / Box</div>
-                    <div>├─ Weapon & Health Info</div>
-                    <div>├─ Radar 2D Overlay</div>
-                    <div>├─ Performance Loot ESP</div>
-                </div>
-            </div>
-            <div class="reveal p-12 bg-white/[0.02] border border-white/5 rounded-[45px]">
-                <div class="font-black text-purple-400 mb-10 uppercase tracking-[5px] border-b border-white/5 pb-6 text-xs">Exploits / Misc</div>
-                <div class="space-y-4 opacity-50 text-[12px] font-black uppercase">
-                    <div>├─ No Recoil & No Spread</div>
-                    <div>├─ Bullet Teleportation</div>
-                    <div>├─ Instant Revive Mod</div>
-                    <div>├─ Stream-Proof Overlay</div>
-                </div>
             </div>
         </section>
     </div>
@@ -235,14 +207,11 @@
         }
 
         function togglePrices() { document.getElementById('price-list').classList.toggle('active'); }
-
         function openModal() {
             const modal = document.getElementById('purchase-modal');
-            const content = document.getElementById('modal-content');
             modal.style.display = 'flex';
-            gsap.fromTo(content, { scale: 0.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.4)" });
+            gsap.fromTo("#modal-content", { scale: 0.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.4)" });
         }
-
         function closeModal() {
             gsap.to("#modal-content", { scale: 0.8, opacity: 0, duration: 0.4, onComplete: () => {
                 document.getElementById('purchase-modal').style.display = 'none';
@@ -252,25 +221,19 @@
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let time = 0;
-
         function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-
         function draw() {
             time += 0.002;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
+            const centerX = canvas.width / 2; const centerY = canvas.height / 2;
             let g1 = ctx.createRadialGradient(centerX + Math.cos(time) * 300, centerY + Math.sin(time) * 200, 0, centerX, centerY, canvas.width);
-            g1.addColorStop(0, "rgba(167, 139, 250, 0.08)");
-            g1.addColorStop(1, "transparent");
+            g1.addColorStop(0, "rgba(167, 139, 250, 0.08)"); g1.addColorStop(1, "transparent");
             let g2 = ctx.createRadialGradient(centerX + Math.sin(time * 0.8) * 400, centerY + Math.cos(time * 0.8) * 300, 0, centerX, centerY, canvas.width);
-            g2.addColorStop(0, "rgba(139, 92, 246, 0.05)");
-            g2.addColorStop(1, "transparent");
+            g2.addColorStop(0, "rgba(139, 92, 246, 0.05)"); g2.addColorStop(1, "transparent");
             ctx.fillStyle = g1; ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = g2; ctx.fillRect(0, 0, canvas.width, canvas.height);
             requestAnimationFrame(draw);
         }
-
         resize(); draw(); window.onresize = resize;
     </script>
 </body>
