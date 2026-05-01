@@ -11,9 +11,14 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
     body { font-family: 'Inter', sans-serif; }
 
+    .glow-purple { text-shadow: 0 0 40px #a855f7, 0 0 80px #a855f7; }
+    .bicolor { background: linear-gradient(90deg, #ffffff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
     .shooting-star {
-      position: absolute; width: 4px; height: 2px; background: linear-gradient(90deg, transparent, #c026d3, #fff);
-      box-shadow: 0 0 25px 8px #c026d3; animation: shoot linear infinite;
+      position: absolute; width: 4px; height: 2px;
+      background: linear-gradient(90deg, transparent, #a855f7, #ffffff);
+      box-shadow: 0 0 25px 8px #a855f7;
+      animation: shoot linear infinite;
     }
     @keyframes shoot {
       from { transform: translateX(-300px) translateY(-300px); opacity: 0; }
@@ -25,11 +30,10 @@
 
   <!-- SPLASH -->
   <div id="splash" class="fixed inset-0 z-50 flex items-center justify-center bg-black">
-    <div class="text-center relative">
-      <img id="splash-logo" src="logo.jpg" alt="MMX" class="w-96 mx-auto">
-      <h1 id="splash-title" class="text-8xl font-black tracking-tighter mt-10 text-white">MMX SHOP</h1>
-      <button onclick="enterSite()" 
-              class="mt-16 px-20 py-7 text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 rounded-3xl hover:scale-110 transition-all duration-300 shadow-2xl shadow-purple-500/60">
+    <div class="text-center">
+      <img id="splash-logo" src="logo.jpg" class="w-96 mx-auto">
+      <h1 id="splash-title" class="text-8xl font-black tracking-tighter bicolor mt-10">MMX SHOP</h1>
+      <button onclick="enterSite()" class="mt-16 px-24 py-8 text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 rounded-3xl hover:scale-110 transition-all duration-300 shadow-2xl">
         ENTER THE MATRIX
       </button>
     </div>
@@ -39,36 +43,27 @@
   <!-- MAIN SITE -->
   <div id="main-site" class="hidden">
 
-    <!-- NAVBAR -->
     <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-xl border-b border-purple-500/30 z-50">
       <div class="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
         <img src="logo.jpg" class="h-12 cursor-pointer" onclick="window.location.reload()">
-        
-        <div class="flex gap-10 text-lg font-medium">
-          <a href="#" class="hover:text-purple-400 transition">Accueil</a>
+        <div class="flex gap-10 text-lg">
           <a href="#" onclick="showProduct()" class="hover:text-purple-400 transition">Fortnite Private</a>
         </div>
-
-        <!-- Panier Amélioré -->
-        <div onclick="showCart()" id="cart-button"
-             class="flex items-center gap-3 cursor-pointer group">
-          <div class="relative">
-            <i class="fas fa-shopping-cart text-3xl transition-transform group-hover:rotate-12"></i>
-            <span id="cart-count" class="absolute -top-1 -right-1 bg-purple-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full scale-0 transition-transform">0</span>
-          </div>
-          <span class="text-sm font-medium opacity-0 group-hover:opacity-100 transition">Panier</span>
+        <div onclick="showCart()" class="cursor-pointer relative">
+          <i class="fas fa-shopping-cart text-3xl"></i>
+          <span id="cart-count" class="absolute -top-1 -right-1 bg-purple-600 w-6 h-6 flex items-center justify-center text-xs rounded-full">0</span>
         </div>
       </div>
     </nav>
 
     <!-- HERO -->
     <section class="min-h-screen flex items-center justify-center relative pt-20">
-      <div class="text-center px-8">
+      <div class="text-center">
         <img src="logo.jpg" class="w-80 mx-auto" id="hero-logo">
-        <h1 onclick="showProduct()" class="text-7xl font-black tracking-tighter cursor-pointer hover:text-purple-400 transition mt-8" id="hero-title">
+        <h1 onclick="showProduct()" class="text-7xl font-black tracking-tighter cursor-pointer bicolor mt-8" id="hero-title">
           FORTNITE PRIVATE
         </h1>
-        <p class="text-3xl text-purple-400 mt-4">LIFETIME • UNDETECTED</p>
+        <p class="text-3xl text-purple-400 mt-4">LIFETIME • KERNEL • UNDETECTED</p>
       </div>
       <div id="stars-hero" class="absolute inset-0 pointer-events-none"></div>
     </section>
@@ -78,16 +73,15 @@
   <div id="product-page" class="hidden fixed inset-0 bg-black z-50 overflow-auto">
     <div class="max-w-7xl mx-auto p-8 pt-24 grid md:grid-cols-2 gap-12">
       <div>
-        <img src="logo.jpg" class="w-full rounded-3xl border border-purple-500/30 shadow-2xl">
+        <img src="fortnite-product.jpg" class="w-full rounded-3xl border border-purple-500/50 shadow-2xl" alt="Fortnite Product">
       </div>
       <div>
-        <h1 class="text-6xl font-black">MMX PRIVATE FORTNITE</h1>
+        <h1 class="text-6xl font-black bicolor">MMX PRIVATE FORTNITE</h1>
         <div class="flex items-center gap-4 mt-6">
           <span class="text-6xl font-bold text-purple-400">69.99€</span>
           <span class="bg-green-500 px-6 py-2 rounded-full text-black font-bold">LIFETIME</span>
         </div>
-        <button onclick="addToCart()" 
-                class="mt-12 w-full py-8 text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 rounded-3xl hover:scale-105 transition-all">
+        <button onclick="addToCart()" class="mt-12 w-full py-8 text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 rounded-3xl hover:scale-110 transition-all">
           AJOUTER AU PANIER
         </button>
       </div>
@@ -95,22 +89,20 @@
     <button onclick="hideProduct()" class="fixed top-8 right-8 text-5xl hover:text-purple-400">✕</button>
   </div>
 
-  <!-- CART MODAL -->
+  <!-- PANIER -->
   <div id="cart-modal" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center">
     <div class="bg-zinc-950 rounded-3xl w-full max-w-2xl p-10">
       <h2 class="text-4xl font-black mb-8">Votre Panier</h2>
       <div id="cart-items" class="space-y-6"></div>
-      
       <div class="mt-10 border-t border-purple-500/30 pt-8 flex justify-between text-3xl font-bold">
         <span>Total</span>
         <span id="cart-total" class="text-purple-400">0.00€</span>
       </div>
-
       <div class="grid grid-cols-2 gap-6 mt-10">
-        <button onclick="fakePaypal()" class="py-7 text-2xl font-bold bg-[#003087] rounded-3xl hover:scale-105 transition">PayPal</button>
-        <button onclick="fakeCard()" class="py-7 text-2xl font-bold bg-gradient-to-r from-gray-700 to-gray-800 rounded-3xl hover:scale-105 transition">Carte Bancaire</button>
+        <button onclick="fakePaypal()" class="py-7 text-2xl font-bold bg-[#003087] rounded-3xl">PayPal</button>
+        <button onclick="fakeCard()" class="py-7 text-2xl font-bold bg-gradient-to-r from-gray-700 to-gray-800 rounded-3xl">Carte</button>
       </div>
-      <button onclick="hideCart()" class="mt-8 text-gray-400 hover:text-white">Fermer</button>
+      <button onclick="hideCart()" class="mt-8 text-gray-400">Fermer</button>
     </div>
   </div>
 
@@ -122,59 +114,39 @@
   <script>
     let cart = [];
 
-    // GSAP Animations
-    function initGSAP() {
-      gsap.from("#hero-logo", { y: -100, opacity: 0, duration: 1.5, ease: "bounce.out" });
-      gsap.from("#hero-title", { y: 50, opacity: 0, duration: 1.2, delay: 0.5 });
-    }
-
     function addToCart() {
       cart = [{ name: "MMX Private Fortnite - Lifetime", price: 69.99 }];
       updateCartCount();
-      gsap.fromTo("#cart-button", { scale: 0.8 }, { scale: 1.3, duration: 0.4, yoyo: true, repeat: 1 });
-      alert("✅ Ajouté au panier !");
+      gsap.fromTo("#cart-button", {scale: 0.6, rotation: -15}, {scale: 1.4, rotation: 15, duration: 0.5, yoyo: true, repeat: 1});
+      alert("✅ Produit ajouté !");
       hideProduct();
       showCart();
     }
 
     function updateCartCount() {
-      const countEl = document.getElementById('cart-count');
-      countEl.textContent = cart.length;
-      gsap.fromTo(countEl, { scale: 0 }, { scale: 1, duration: 0.4 });
+      document.getElementById('cart-count').textContent = cart.length;
     }
 
     function showCart() {
       const modal = document.getElementById('cart-modal');
       const container = document.getElementById('cart-items');
-      container.innerHTML = '';
+      container.innerHTML = cart.length ? '' : `<p class="text-center py-12 text-gray-400">Panier vide</p>`;
 
-      if (cart.length === 0) {
-        container.innerHTML = `<p class="text-center py-12 text-gray-400">Votre panier est vide</p>`;
-      } else {
-        let total = 0;
-        cart.forEach((item, i) => {
-          total += item.price;
-          container.innerHTML += `
-            <div class="flex justify-between bg-zinc-900 p-6 rounded-2xl">
-              <div>
-                <p class="font-semibold">${item.name}</p>
-                <p class="text-purple-400">${item.price}€</p>
-              </div>
-              <button onclick="removeFromCart(${i})" class="text-red-500 hover:text-red-400">Supprimer</button>
-            </div>`;
-        });
-        document.getElementById('cart-total').textContent = total.toFixed(2) + "€";
-      }
+      let total = 0;
+      cart.forEach((item, i) => {
+        total += item.price;
+        container.innerHTML += `
+          <div class="flex justify-between bg-zinc-900 p-6 rounded-2xl">
+            <div><p class="font-semibold">${item.name}</p><p class="text-purple-400">${item.price}€</p></div>
+            <button onclick="removeFromCart(${i})" class="text-red-500">Supprimer</button>
+          </div>`;
+      });
+      document.getElementById('cart-total').textContent = total.toFixed(2) + "€";
       modal.classList.remove('hidden');
-      gsap.from(modal, { opacity: 0, y: 100, duration: 0.6, ease: "power3.out" });
+      gsap.from(modal, { y: 100, opacity: 0, duration: 0.6 });
     }
 
-    function removeFromCart(i) {
-      cart.splice(i, 1);
-      updateCartCount();
-      showCart();
-    }
-
+    function removeFromCart(i) { cart.splice(i, 1); updateCartCount(); showCart(); }
     function hideCart() { document.getElementById('cart-modal').classList.add('hidden'); }
     function fakePaypal() { hideCart(); setTimeout(() => { alert("✅ Paiement PayPal réussi !"); cart = []; updateCartCount(); }, 600); }
     function fakeCard() { hideCart(); setTimeout(() => { alert("✅ Paiement carte réussi !"); cart = []; updateCartCount(); }, 600); }
@@ -194,25 +166,25 @@
 
     function startStars(id) {
       const cont = document.getElementById(id);
-      setInterval(() => createShootingStar(cont), 250);
+      setInterval(() => createShootingStar(cont), 220);
     }
 
     function enterSite() {
       const splash = document.getElementById('splash');
-      splash.style.transition = 'opacity 1.2s';
       splash.style.opacity = '0';
       setTimeout(() => {
         splash.classList.add('hidden');
         document.getElementById('main-site').classList.remove('hidden');
         document.getElementById('bgMusic').play();
         startStars('stars-hero');
-        initGSAP();
+
+        // GSAP Animations
+        gsap.from("#hero-logo", { y: -120, opacity: 0, duration: 1.8, ease: "bounce.out" });
+        gsap.from("#hero-title", { y: 80, opacity: 0, duration: 1.4, delay: 0.6 });
       }, 1200);
     }
 
-    window.onload = () => {
-      startStars('stars-splash');
-    };
+    window.onload = () => startStars('stars-splash');
   </script>
 </body>
 </html>
