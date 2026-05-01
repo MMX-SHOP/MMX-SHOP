@@ -1,337 +1,192 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMX | Private Market</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Orbitron:wght@500;900&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MMX Shop • Fortnite Private Cheat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+    body { font-family: 'Inter', sans-serif; }
 
-        :root {
-            --accent: #a855f7; /* Violet */
-            --main: #ffffff;   /* Blanc */
-            --bg: #000000;     /* Noir Pur */
-        }
+    .bicolor { background: linear-gradient(90deg, #ffffff, #c026d3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .glow { text-shadow: 0 0 40px #c026d3, 0 0 80px #c026d3; }
 
-        * { cursor: crosshair !important; }
+    .shooting-star {
+      position: absolute;
+      width: 4px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #c026d3, #fff);
+      box-shadow: 0 0 25px 8px #c026d3;
+      animation: shoot linear infinite;
+    }
+    @keyframes shoot {
+      from { transform: translateX(-300px) translateY(-300px); opacity: 0; }
+      to { transform: translateX(1200px) translateY(800px); opacity: 0; }
+    }
 
-        body {
-            background-color: var(--bg);
-            color: var(--main);
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        /* --- BACKGROUND & STARS --- */
-        #star-canvas {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-        }
-
-        /* --- SPLASH SCREEN (THE END STYLE) --- */
-        #splash {
-            position: fixed;
-            inset: 0;
-            background: #000;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 1.2s ease, visibility 1.2s;
-        }
-
-        .enter-btn {
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 5px;
-            font-size: 0.8rem;
-            color: var(--accent);
-            text-transform: uppercase;
-            border: 1px solid var(--accent);
-            padding: 15px 40px;
-            transition: 0.5s;
-        }
-
-        .enter-btn:hover {
-            background: var(--accent);
-            color: #000;
-            box-shadow: 0 0 30px var(--accent);
-        }
-
-        /* --- NAVBAR --- */
-        nav {
-            position: fixed;
-            top: 0; width: 100%;
-            height: 70px;
-            padding: 0 60px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            z-index: 100;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
-        }
-
-        .nav-logo { height: 25px; filter: grayscale(1) brightness(2); }
-
-        .nav-links a {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-left: 40px;
-            color: rgba(255,255,255,0.5);
-            transition: 0.3s;
-        }
-
-        .nav-links a:hover { color: var(--accent); }
-
-        /* --- MAIN CONTENT --- */
-        main {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding-top: 70px;
-        }
-
-        .product-container {
-            width: 800px;
-            display: flex;
-            background: rgba(255,255,255,0.01);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 4px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .product-img-box {
-            width: 40%;
-            border-right: 1px solid rgba(255,255,255,0.05);
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .product-img-box img {
-            width: 100%;
-            border-radius: 2px;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .product-details {
-            flex: 1;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .tag {
-            font-size: 0.6rem;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        h2 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            letter-spacing: -1px;
-        }
-
-        .features {
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.4);
-            line-height: 1.8;
-            margin-bottom: 30px;
-            list-style: none;
-            padding: 0;
-        }
-
-        .features li::before {
-            content: "—";
-            margin-right: 10px;
-            color: var(--accent);
-        }
-
-        .buy-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            padding-top: 25px;
-        }
-
-        .price { font-family: 'Orbitron'; font-size: 1.2rem; }
-
-        .btn-purchase {
-            background: var(--main);
-            color: #000;
-            padding: 10px 30px;
-            font-size: 0.7rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: 0.3s;
-        }
-
-        .btn-purchase:hover {
-            background: var(--accent);
-            color: white;
-            box-shadow: 0 0 20px var(--accent);
-        }
-
-        /* --- TOAST --- */
-        #toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #111;
-            border-left: 3px solid var(--accent);
-            padding: 15px 25px;
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-            transform: translateX(150%);
-            transition: 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        }
-
-        #toast.active { transform: translateX(0); }
-    </style>
+    .feature-card:hover {
+      transform: translateY(-10px);
+      border-color: #c026d3;
+    }
+  </style>
 </head>
-<body>
+<body class="bg-black text-white">
 
-    <audio id="music" loop><source src="music.mp3" type="audio/mpeg"></audio>
-
-    <!-- Splash Screen -->
-    <div id="splash" onclick="init()">
-        <div class="enter-btn">Initialize MMX</div>
+  <!-- SPLASH -->
+  <div id="splash" class="fixed inset-0 z-50 flex items-center justify-center bg-black">
+    <div class="text-center relative">
+      <img src="logo.jpg" alt="MMX Logo" class="w-96 mx-auto" id="splash-logo">
+      <h1 class="text-8xl font-black tracking-tighter bicolor mt-10 glow" id="splash-title">MMX SHOP</h1>
+      <p class="text-3xl text-purple-400 mt-3">FORTNITE PRIVATE CHEAT</p>
+      <button onclick="enterSite()" class="mt-16 px-20 py-7 text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 rounded-3xl hover:scale-110 transition-all shadow-2xl shadow-purple-500/60">
+        ENTER THE MATRIX
+      </button>
     </div>
+    <div id="stars-splash" class="absolute inset-0 pointer-events-none"></div>
+  </div>
 
-    <nav>
-        <img src="logo.jpg" class="nav-logo" alt="MMX">
-        <div class="nav-links">
-            <a href="#">Products</a>
-            <a href="https://discord.com/users/kyotouhq" target="_blank">Support</a>
-            <a href="#">Status</a>
+  <!-- MAIN SITE -->
+  <div id="main-site" class="hidden">
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-xl border-b border-purple-500/20 z-50">
+      <div class="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
+        <img src="logo.jpg" class="h-12 cursor-pointer" onclick="window.location.reload()">
+        <div class="flex gap-10 text-lg font-medium">
+          <a href="#hero" class="hover:text-purple-400 transition">Accueil</a>
+          <a href="#features" class="hover:text-purple-400 transition">Features</a>
+          <a href="#pricing" class="hover:text-purple-400 transition">Prix</a>
+          <a href="#discord" class="hover:text-purple-400 transition">Discord</a>
         </div>
+      </div>
     </nav>
 
-    <canvas id="star-canvas"></canvas>
+    <!-- HERO -->
+    <section id="hero" class="min-h-screen flex items-center justify-center pt-20 relative">
+      <div class="max-w-6xl mx-auto text-center px-8">
+        <img src="logo.jpg" class="w-80 mx-auto" id="hero-logo">
+        <h1 class="text-8xl font-black tracking-tighter bicolor mt-10 glow" id="hero-title">MMX PRIVATE FORTNITE</h1>
+        <p class="text-4xl text-purple-300 mt-4">Le cheat le plus propre du marché</p>
+      </div>
+      <div id="stars-hero" class="absolute inset-0 pointer-events-none"></div>
+    </section>
 
-    <main>
-        <div class="product-container">
-            <div class="product-img-box">
-                <!-- Ton image fortnite.png -->
-                <img src="fortnite.png" onerror="this.src='https://via.placeholder.com/300x300/000/fff?text=FORTNITE+PRIVATE'" alt="Fortnite Private">
+    <!-- FEATURES -->
+    <section id="features" class="py-24 bg-zinc-950">
+      <div class="max-w-6xl mx-auto px-8">
+        <h2 class="text-6xl font-black text-center mb-16 bicolor">Features</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div class="feature-card bg-black/70 border border-purple-500/30 rounded-3xl p-8">
+            <h3 class="text-3xl font-bold mb-6 bicolor">AIMBOT</h3>
+            <ul class="space-y-3 text-lg">
+              <li>Enable + Keybind</li>
+              <li>Enable Predictions</li>
+              <li>Target Line + Color Picker</li>
+              <li>Visible Check</li>
+              <li>Draw FOV + Color Picker</li>
+              <li>Bullet Drop Compensation</li>
+              <li>Humanization (0.1 - 25)</li>
+              <li>Kernel / Memory / Silent Aim</li>
+              <li>Hitbox : Head / Chest / Pelvis</li>
+            </ul>
+          </div>
+
+          <div class="space-y-8">
+            <div class="feature-card bg-black/70 border border-purple-500/30 rounded-3xl p-8">
+              <h3 class="text-3xl font-bold mb-6 bicolor">WEAPON CONFIG</h3>
+              <ul class="space-y-3 text-lg">
+                <li>Rifle • Shotgun • SMG • Sniper • Pistol</li>
+                <li>Global & Per Weapon Settings</li>
+              </ul>
             </div>
-            <div class="product-details">
-                <span class="tag">Private Project — Undetected</span>
-                <h2>Fortnite Internal</h2>
-                <ul class="features">
-                    <li>Kernel Mode Driver (Bypass EAC/BE)</li>
-                    <li>Advanced Vector Aimbot</li>
-                    <li>Player/Item ESP with VisCheck</li>
-                    <li>Highly Customizable FOV & Smoothing</li>
-                </ul>
-                <div class="buy-row">
-                    <div class="price">€25.00</div>
-                    <button class="btn-purchase" onclick="notify()">Purchase Access</button>
-                </div>
+            <div class="feature-card bg-black/70 border border-purple-500/30 rounded-3xl p-8">
+              <h3 class="text-3xl font-bold mb-6 bicolor">VISUALS & RADAR</h3>
+              <ul class="space-y-3 text-lg">
+                <li>Box • Skeleton • Snapline • Arrow ESP</li>
+                <li>World ESP • Item Rarity Filter</li>
+                <li>Radar + Magic Bullet</li>
+              </ul>
             </div>
+          </div>
         </div>
-    </main>
+      </div>
+    </section>
 
-    <div id="toast">API pas ajoutée pour le Moment</div>
+    <!-- PRICING -->
+    <section id="pricing" class="py-24 bg-black">
+      <div class="max-w-6xl mx-auto px-8 text-center">
+        <h2 class="text-6xl font-black mb-12 bicolor">Prix</h2>
+        <div class="max-w-md mx-auto bg-zinc-950 border-2 border-purple-500 rounded-3xl p-12 hover:border-purple-400 transition-all">
+          <h3 class="text-5xl font-bold">LIFETIME</h3>
+          <div class="text-8xl font-black text-purple-400 mt-6">69.99€</div>
+          <p class="text-xl mt-4 text-purple-300">Accès à vie + Mises à jour permanentes</p>
+          <button onclick="alert('Paiement simulé - Merci pour votre achat !')" class="mt-12 w-full py-6 text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 rounded-3xl hover:scale-105 transition">
+            ACHETER MAINTENANT
+          </button>
+        </div>
+      </div>
+    </section>
 
-    <script>
-        const canvas = document.getElementById('star-canvas');
-        const ctx = canvas.getContext('2d');
-        let stars = [];
-        let shooters = [];
+    <!-- DISCORD -->
+    <section id="discord" class="py-24 bg-zinc-950">
+      <div class="max-w-6xl mx-auto px-8 text-center">
+        <h2 class="text-6xl font-black mb-12 bicolor">Rejoins le Discord</h2>
+        <div class="flex flex-col md:flex-row gap-12 justify-center items-center">
+          <a href="https://discord.com/users/kyotouhq" target="_blank" class="flex flex-col items-center hover:scale-110 transition">
+            <i class="fab fa-discord text-8xl text-purple-400 mb-4"></i>
+            <p class="text-xl">kyotouhq</p>
+          </a>
+          <a href="https://discord.com/users/mtx93" target="_blank" class="flex flex-col items-center hover:scale-110 transition">
+            <i class="fab fa-discord text-8xl text-purple-400 mb-4"></i>
+            <p class="text-xl">mtx93</p>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
 
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
+  <!-- AUDIO -->
+  <audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
 
-        window.addEventListener('resize', resize);
-        resize();
+  <script>
+    function createShootingStar(container) {
+      const star = document.createElement('div');
+      star.className = 'shooting-star';
+      star.style.left = Math.random() * 100 + 'vw';
+      star.style.top = Math.random() * 60 + 'vh';
+      star.style.animationDuration = (3 + Math.random() * 4) + 's';
+      container.appendChild(star);
+      setTimeout(() => star.remove(), 10000);
+    }
 
-        // Stars setup
-        for(let i=0; i<150; i++) {
-            stars.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                s: Math.random() * 1,
-                o: Math.random()
-            });
-        }
+    function startStars(id) {
+      const container = document.getElementById(id);
+      setInterval(() => createShootingStar(container), 280);
+    }
 
-        function draw() {
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            
-            // Background Stars
-            ctx.fillStyle = "#fff";
-            stars.forEach(s => {
-                ctx.globalAlpha = s.o;
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.s, 0, Math.PI*2);
-                ctx.fill();
-            });
+    function enterSite() {
+      const splash = document.getElementById('splash');
+      splash.style.transition = 'opacity 1.2s';
+      splash.style.opacity = '0';
 
-            // Shooting Stars (Etoiles filantes)
-            shooters.forEach((sh, i) => {
-                ctx.strokeStyle = "rgba(168, 85, 247, "+sh.o+")";
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(sh.x, sh.y);
-                ctx.lineTo(sh.x + sh.l, sh.y - sh.l);
-                ctx.stroke();
-                sh.x -= sh.v;
-                sh.y += sh.v;
-                sh.o -= 0.01;
-                if(sh.o <= 0) shooters.splice(i, 1);
-            });
+      setTimeout(() => {
+        splash.classList.add('hidden');
+        document.getElementById('main-site').classList.remove('hidden');
+        document.getElementById('bgMusic').play();
+        startStars('stars-hero');
 
-            if(Math.random() < 0.01) {
-                shooters.push({
-                    x: Math.random() * canvas.width,
-                    y: 0,
-                    l: Math.random() * 50 + 20,
-                    v: Math.random() * 10 + 5,
-                    o: 1
-                });
-            }
+        // GSAP Animations
+        gsap.from("#hero-logo", { y: -120, opacity: 0, duration: 1.8, ease: "bounce.out" });
+        gsap.from("#hero-title", { y: 80, opacity: 0, duration: 1.4, delay: 0.6 });
+      }, 1200);
+    }
 
-            requestAnimationFrame(draw);
-        }
-        draw();
-
-        function init() {
-            document.getElementById('splash').style.opacity = '0';
-            setTimeout(() => document.getElementById('splash').style.visibility = 'hidden', 1200);
-            document.getElementById('music').play();
-        }
-
-        function notify() {
-            const t = document.getElementById('toast');
-            t.classList.add('active');
-            setTimeout(() => t.classList.remove('active'), 3000);
-        }
-    </script>
+    window.onload = () => startStars('stars-splash');
+  </script>
 </body>
 </html>
