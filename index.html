@@ -11,220 +11,314 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         
-        :root { --accent: #a78bfa; --bg: #030308; }
+        :root { --accent: #a78bfa; --bg: #020205; }
         * { cursor: none !important; box-sizing: border-box; }
-        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow: hidden; }
+        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
 
-        /* INTRO LOADER SYSTEM */
+        /* INTRO ANIMATION */
         #intro-overlay {
             position: fixed; inset: 0; z-index: 100000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: rgba(3, 3, 8, 0.8); backdrop-filter: blur(60px);
+            background: #000; backdrop-filter: blur(50px);
         }
-        .rocket-container { position: absolute; top: -100px; color: var(--accent); filter: drop-shadow(0 0 20px var(--accent)); }
+        .rocket-ship {
+            position: absolute; top: -200px; color: var(--accent);
+            filter: drop-shadow(0 0 30px var(--accent));
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .rocket-trail {
+            width: 4px; height: 100px;
+            background: linear-gradient(to top, var(--accent), transparent);
+            box-shadow: 0 0 20px var(--accent);
+            border-radius: 100px; margin-top: -10px;
+        }
         #welcome-text { 
-            font-size: 5vw; font-weight: 900; letter-spacing: -2px; italic: true;
-            opacity: 0; transform: scale(0.5); filter: blur(20px);
-            text-shadow: 0 0 30px var(--accent);
+            font-size: 6vw; font-weight: 900; italic: true; opacity: 0; 
+            text-shadow: 0 0 50px rgba(167, 139, 250, 0.8);
         }
 
         /* CURSOR */
         #cursor {
-            width: 8px; height: 8px; background: var(--accent); border-radius: 50%;
+            width: 10px; height: 10px; background: var(--accent); border-radius: 50%;
             position: fixed; pointer-events: none; z-index: 200000;
-            box-shadow: 0 0 15px var(--accent); opacity: 0;
+            box-shadow: 0 0 20px var(--accent);
         }
         #cursor-follower {
-            width: 30px; height: 30px; border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 50%;
+            width: 40px; height: 40px; border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 50%;
             position: fixed; pointer-events: none; z-index: 199999;
-            transition: transform 0.1s ease-out; opacity: 0;
+            transition: transform 0.15s ease-out;
         }
 
-        /* BG & GLASS */
+        /* BACKGROUND NEBULA */
         #bg-canvas { position: fixed; inset: 0; z-index: -1; }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.015);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px); border-radius: 28px;
-            transform-style: preserve-3d; will-change: transform; transition: border 0.4s ease;
-        }
-        .glass-card:hover { border-color: var(--accent); }
 
-        #app { opacity: 0; filter: blur(30px); }
-        .reveal { opacity: 0; transform: translateY(30px); filter: blur(20px); }
-        .logo-x { color: var(--accent); text-shadow: 0 0 20px var(--accent); font-style: italic; }
-        
-        #price-list { display: none; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; margin-top: 25px; }
+        /* GLASSMORPHISM 3D */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02) !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            backdrop-filter: blur(20px) saturate(150%);
+            border-radius: 30px;
+            transform-style: preserve-3d;
+            will-change: transform;
+            transition: border 0.5s ease, background 0.5s ease;
+        }
+        .glass-card:hover { border-color: var(--accent); background: rgba(167, 139, 250, 0.05) !important; }
+
+        /* TEXTS */
+        .logo-x, .text-purple-glow { color: var(--accent); text-shadow: 0 0 25px var(--accent); font-style: italic; }
+        .reveal { opacity: 0; transform: translateY(50px); filter: blur(20px); }
+
+        /* PRICE LIST */
+        #price-list {
+            display: none; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 15px; margin-top: 30px; width: 100%;
+        }
+
+        /* MODAL SORRY */
+        #purchase-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 150001;
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(40px);
+        }
+        .discord-btn {
+            background: #5865F2; color: white; padding: 20px 40px; border-radius: 20px;
+            font-weight: 900; letter-spacing: 2px; transition: 0.5s;
+            box-shadow: 0 10px 30px rgba(88, 101, 243, 0.3);
+        }
+        .discord-btn:hover { transform: scale(1.05); box-shadow: 0 15px 40px rgba(88, 101, 243, 0.5); }
     </style>
 </head>
 <body>
 
     <div id="intro-overlay">
-        <div class="rocket-container" id="rocket">
-            <i data-lucide="rocket" width="60" height="60" style="transform: rotate(180deg);"></i>
+        <div class="rocket-ship" id="rocket">
+            <i data-lucide="rocket" width="80" height="80" style="transform: rotate(180deg);"></i>
+            <div class="rocket-trail"></div>
         </div>
-        <h1 id="welcome-text" class="italic">WELCOME TO MM<span class="logo-x">X</span></h1>
+        <h1 id="welcome-text" class="italic uppercase">WELCOME TO MM<span class="logo-x">X</span></h1>
+    </div>
+
+    <div id="purchase-modal">
+        <div id="modal-content" class="text-center p-12 glass-card max-w-lg">
+            <h2 class="text-5xl font-black italic mb-6">SORRY...</h2>
+            <p class="text-gray-400 text-xs tracking-[5px] mb-10 uppercase">Our Website is Not Finished Yet.</p>
+            <a href="https://discord.gg/3FUMtkyPkF" target="_blank" class="discord-btn inline-flex items-center gap-4">
+                <i data-lucide="message-square"></i> JOIN DISCORD
+            </a>
+            <br>
+            <button onclick="closeModal()" class="mt-12 opacity-30 hover:opacity-100 text-[10px] font-black tracking-[5px] uppercase transition">Back to site</button>
+        </div>
     </div>
 
     <div id="cursor"></div>
     <div id="cursor-follower"></div>
     <canvas id="bg-canvas"></canvas>
 
-    <div id="app">
-        <nav class="fixed top-0 w-full h-[90px] px-[8%] flex justify-between items-center z-[5000] backdrop-blur-xl border-b border-white/5">
-            <div class="text-2xl font-black italic tracking-tighter">MM<span class="logo-x">X</span></div>
-            <div class="flex items-center gap-8">
-                <div class="flex items-center gap-2 opacity-40">
-                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                    <span class="text-[8px] font-black uppercase tracking-[2px]">Bypass Live</span>
+    <div id="app" style="display: none; opacity: 0;">
+        <nav class="fixed top-0 w-full h-[110px] px-[8%] flex justify-between items-center z-[5000] backdrop-blur-md border-b border-white/5">
+            <div class="text-3xl font-black italic">MM<span class="logo-x">X</span></div>
+            <div class="flex items-center gap-10">
+                <div class="px-5 py-2 rounded-full border border-purple-500/20 bg-purple-500/5 flex items-center gap-3">
+                    <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse shadow-[0_0_10px_#a78bfa]"></div>
+                    <span class="text-[9px] font-black uppercase tracking-[3px]">Protocol: Online</span>
                 </div>
-                <div class="text-[9px] font-black opacity-20 tracking-[4px]">V2.0.4</div>
+                <div class="text-[10px] font-black opacity-20 tracking-[5px]">STATUS: <span class="text-purple-400 uppercase">Undetected</span></div>
             </div>
         </nav>
 
-        <main class="h-screen flex items-center px-[8%]">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
+        <section class="min-h-screen flex items-center px-[8%] pt-20">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center w-full">
                 <div class="reveal">
-                    <h1 class="text-[6.5vw] font-black italic leading-[0.9] mb-8 tracking-tighter uppercase">
-                        PREMIUM<br><span class="logo-x">PROTOCOL</span>
-                    </h1>
-                    <div class="flex flex-col gap-6 max-w-xl">
-                        <div class="flex gap-4">
-                            <button class="bg-white text-black px-12 py-5 font-black uppercase text-[10px] tracking-widest hover:bg-purple-500 hover:text-white transition-all duration-500">Purchase</button>
-                            <button onclick="togglePrices()" class="glass-card px-8 py-5 text-[10px] font-black uppercase tracking-widest flex items-center gap-3">
-                                <i data-lucide="layers" class="w-4 h-4"></i> Show Prices
+                    <p class="text-purple-400 font-black tracking-[8px] text-[12px] mb-6 uppercase">Private External Solution</p>
+                    <h1 class="text-[7.5vw] font-black italic leading-[0.85] mb-12 tracking-tighter uppercase">FORTNITE<br><span class="text-purple-glow">PREMIUM</span></h1>
+                    
+                    <div class="flex flex-col gap-8">
+                        <div class="flex gap-6">
+                            <button onclick="openModal()" class="bg-white text-black px-14 py-6 font-black uppercase text-[11px] tracking-widest hover:bg-purple-500 hover:text-white transition-all duration-700 shadow-xl">Purchase</button>
+                            <button onclick="togglePrices()" class="glass-card px-10 py-6 text-[11px] font-black uppercase tracking-widest hover:border-purple-500 transition-all flex items-center gap-3">
+                                <i data-lucide="tag" class="w-4 h-4"></i> Price List
                             </button>
                         </div>
+                        
                         <div id="price-list">
-                            <div class="glass-card p-4 text-center price-item">
-                                <div class="text-[8px] opacity-40 mb-1">1D</div>
-                                <div class="font-black text-sm italic">5€</div>
+                            <div class="glass-card p-5 text-center price-item">
+                                <div class="text-[9px] text-gray-500 mb-1">1 DAY</div>
+                                <div class="font-black italic">4.99€</div>
                             </div>
-                            <div class="glass-card p-4 text-center price-item border-purple-500/40 bg-purple-500/5">
-                                <div class="text-[8px] text-purple-400 mb-1">30D</div>
-                                <div class="font-black text-sm italic">35€</div>
+                            <div class="glass-card p-5 text-center price-item border-purple-500/50 bg-purple-500/5">
+                                <div class="text-[9px] text-purple-400 mb-1">30 DAYS</div>
+                                <div class="font-black italic text-lg">35.00€</div>
                             </div>
-                            <div class="glass-card p-4 text-center price-item border-yellow-500/20">
-                                <div class="text-[8px] text-yellow-500 mb-1">LT</div>
-                                <div class="font-black text-sm italic text-yellow-500">99€</div>
+                            <div class="glass-card p-5 text-center price-item border-yellow-500/30">
+                                <div class="text-[9px] text-yellow-500 mb-1">LIFETIME</div>
+                                <div class="font-black italic text-yellow-500">99.99€</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="reveal flex justify-center">
-                    <div class="glass-card p-2 w-full max-w-lg rotate-2">
-                        <img src="fortnite.jpg" class="w-full h-[450px] object-cover rounded-[22px] opacity-60" alt="MMX">
+                <div class="reveal">
+                    <div class="glass-card p-3 rotate-1">
+                        <img src="fortnite.jpg" class="w-full h-[550px] object-cover rounded-[25px] opacity-70" alt="Preview">
                     </div>
                 </div>
             </div>
-        </main>
+        </section>
+
+        <section class="py-24 px-[8%] grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="glass-card p-12 reveal">
+                <i data-lucide="shield-check" class="text-purple-400 mb-8 w-10 h-10"></i>
+                <h3 class="font-black uppercase tracking-tight text-xl mb-3">Kernel</h3>
+                <p class="text-[11px] text-gray-500 font-bold tracking-[2px] uppercase">R0 Bypass Technology</p>
+            </div>
+            <div class="glass-card p-12 reveal">
+                <i data-lucide="zap" class="text-purple-400 mb-8 w-10 h-10"></i>
+                <h3 class="font-black uppercase tracking-tight text-xl mb-3">Instant</h3>
+                <p class="text-[11px] text-gray-500 font-bold tracking-[2px] uppercase">Automatic Delivery</p>
+            </div>
+            <div class="glass-card p-12 reveal">
+                <i data-lucide="cpu" class="text-purple-400 mb-8 w-10 h-10"></i>
+                <h3 class="font-black uppercase tracking-tight text-xl mb-3">Optimized</h3>
+                <p class="text-[11px] text-gray-500 font-bold tracking-[2px] uppercase">Zero Performance Impact</p>
+            </div>
+            <div class="glass-card p-12 reveal">
+                <i data-lucide="lock" class="text-purple-400 mb-8 w-10 h-10"></i>
+                <h3 class="font-black uppercase tracking-tight text-xl mb-3">Slots</h3>
+                <p class="text-[11px] text-gray-500 font-bold tracking-[2px] uppercase">Limited Slots System</p>
+            </div>
+        </section>
+
+        <section class="py-40 px-[8%] grid grid-cols-1 md:grid-cols-3 gap-12 pb-60">
+            <div class="glass-card p-14 reveal">
+                <div class="text-purple-400 font-black text-xs tracking-[5px] uppercase border-b border-white/5 pb-8 mb-10 italic">Aimbot Logic</div>
+                <div class="space-y-5 text-[12px] font-black text-gray-400 uppercase tracking-widest opacity-60">
+                    <p>├─ Silent Aim (pSilent)</p>
+                    <p>├─ Visible Check Only</p>
+                    <p>├─ Smoothing & FOV</p>
+                    <p>├─ Prediction Engine</p>
+                </div>
+            </div>
+            <div class="glass-card p-14 reveal">
+                <div class="text-purple-400 font-black text-xs tracking-[5px] uppercase border-b border-white/5 pb-8 mb-10 italic">Visuals ESP</div>
+                <div class="space-y-5 text-[12px] font-black text-gray-400 uppercase tracking-widest opacity-60">
+                    <p>├─ Skeleton & 3D Box</p>
+                    <p>├─ Radar Overlay</p>
+                    <p>├─ Item & Loot Filter</p>
+                    <p>├─ Snaplines</p>
+                </div>
+            </div>
+            <div class="glass-card p-14 reveal">
+                <div class="text-purple-400 font-black text-xs tracking-[5px] uppercase border-b border-white/5 pb-8 mb-10 italic">System Misc</div>
+                <div class="space-y-5 text-[12px] font-black text-gray-400 uppercase tracking-widest opacity-60">
+                    <p>├─ Streamproof OBS</p>
+                    <p>├─ Bullet Teleport</p>
+                    <p>├─ HWID Spoofer Inc.</p>
+                    <p>├─ Config System</p>
+                </div>
+            </div>
+        </section>
     </div>
 
     <script>
         lucide.createIcons();
-        
-        // INTRO TIMELINE
-        const tl = gsap.timeline();
+        gsap.registerPlugin(ScrollTrigger);
 
+        // --- ANIMATION D'ENTRÉE ---
+        const tl = gsap.timeline();
         window.addEventListener('load', () => {
-            // 1. La fusée descend
-            tl.to("#rocket", { 
-                top: "120%", 
-                duration: 1.2, 
-                ease: "power2.inOut" 
-            })
-            // 2. Le texte Welcome apparaît au passage de la fusée
-            .to("#welcome-text", { 
-                opacity: 1, 
-                scale: 1, 
-                filter: "blur(0px)", 
-                duration: 0.8,
-                ease: "back.out(1.7)"
-            }, "-=0.6")
-            // 3. Pause et disparition de l'overlay
-            .to("#intro-overlay", { 
-                opacity: 0, 
-                duration: 1, 
-                delay: 0.5,
-                onComplete: () => {
-                    document.getElementById('intro-overlay').style.display = 'none';
-                    startSite();
-                }
-            });
+            tl.to("#rocket", { top: "120%", duration: 1.5, ease: "power4.in" })
+              .to("#welcome-text", { opacity: 1, scale: 1.2, duration: 0.8, ease: "back.out(1.7)" }, "-=0.8")
+              .to("#intro-overlay", { opacity: 0, duration: 1, delay: 0.5, onComplete: () => {
+                  document.getElementById('intro-overlay').style.display = 'none';
+                  startSite();
+              }});
         });
 
         function startSite() {
-            gsap.to("#app", { opacity: 1, filter: "blur(0px)", duration: 2 });
-            gsap.to(".reveal", { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.5, stagger: 0.2 });
-            gsap.to(["#cursor", "#cursor-follower"], { opacity: 1, duration: 1 });
+            document.getElementById('app').style.display = 'block';
+            gsap.to("#app", { opacity: 1, duration: 2 });
+            gsap.to(".reveal", { 
+                opacity: 1, y: 0, filter: "blur(0px)", duration: 1.5, stagger: 0.2, ease: "power3.out" 
+            });
             applyTilt();
         }
 
-        // MOUSE & TILT
+        // --- CURSEUR ---
         const cur = document.getElementById('cursor');
         const fol = document.getElementById('cursor-follower');
         window.addEventListener('mousemove', e => {
             gsap.to(cur, { x: e.clientX, y: e.clientY, duration: 0 });
-            gsap.to(fol, { x: e.clientX - 15, y: e.clientY - 15, duration: 0.1 });
+            gsap.to(fol, { x: e.clientX - 20, y: e.clientY - 20, duration: 0.15 });
         });
 
+        // --- TILT 3D ---
         function applyTilt() {
             document.querySelectorAll('.glass-card').forEach(card => {
                 card.addEventListener('mousemove', e => {
                     const rect = card.getBoundingClientRect();
                     const x = (e.clientX - rect.left) / rect.width - 0.5;
                     const y = (e.clientY - rect.top) / rect.height - 0.5;
-                    gsap.to(card, { rotationY: x * 15, rotationX: -y * 15, transformPerspective: 1000, duration: 0.4 });
+                    gsap.to(card, {
+                        rotationY: x * 20, rotationX: -y * 20, transformPerspective: 1000, duration: 0.5
+                    });
                 });
                 card.addEventListener('mouseleave', () => {
-                    gsap.to(card, { rotationY: 0, rotationX: 0, duration: 0.8 });
+                    gsap.to(card, { rotationY: 0, rotationX: 0, duration: 1, ease: "elastic.out(1, 0.3)" });
                 });
             });
         }
 
+        // --- FONCTIONS ---
         function togglePrices() {
             const list = document.getElementById('price-list');
             const items = document.querySelectorAll('.price-item');
             if(list.style.display === 'none' || !list.style.display) {
                 list.style.display = 'grid';
-                gsap.fromTo(items, { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: 0.1, ease: "back.out(1.7)" });
+                gsap.fromTo(items, { opacity: 0, scale: 0.8, y: 20 }, { opacity: 1, scale: 1, y: 0, stagger: 0.1, duration: 0.6, ease: "back.out(1.7)" });
             } else {
                 list.style.display = 'none';
             }
         }
 
-        // BACKGROUND MESH
+        function openModal() {
+            document.getElementById('purchase-modal').style.display = 'flex';
+            gsap.fromTo("#modal-content", { scale: 0.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out" });
+        }
+        function closeModal() {
+            gsap.to("#modal-content", { scale: 0.7, opacity: 0, duration: 0.3, onComplete: () => {
+                document.getElementById('purchase-modal').style.display = 'none';
+            }});
+        }
+
+        // --- BACKGROUND HYPER-SPACE ---
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
-        let points = [];
+        let stars = [];
         function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        class Point {
+        class Star {
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.4;
-                this.vy = (Math.random() - 0.5) * 0.4;
+                this.z = Math.random() * canvas.width;
+                this.v = 2;
             }
             update() {
-                this.x += this.vx; this.y += this.vy;
-                if(this.x < 0 || this.x > canvas.width) this.vx *= -1;
-                if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                this.z -= this.v;
+                if(this.z <= 0) this.z = canvas.width;
+            }
+            draw() {
+                let sx = (this.x - canvas.width/2) * (canvas.width/this.z) + canvas.width/2;
+                let sy = (this.y - canvas.height/2) * (canvas.width/this.z) + canvas.height/2;
+                let r = (canvas.width/this.z) * 1;
+                ctx.fillStyle = "rgba(167, 139, 250, 0.4)";
+                ctx.beginPath(); ctx.arc(sx, sy, r, 0, Math.PI*2); ctx.fill();
             }
         }
-        function initBg() { for(let i=0; i<40; i++) points.push(new Point()); }
-        function draw() {
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.strokeStyle = "rgba(167, 139, 250, 0.07)";
-            for(let i=0; i<points.length; i++) {
-                points[i].update();
-                for(let j=i+1; j<points.length; j++) {
-                    let d = Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
-                    if(d < 200) { ctx.beginPath(); ctx.moveTo(points[i].x, points[i].y); ctx.lineTo(points[j].x, points[j].y); ctx.stroke(); }
-                }
-            }
-            requestAnimationFrame(draw);
+        function initBg() { for(let i=0; i<400; i++) stars.push(new Star()); }
+        function animate() {
+            ctx.fillStyle = "rgba(2, 2, 5, 0.2)"; ctx.fillRect(0,0,canvas.width, canvas.height);
+            stars.forEach(s => { s.update(); s.draw(); });
+            requestAnimationFrame(animate);
         }
-        resize(); initBg(); draw(); window.onresize = resize;
+        resize(); initBg(); animate(); window.onresize = resize;
     </script>
 </body>
 </html>
