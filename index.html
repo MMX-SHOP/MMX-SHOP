@@ -15,74 +15,67 @@
         * { cursor: none !important; box-sizing: border-box; }
         body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow: hidden; }
 
+        /* INTRO LOADER SYSTEM */
+        #intro-overlay {
+            position: fixed; inset: 0; z-index: 100000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(3, 3, 8, 0.8); backdrop-filter: blur(60px);
+        }
+        .rocket-container { position: absolute; top: -100px; color: var(--accent); filter: drop-shadow(0 0 20px var(--accent)); }
+        #welcome-text { 
+            font-size: 5vw; font-weight: 900; letter-spacing: -2px; italic: true;
+            opacity: 0; transform: scale(0.5); filter: blur(20px);
+            text-shadow: 0 0 30px var(--accent);
+        }
+
         /* CURSOR */
         #cursor {
             width: 8px; height: 8px; background: var(--accent); border-radius: 50%;
             position: fixed; pointer-events: none; z-index: 200000;
-            box-shadow: 0 0 15px var(--accent);
+            box-shadow: 0 0 15px var(--accent); opacity: 0;
         }
         #cursor-follower {
             width: 30px; height: 30px; border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 50%;
             position: fixed; pointer-events: none; z-index: 199999;
-            transition: transform 0.1s ease-out;
+            transition: transform 0.1s ease-out; opacity: 0;
         }
 
-        /* DYNAMIC BACKGROUND */
+        /* BG & GLASS */
         #bg-canvas { position: fixed; inset: 0; z-index: -1; }
-        .radial-overlay {
-            position: fixed; inset: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(167, 139, 250, 0.03) 0%, transparent 80%);
-            z-index: -1;
-        }
-
-        /* GLASS 3D CARDS */
         .glass-card {
             background: rgba(255, 255, 255, 0.015);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border-radius: 28px;
-            transform-style: preserve-3d;
-            will-change: transform;
-            transition: border 0.4s ease;
+            backdrop-filter: blur(20px); border-radius: 28px;
+            transform-style: preserve-3d; will-change: transform; transition: border 0.4s ease;
         }
         .glass-card:hover { border-color: var(--accent); }
 
-        /* PRICE LIST ANIMATION CONTAINER */
-        #price-list {
-            display: none;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 12px;
-            margin-top: 25px;
-            width: 100%;
-        }
-
-        /* UTILS */
+        #app { opacity: 0; filter: blur(30px); }
         .reveal { opacity: 0; transform: translateY(30px); filter: blur(20px); }
         .logo-x { color: var(--accent); text-shadow: 0 0 20px var(--accent); font-style: italic; }
         
-        .btn-purchase:active { animation: shake 0.2s ease-in-out; }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-4px); }
-            75% { transform: translateX(4px); }
-        }
-
-        nav { border-bottom: 1px solid rgba(255,255,255,0.03); }
+        #price-list { display: none; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; margin-top: 25px; }
     </style>
 </head>
 <body>
 
+    <div id="intro-overlay">
+        <div class="rocket-container" id="rocket">
+            <i data-lucide="rocket" width="60" height="60" style="transform: rotate(180deg);"></i>
+        </div>
+        <h1 id="welcome-text" class="italic">WELCOME TO MM<span class="logo-x">X</span></h1>
+    </div>
+
     <div id="cursor"></div>
     <div id="cursor-follower"></div>
-    <div class="radial-overlay"></div>
     <canvas id="bg-canvas"></canvas>
 
     <div id="app">
-        <nav class="fixed top-0 w-full h-[90px] px-[8%] flex justify-between items-center z-[5000] backdrop-blur-xl">
+        <nav class="fixed top-0 w-full h-[90px] px-[8%] flex justify-between items-center z-[5000] backdrop-blur-xl border-b border-white/5">
             <div class="text-2xl font-black italic tracking-tighter">MM<span class="logo-x">X</span></div>
             <div class="flex items-center gap-8">
                 <div class="flex items-center gap-2 opacity-40">
-                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
                     <span class="text-[8px] font-black uppercase tracking-[2px]">Bypass Live</span>
                 </div>
                 <div class="text-[9px] font-black opacity-20 tracking-[4px]">V2.0.4</div>
@@ -91,30 +84,21 @@
 
         <main class="h-screen flex items-center px-[8%]">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
-                
-                <div class="reveal" id="hero-text">
+                <div class="reveal">
                     <h1 class="text-[6.5vw] font-black italic leading-[0.9] mb-8 tracking-tighter uppercase">
                         PREMIUM<br><span class="logo-x">PROTOCOL</span>
                     </h1>
-                    
                     <div class="flex flex-col gap-6 max-w-xl">
                         <div class="flex gap-4">
-                            <button class="btn-purchase bg-white text-black px-12 py-5 font-black uppercase text-[10px] tracking-widest hover:bg-purple-500 hover:text-white transition-all duration-500 shadow-2xl">
-                                Purchase
-                            </button>
+                            <button class="bg-white text-black px-12 py-5 font-black uppercase text-[10px] tracking-widest hover:bg-purple-500 hover:text-white transition-all duration-500">Purchase</button>
                             <button onclick="togglePrices()" class="glass-card px-8 py-5 text-[10px] font-black uppercase tracking-widest flex items-center gap-3">
                                 <i data-lucide="layers" class="w-4 h-4"></i> Show Prices
                             </button>
                         </div>
-
                         <div id="price-list">
                             <div class="glass-card p-4 text-center price-item">
                                 <div class="text-[8px] opacity-40 mb-1">1D</div>
                                 <div class="font-black text-sm italic">5€</div>
-                            </div>
-                            <div class="glass-card p-4 text-center price-item">
-                                <div class="text-[8px] opacity-40 mb-1">7D</div>
-                                <div class="font-black text-sm italic">15€</div>
                             </div>
                             <div class="glass-card p-4 text-center price-item border-purple-500/40 bg-purple-500/5">
                                 <div class="text-[8px] text-purple-400 mb-1">30D</div>
@@ -127,22 +111,56 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="reveal h-full flex items-center justify-center">
-                    <div class="glass-card p-2 w-full max-w-lg rotate-3 hover:rotate-0 transition-transform duration-1000">
-                        <img src="fortnite.jpg" class="w-full h-[450px] object-cover rounded-[22px] opacity-50 hover:opacity-80 transition-opacity" alt="Preview">
+                <div class="reveal flex justify-center">
+                    <div class="glass-card p-2 w-full max-w-lg rotate-2">
+                        <img src="fortnite.jpg" class="w-full h-[450px] object-cover rounded-[22px] opacity-60" alt="MMX">
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
 
     <script>
         lucide.createIcons();
-        gsap.registerPlugin(ScrollTrigger);
+        
+        // INTRO TIMELINE
+        const tl = gsap.timeline();
 
-        // CURSOR LOGIC
+        window.addEventListener('load', () => {
+            // 1. La fusée descend
+            tl.to("#rocket", { 
+                top: "120%", 
+                duration: 1.2, 
+                ease: "power2.inOut" 
+            })
+            // 2. Le texte Welcome apparaît au passage de la fusée
+            .to("#welcome-text", { 
+                opacity: 1, 
+                scale: 1, 
+                filter: "blur(0px)", 
+                duration: 0.8,
+                ease: "back.out(1.7)"
+            }, "-=0.6")
+            // 3. Pause et disparition de l'overlay
+            .to("#intro-overlay", { 
+                opacity: 0, 
+                duration: 1, 
+                delay: 0.5,
+                onComplete: () => {
+                    document.getElementById('intro-overlay').style.display = 'none';
+                    startSite();
+                }
+            });
+        });
+
+        function startSite() {
+            gsap.to("#app", { opacity: 1, filter: "blur(0px)", duration: 2 });
+            gsap.to(".reveal", { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.5, stagger: 0.2 });
+            gsap.to(["#cursor", "#cursor-follower"], { opacity: 1, duration: 1 });
+            applyTilt();
+        }
+
+        // MOUSE & TILT
         const cur = document.getElementById('cursor');
         const fol = document.getElementById('cursor-follower');
         window.addEventListener('mousemove', e => {
@@ -150,27 +168,13 @@
             gsap.to(fol, { x: e.clientX - 15, y: e.clientY - 15, duration: 0.1 });
         });
 
-        // AUTO START ON LOAD
-        window.addEventListener('DOMContentLoaded', () => {
-            document.body.style.overflow = 'hidden';
-            gsap.to(".reveal", {
-                opacity: 1, y: 0, filter: "blur(0px)",
-                duration: 1.5, stagger: 0.2, ease: "power4.out"
-            });
-            applyTilt();
-        });
-
-        // TILT 3D
         function applyTilt() {
             document.querySelectorAll('.glass-card').forEach(card => {
                 card.addEventListener('mousemove', e => {
                     const rect = card.getBoundingClientRect();
                     const x = (e.clientX - rect.left) / rect.width - 0.5;
                     const y = (e.clientY - rect.top) / rect.height - 0.5;
-                    gsap.to(card, {
-                        rotationY: x * 15, rotationX: -y * 15,
-                        transformPerspective: 1000, duration: 0.4
-                    });
+                    gsap.to(card, { rotationY: x * 15, rotationX: -y * 15, transformPerspective: 1000, duration: 0.4 });
                 });
                 card.addEventListener('mouseleave', () => {
                     gsap.to(card, { rotationY: 0, rotationX: 0, duration: 0.8 });
@@ -178,29 +182,18 @@
             });
         }
 
-        // PRICE LIST ANIMATION (GSAP)
-        let pricesOpen = false;
         function togglePrices() {
             const list = document.getElementById('price-list');
             const items = document.querySelectorAll('.price-item');
-            
-            if(!pricesOpen) {
+            if(list.style.display === 'none' || !list.style.display) {
                 list.style.display = 'grid';
-                gsap.fromTo(items, 
-                    { opacity: 0, y: 20, filter: "blur(10px)", scale: 0.8 },
-                    { opacity: 1, y: 0, filter: "blur(0px)", scale: 1, duration: 0.6, stagger: 0.1, ease: "back.out(1.7)" }
-                );
-                pricesOpen = true;
+                gsap.fromTo(items, { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: 0.1, ease: "back.out(1.7)" });
             } else {
-                gsap.to(items, { 
-                    opacity: 0, y: 10, filter: "blur(10px)", duration: 0.4, stagger: 0.05, 
-                    onComplete: () => { list.style.display = 'none'; }
-                });
-                pricesOpen = false;
+                list.style.display = 'none';
             }
         }
 
-        // BACKGROUND ANIMATION
+        // BACKGROUND MESH
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let points = [];
@@ -209,8 +202,8 @@
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.3;
-                this.vy = (Math.random() - 0.5) * 0.3;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
             }
             update() {
                 this.x += this.vx; this.y += this.vy;
@@ -218,21 +211,15 @@
                 if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
             }
         }
-        function initBg() {
-            for(let i=0; i<50; i++) points.push(new Point());
-        }
+        function initBg() { for(let i=0; i<40; i++) points.push(new Point()); }
         function draw() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.strokeStyle = "rgba(167, 139, 250, 0.05)";
-            ctx.lineWidth = 0.5;
+            ctx.strokeStyle = "rgba(167, 139, 250, 0.07)";
             for(let i=0; i<points.length; i++) {
                 points[i].update();
                 for(let j=i+1; j<points.length; j++) {
                     let d = Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
-                    if(d < 250) {
-                        ctx.beginPath(); ctx.moveTo(points[i].x, points[i].y);
-                        ctx.lineTo(points[j].x, points[j].y); ctx.stroke();
-                    }
+                    if(d < 200) { ctx.beginPath(); ctx.moveTo(points[i].x, points[i].y); ctx.lineTo(points[j].x, points[j].y); ctx.stroke(); }
                 }
             }
             requestAnimationFrame(draw);
