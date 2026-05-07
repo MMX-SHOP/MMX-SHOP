@@ -19,35 +19,41 @@
         #cursor { width: 4px; height: 4px; background: white; border-radius: 50%; position: fixed; pointer-events: none; z-index: 200000; }
         #cursor-scanner { width: 34px; height: 34px; border: 1px solid var(--accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 199999; transition: transform 0.15s ease-out; }
 
+        /* --- BACKGROUND ANIME --- */
+        #bg-canvas { position: fixed; inset: 0; z-index: -1; filter: blur(60px); opacity: 0.4; }
+        .bg-mesh {
+            position: fixed; inset: 0; z-index: -2;
+            background-image: radial-gradient(at 0% 0%, rgba(167, 139, 250, 0.15) 0, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(167, 139, 250, 0.1) 0, transparent 50%);
+        }
+
         /* --- LOADER --- */
         #loader { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; align-items: center; justify-content: center; }
         .welcome-msg { font-size: 5vw; font-weight: 900; font-style: italic; opacity: 0; filter: blur(20px); transform: translateY(20px); }
 
         /* --- GLASS DESIGN --- */
         .glass {
-            background: rgba(255, 255, 255, 0.015);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
+            background: rgba(255, 255, 255, 0.01) !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            backdrop-filter: blur(20px) saturate(180%);
             border-radius: 35px;
             transform-style: preserve-3d;
-            transition: border 0.3s, background 0.3s;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .glass:hover { border-color: var(--accent); background: rgba(167, 139, 250, 0.05); }
+        .glass:hover { border-color: var(--accent) !important; background: rgba(167, 139, 250, 0.03) !important; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
 
-        /* --- GSAP ANIMATIONS --- */
         .reveal { opacity: 0; transform: translateY(50px); filter: blur(15px); }
-        #price-grid { display: none; opacity: 0; }
-        
         .text-glow { color: var(--accent); text-shadow: 0 0 25px var(--accent); }
         
-        /* MODAL */
-        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 100001; display: none; align-items: center; justify-content: center; backdrop-filter: blur(20px); }
+        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100001; display: none; align-items: center; justify-content: center; backdrop-filter: blur(40px); }
     </style>
 </head>
 <body>
 
     <div id="cursor"></div>
     <div id="cursor-scanner"></div>
+    <div class="bg-mesh"></div>
+    <canvas id="bg-canvas"></canvas>
 
     <div id="loader">
         <h1 class="welcome-msg">WELCOME TO <span class="text-glow">MMX SHOP</span></h1>
@@ -57,7 +63,7 @@
         <nav class="fixed top-0 w-full h-24 px-[8%] flex justify-between items-center z-[5000] border-b border-white/5 backdrop-blur-xl">
             <div class="text-3xl font-black italic">MM<span class="text-glow">X</span></div>
             <div class="flex items-center gap-8">
-                <div class="text-[10px] font-black opacity-30 tracking-[4px]">V2.1.0_PRIVATE</div>
+                <div class="text-[9px] font-black opacity-30 tracking-[4px]">V2.4.0</div>
                 <div class="glass px-4 py-2 text-[9px] font-bold text-purple-400 uppercase tracking-widest border-purple-500/20">System Online</div>
             </div>
         </nav>
@@ -65,32 +71,28 @@
         <section class="min-h-screen flex items-center px-[8%] pt-20">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
                 <div class="reveal">
-                    <p class="text-purple-400 font-bold tracking-[10px] text-[11px] mb-6 uppercase">Private External Cheat</p>
+                    <p class="text-purple-400 font-bold tracking-[10px] text-[11px] mb-6 uppercase">Premium Private Solution</p>
                     <h1 class="text-[8vw] font-black italic leading-[0.85] mb-12 tracking-tighter uppercase">FORTNITE<br><span class="text-glow">PRIVATE</span></h1>
                     
                     <div class="flex flex-col gap-6">
                         <div class="flex items-center gap-6">
-                            <button onclick="openModal()" class="bg-white text-black px-14 py-7 font-black uppercase text-xs hover:bg-purple-500 hover:text-white transition-all duration-500 shadow-2xl">Get Access</button>
+                            <button onclick="openModal()" class="bg-white text-black px-14 py-7 font-black uppercase text-xs hover:bg-purple-500 hover:text-white transition-all duration-500">Get Access</button>
                             <button onclick="togglePrices()" class="glass px-10 py-7 text-xs font-black uppercase tracking-widest flex items-center gap-4">
                                 <i data-lucide="tag" class="w-4 h-4"></i> Show Prices
                             </button>
                         </div>
 
-                        <div id="price-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                        <div id="price-grid" class="hidden grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 opacity-0">
                             <div class="glass p-6 text-center">
-                                <div class="text-[9px] text-gray-500 uppercase mb-1">1 Day</div>
+                                <div class="text-[9px] text-gray-500 uppercase mb-1">Daily</div>
                                 <div class="font-black text-xl">4.99€</div>
                             </div>
-                            <div class="glass p-6 text-center">
-                                <div class="text-[9px] text-gray-500 uppercase mb-1">7 Days</div>
-                                <div class="font-black text-xl">14.99€</div>
-                            </div>
                             <div class="glass p-6 text-center border-purple-500/40">
-                                <div class="text-[9px] text-purple-400 uppercase mb-1">30 Days</div>
+                                <div class="text-[9px] text-purple-400 uppercase mb-1">Monthly</div>
                                 <div class="font-black text-xl">35€</div>
                             </div>
                             <div class="glass p-6 text-center">
-                                <div class="text-[9px] text-yellow-500 uppercase mb-1">Life</div>
+                                <div class="text-[9px] text-yellow-500 uppercase mb-1">Lifetime</div>
                                 <div class="font-black text-xl text-yellow-500">99€</div>
                             </div>
                         </div>
@@ -99,58 +101,76 @@
 
                 <div class="reveal">
                     <div class="glass p-3 rounded-[45px] overflow-hidden">
-                        <img src="fortnite.jpg" class="w-full h-[550px] object-cover rounded-[35px] opacity-70" alt="Preview">
+                        <img src="fortnite.jpg" class="w-full h-[550px] object-cover rounded-[35px] opacity-60" alt="Preview">
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="py-40 px-[8%] relative">
-            <div class="text-center mb-24 reveal">
-                <h2 class="text-5xl font-black italic uppercase tracking-tighter">Core <span class="text-glow">Engine</span></h2>
-                <div class="h-1 w-20 bg-purple-500 mx-auto mt-4"></div>
+        <section class="py-20 px-[8%] grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="glass p-10 reveal text-center">
+                <i data-lucide="shield-check" class="text-purple-400 w-8 h-8 mx-auto mb-6"></i>
+                <h3 class="font-black uppercase text-sm mb-2">Undetected</h3>
+                <p class="text-[9px] text-gray-500 font-bold tracking-widest">KERNEL LEVEL BYPASS</p>
             </div>
+            <div class="glass p-10 reveal text-center">
+                <i data-lucide="zap" class="text-purple-400 w-8 h-8 mx-auto mb-6"></i>
+                <h3 class="font-black uppercase text-sm mb-2">Instant</h3>
+                <p class="text-[9px] text-gray-500 font-bold tracking-widest">AUTOMATIC DELIVERY</p>
+            </div>
+            <div class="glass p-10 reveal text-center">
+                <i data-lucide="cpu" class="text-purple-400 w-8 h-8 mx-auto mb-6"></i>
+                <h3 class="font-black uppercase text-sm mb-2">Optimized</h3>
+                <p class="text-[9px] text-gray-500 font-bold tracking-widest">ZERO PERFORMANCE IMPACT</p>
+            </div>
+            <div class="glass p-10 reveal text-center">
+                <i data-lucide="headphones" class="text-purple-400 w-8 h-8 mx-auto mb-6"></i>
+                <h3 class="font-black uppercase text-sm mb-2">24/7 Support</h3>
+                <p class="text-[9px] text-gray-500 font-bold tracking-widest">ALWAYS HERE FOR YOU</p>
+            </div>
+        </section>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                <div class="glass p-16 reveal feature-card">
-                    <i data-lucide="target" class="text-purple-400 w-12 h-12 mb-8"></i>
-                    <h3 class="text-2xl font-black italic uppercase mb-6">Combat</h3>
-                    <ul class="space-y-4 text-[11px] font-bold text-gray-500 tracking-widest uppercase">
-                        <li>├─ Silent Aim (pSilent)</li>
-                        <li>├─ Memory Prediction</li>
-                        <li>├─ Humanized Smoothing</li>
-                    </ul>
-                </div>
-                <div class="glass p-16 reveal feature-card">
-                    <i data-lucide="eye" class="text-purple-400 w-12 h-12 mb-8"></i>
-                    <h3 class="text-2xl font-black italic uppercase mb-6">Visuals</h3>
-                    <ul class="space-y-4 text-[11px] font-bold text-gray-500 tracking-widest uppercase">
-                        <li>├─ 3D Skeleton ESP</li>
-                        <li>├─ Box & Corner ESP</li>
-                        <li>├─ World Loot ESP</li>
-                    </ul>
-                </div>
-                <div class="glass p-16 reveal feature-card">
-                    <i data-lucide="shield-check" class="text-purple-400 w-12 h-12 mb-8"></i>
-                    <h3 class="text-2xl font-black italic uppercase mb-6">Security</h3>
-                    <ul class="space-y-4 text-[11px] font-bold text-gray-500 tracking-widest uppercase">
-                        <li>├─ Kernel Bypass</li>
-                        <li>├─ HWID Spoofer Inc.</li>
-                        <li>├─ Stream-Proof</li>
-                    </ul>
-                </div>
+        <section class="py-40 px-[8%] grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div class="glass p-14 reveal">
+                <div class="font-black text-purple-400 mb-8 uppercase tracking-[5px] border-b border-white/5 pb-6 italic">Combat Engine</div>
+                <ul class="space-y-4 text-[11px] font-bold text-gray-400 uppercase tracking-widest opacity-60">
+                    <li>├─ Silent Aim (pSilent)</li>
+                    <li>├─ Advanced Prediction</li>
+                    <li>├─ Humanized Smoothing</li>
+                </ul>
+            </div>
+            <div class="glass p-14 reveal">
+                <div class="font-black text-purple-400 mb-8 uppercase tracking-[5px] border-b border-white/5 pb-6 italic">Visual System</div>
+                <ul class="space-y-4 text-[11px] font-bold text-gray-400 uppercase tracking-widest opacity-60">
+                    <li>├─ 3D Skeleton ESP</li>
+                    <li>├─ Box & Corner ESP</li>
+                    <li>├─ Radar 2D Overlay</li>
+                </ul>
+            </div>
+            <div class="glass p-14 reveal">
+                <div class="font-black text-purple-400 mb-8 uppercase tracking-[5px] border-b border-white/5 pb-6 italic">Miscellaneous</div>
+                <ul class="space-y-4 text-[11px] font-bold text-gray-400 uppercase tracking-widest opacity-60">
+                    <li>├─ Stream-Proof Bypass</li>
+                    <li>├─ HWID Spoofer Inc.</li>
+                    <li>├─ Cloud Config System</li>
+                </ul>
             </div>
         </section>
     </div>
 
     <div id="modal">
         <div class="glass p-20 text-center max-w-lg mx-4">
-            <h2 class="text-6xl font-black italic uppercase mb-4">SORRY</h2>
-            <p class="text-gray-500 text-[10px] tracking-[6px] uppercase mb-12">Automated shop coming soon</p>
-            <a href="https://discord.gg/3FUMtkyPkF" target="_blank" class="bg-[#5865F2] text-white px-12 py-6 rounded-2xl font-black flex items-center justify-center gap-4 hover:scale-105 transition-transform text-lg shadow-2xl">
-                <i data-lucide="message-square"></i> JOIN DISCORD
+            <h2 class="text-6xl font-black italic uppercase mb-4">SORRY...</h2>
+            <p class="text-gray-400 text-[10px] tracking-[6px] uppercase mb-12">Automated shop coming soon</p>
+            
+            <a href="https://discord.gg/3FUMtkyPkF" target="_blank" class="bg-[#5865F2] text-white px-12 py-6 rounded-2xl font-black flex items-center justify-center gap-4 hover:scale-105 transition-all text-lg shadow-[0_20px_50px_rgba(88,101,243,0.3)]">
+                <svg width="24" height="24" viewBox="0 0 127.14 96.36" fill="white">
+                    <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.71,32.65-1.82,56.6,.39,80.21a105.73,105.73,0,0,0,32.77,16.15,77.7,77.7,0,0,0,7.07-11.39,67.42,67.42,0,0,1-11.35-5.41c.95-.69,1.89-1.39,2.78-2.11a76.08,76.08,0,0,0,64.06,0c.89.72,1.83,1.42,2.78,2.11a67.11,67.11,0,0,1-11.35,5.41,78.45,78.45,0,0,0,7.07,11.39,106.16,106.16,0,0,0,32.81-16.15C131.58,52.41,126.31,28.61,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+                </svg>
+                JOIN DISCORD
             </a>
-            <button onclick="closeModal()" class="mt-12 opacity-20 hover:opacity-100 text-[9px] font-bold tracking-[5px] uppercase transition-all">Go Back</button>
+            
+            <button onclick="closeModal()" class="mt-12 opacity-20 hover:opacity-100 text-[10px] font-bold tracking-[5px] uppercase transition-all">Go Back</button>
         </div>
     </div>
 
@@ -170,27 +190,26 @@
 
         function initApp() {
             gsap.to("#app", { opacity: 1, duration: 1.5 });
-            
-            // GSAP REVEAL
             gsap.utils.toArray(".reveal").forEach(el => {
-                gsap.to(el, {
-                    scrollTrigger: { trigger: el, start: "top 95%" },
-                    opacity: 1, y: 0, filter: "blur(0px)", duration: 1.2, ease: "power3.out"
-                });
+                gsap.to(el, { scrollTrigger: { trigger: el, start: "top 95%" }, opacity: 1, y: 0, filter: "blur(0px)", duration: 1.2 });
             });
-
             initTilt();
+            initBackground();
         }
 
-        // --- GSAP PRICE TOGGLE ---
+        // --- TOGGLE PRICES ---
         let open = false;
         function togglePrices() {
             const grid = document.getElementById('price-grid');
             if(!open) {
-                grid.style.display = 'grid';
+                grid.classList.remove('hidden');
+                grid.classList.add('grid');
                 gsap.to(grid, { opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.7)" });
             } else {
-                gsap.to(grid, { opacity: 0, y: 20, duration: 0.4, onComplete: () => grid.style.display = 'none' });
+                gsap.to(grid, { opacity: 0, y: 20, duration: 0.4, onComplete: () => {
+                    grid.classList.add('hidden');
+                    grid.classList.remove('grid');
+                }});
             }
             open = !open;
         }
@@ -202,28 +221,34 @@
             gsap.to(scan, { x: e.clientX - 17, y: e.clientY - 17, duration: 0.15 });
         });
 
-        document.querySelectorAll('button, a, .glass').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                gsap.to(scan, { scale: 1.8, borderColor: "white", duration: 0.3 });
-            });
-            el.addEventListener('mouseleave', () => {
-                gsap.to(scan, { scale: 1, borderColor: "#a78bfa", duration: 0.3 });
-            });
-        });
-
-        // --- 3D TILT ENGINE ---
+        // --- TILT ENGINE ---
         function initTilt() {
             document.querySelectorAll('.glass').forEach(card => {
                 card.addEventListener('mousemove', e => {
                     const rect = card.getBoundingClientRect();
                     const x = (e.clientX - rect.left) / rect.width - 0.5;
                     const y = (e.clientY - rect.top) / rect.height - 0.5;
-                    gsap.to(card, { rotationY: x * 25, rotationX: -y * 25, transformPerspective: 1000, duration: 0.5 });
+                    gsap.to(card, { rotationY: x * 20, rotationX: -y * 20, transformPerspective: 1000, duration: 0.5 });
                 });
                 card.addEventListener('mouseleave', () => {
                     gsap.to(card, { rotationY: 0, rotationX: 0, duration: 1, ease: "elastic.out(1, 0.3)" });
                 });
             });
+        }
+
+        // --- BACKGROUND GENERATOR ---
+        function initBackground() {
+            const canvas = document.getElementById('bg-canvas'), ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            let time = 0;
+            function draw() {
+                time += 0.002; ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let g = ctx.createRadialGradient(canvas.width/2 + Math.cos(time)*200, canvas.height/2 + Math.sin(time)*150, 0, canvas.width/2, canvas.height/2, canvas.width);
+                g.addColorStop(0, "rgba(167, 139, 250, 0.15)"); g.addColorStop(1, "transparent");
+                ctx.fillStyle = g; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                requestAnimationFrame(draw);
+            }
+            draw();
         }
 
         function openModal() { document.getElementById('modal').style.display = 'flex'; }
