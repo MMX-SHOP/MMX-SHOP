@@ -11,9 +11,9 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         
-        :root { --accent: #a78bfa; --bg: #020205; }
+        :root { --accent: #a78bfa; --bg: #030308; }
         * { cursor: none !important; box-sizing: border-box; }
-        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow: hidden; }
 
         /* CURSOR */
         #cursor {
@@ -22,192 +22,145 @@
             box-shadow: 0 0 15px var(--accent);
         }
         #cursor-follower {
-            width: 35px; height: 35px; border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 50%;
+            width: 30px; height: 30px; border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 50%;
             position: fixed; pointer-events: none; z-index: 199999;
             transition: transform 0.1s ease-out;
         }
 
-        /* NEW BACKGROUND - DEEP VIOLET GRADIENT */
+        /* DYNAMIC BACKGROUND */
         #bg-canvas { position: fixed; inset: 0; z-index: -1; }
-        .bg-glow {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80vw; height: 80vh; background: radial-gradient(circle, rgba(167, 139, 250, 0.05) 0%, transparent 70%);
-            z-index: -1; pointer-events: none;
+        .radial-overlay {
+            position: fixed; inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(167, 139, 250, 0.03) 0%, transparent 80%);
+            z-index: -1;
         }
 
-        /* GATEWAY */
-        #enter-gateway {
-            position: fixed; inset: 0; background: #000; z-index: 150000;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .init-btn {
-            padding: 25px 50px; border: 1px solid var(--accent);
-            background: transparent; color: white; font-weight: 900;
-            letter-spacing: 12px; text-transform: uppercase;
-            transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-        .init-btn:hover { background: var(--accent); color: black; box-shadow: 0 0 50px rgba(167, 139, 250, 0.3); }
-
-        /* GLASSMORPHISM 3D CARDS */
+        /* GLASS 3D CARDS */
         .glass-card {
-            background: rgba(255, 255, 255, 0.01) !important;
-            border: 1px solid rgba(255, 255, 255, 0.05) !important;
-            backdrop-filter: blur(12px) saturate(150%);
-            border-radius: 24px;
-            transition: border 0.3s ease, box-shadow 0.3s ease;
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
             transform-style: preserve-3d;
+            will-change: transform;
+            transition: border 0.4s ease;
         }
-        .glass-card:hover {
-            border-color: rgba(167, 139, 250, 0.4) !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        .glass-card:hover { border-color: var(--accent); }
+
+        /* PRICE LIST ANIMATION CONTAINER */
+        #price-list {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 25px;
+            width: 100%;
         }
 
-        /* LOGO & TITLES */
-        .logo-x, .text-purple-glow { color: var(--accent); text-shadow: 0 0 20px var(--accent); font-style: italic; }
-        .reveal { opacity: 0; transform: translateY(40px); filter: blur(15px); }
+        /* UTILS */
+        .reveal { opacity: 0; transform: translateY(30px); filter: blur(20px); }
+        .logo-x { color: var(--accent); text-shadow: 0 0 20px var(--accent); font-style: italic; }
+        
+        .btn-purchase:active { animation: shake 0.2s ease-in-out; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
 
-        /* TICKER / MARQUEE */
-        .ticker-wrap {
-            position: fixed; bottom: 0; width: 100%; overflow: hidden;
-            background: rgba(0,0,0,0.8); border-top: 1px solid rgba(255,255,255,0.05);
-            padding: 10px 0; z-index: 100; backdrop-blur: 10px;
-        }
-        .ticker { display: flex; white-space: nowrap; animation: marquee 30s linear infinite; }
-        .ticker-item {
-            color: rgba(255,255,255,0.2); font-size: 9px; font-weight: 900;
-            letter-spacing: 3px; padding: 0 40px; text-transform: uppercase;
-        }
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-        /* TOAST */
-        .toast {
-            background: rgba(10, 10, 15, 0.9); border: 1px solid rgba(167, 139, 250, 0.3);
-            padding: 12px 20px; border-radius: 12px; backdrop-filter: blur(10px);
-            display: flex; align-items: center; gap: 12px; opacity: 0; transform: translateX(-30px);
-        }
+        nav { border-bottom: 1px solid rgba(255,255,255,0.03); }
     </style>
 </head>
 <body>
 
     <div id="cursor"></div>
     <div id="cursor-follower"></div>
-    <div class="bg-glow"></div>
+    <div class="radial-overlay"></div>
     <canvas id="bg-canvas"></canvas>
 
-    <div id="enter-gateway">
-        <button class="init-btn" onclick="startSystem()">Initialize</button>
-    </div>
-
-    <div id="toast-container" class="fixed bottom-20 left-8 z-[200001] flex flex-col gap-4 pointer-events-none"></div>
-
-    <audio id="main-audio" loop><source src="music.mp3" type="audio/mpeg"></audio>
-
-    <div id="app" style="display: none;">
-        <nav class="fixed top-0 w-full h-[100px] px-[8%] flex justify-between items-center z-[5000] backdrop-blur-md">
-            <div class="text-3xl font-black italic">MM<span class="logo-x">X</span></div>
+    <div id="app">
+        <nav class="fixed top-0 w-full h-[90px] px-[8%] flex justify-between items-center z-[5000] backdrop-blur-xl">
+            <div class="text-2xl font-black italic tracking-tighter">MM<span class="logo-x">X</span></div>
             <div class="flex items-center gap-8">
-                <div class="px-4 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/5 flex items-center gap-3">
-                    <div class="w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse shadow-[0_0_8px_#a78bfa]"></div>
-                    <span class="text-[8px] font-black uppercase tracking-[2px]">System Online</span>
+                <div class="flex items-center gap-2 opacity-40">
+                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <span class="text-[8px] font-black uppercase tracking-[2px]">Bypass Live</span>
                 </div>
-                <div class="text-[10px] font-black opacity-30 tracking-[4px]">STATUS: <span class="text-purple-400">UNDETECTED</span></div>
+                <div class="text-[9px] font-black opacity-20 tracking-[4px]">V2.0.4</div>
             </div>
         </nav>
 
-        <section class="min-h-screen flex items-center px-[8%] pt-10">
+        <main class="h-screen flex items-center px-[8%]">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
-                <div class="reveal">
-                    <p class="text-purple-400 font-black tracking-[8px] text-[10px] mb-4 uppercase opacity-80">Private Security Protocol</p>
-                    <h1 class="text-[7vw] font-black italic leading-[0.9] mb-10 tracking-tighter uppercase">FORTNITE<br><span class="text-purple-glow">EXTERNAL</span></h1>
-                    <div class="flex gap-4">
-                        <button class="bg-white text-black px-12 py-5 font-black uppercase text-[10px] tracking-widest hover:bg-purple-500 hover:text-white transition-all duration-500">Purchase Now</button>
-                        <button class="border border-white/10 px-8 py-5 text-[10px] font-black uppercase tracking-widest hover:border-purple-500 transition-all">Show Prices</button>
+                
+                <div class="reveal" id="hero-text">
+                    <h1 class="text-[6.5vw] font-black italic leading-[0.9] mb-8 tracking-tighter uppercase">
+                        PREMIUM<br><span class="logo-x">PROTOCOL</span>
+                    </h1>
+                    
+                    <div class="flex flex-col gap-6 max-w-xl">
+                        <div class="flex gap-4">
+                            <button class="btn-purchase bg-white text-black px-12 py-5 font-black uppercase text-[10px] tracking-widest hover:bg-purple-500 hover:text-white transition-all duration-500 shadow-2xl">
+                                Purchase
+                            </button>
+                            <button onclick="togglePrices()" class="glass-card px-8 py-5 text-[10px] font-black uppercase tracking-widest flex items-center gap-3">
+                                <i data-lucide="layers" class="w-4 h-4"></i> Show Prices
+                            </button>
+                        </div>
+
+                        <div id="price-list">
+                            <div class="glass-card p-4 text-center price-item">
+                                <div class="text-[8px] opacity-40 mb-1">1D</div>
+                                <div class="font-black text-sm italic">5€</div>
+                            </div>
+                            <div class="glass-card p-4 text-center price-item">
+                                <div class="text-[8px] opacity-40 mb-1">7D</div>
+                                <div class="font-black text-sm italic">15€</div>
+                            </div>
+                            <div class="glass-card p-4 text-center price-item border-purple-500/40 bg-purple-500/5">
+                                <div class="text-[8px] text-purple-400 mb-1">30D</div>
+                                <div class="font-black text-sm italic">35€</div>
+                            </div>
+                            <div class="glass-card p-4 text-center price-item border-yellow-500/20">
+                                <div class="text-[8px] text-yellow-500 mb-1">LT</div>
+                                <div class="font-black text-sm italic text-yellow-500">99€</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="reveal">
-                    <div class="glass-card p-2">
-                        <img src="fortnite.jpg" class="w-full h-[500px] object-cover rounded-[20px] opacity-60" alt="MMX Preview">
+
+                <div class="reveal h-full flex items-center justify-center">
+                    <div class="glass-card p-2 w-full max-w-lg rotate-3 hover:rotate-0 transition-transform duration-1000">
+                        <img src="fortnite.jpg" class="w-full h-[450px] object-cover rounded-[22px] opacity-50 hover:opacity-80 transition-opacity" alt="Preview">
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <section class="py-20 px-[8%] grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="glass-card p-10 reveal">
-                <i data-lucide="shield-check" class="text-purple-400 mb-6 w-8 h-8"></i>
-                <h3 class="font-black uppercase tracking-tight mb-2">Bypass</h3>
-                <p class="text-[10px] text-gray-500 font-bold tracking-widest uppercase">Kernel Level 0</p>
             </div>
-            <div class="glass-card p-10 reveal">
-                <i data-lucide="zap" class="text-purple-400 mb-6 w-8 h-8"></i>
-                <h3 class="font-black uppercase tracking-tight mb-2">Instant</h3>
-                <p class="text-[10px] text-gray-500 font-bold tracking-widest uppercase">Auto-Delivery</p>
-            </div>
-            <div class="glass-card p-10 reveal">
-                <i data-lucide="cpu" class="text-purple-400 mb-6 w-8 h-8"></i>
-                <h3 class="font-black uppercase tracking-tight mb-2">Internal</h3>
-                <p class="text-[10px] text-gray-500 font-bold tracking-widest uppercase">Zero Lag / 0% CPU</p>
-            </div>
-            <div class="glass-card p-10 reveal">
-                <i data-lucide="lock" class="text-purple-400 mb-6 w-8 h-8"></i>
-                <h3 class="font-black uppercase tracking-tight mb-2">Private</h3>
-                <p class="text-[10px] text-gray-500 font-bold tracking-widest uppercase">Slots Limited</p>
-            </div>
-        </section>
-
-        <section class="py-32 px-[8%] grid grid-cols-1 md:grid-cols-3 gap-10 pb-48">
-            <div class="glass-card p-12 reveal">
-                <div class="text-purple-400 font-black text-[10px] tracking-[4px] uppercase border-b border-white/5 pb-6 mb-8">Aimbot Logic</div>
-                <div class="space-y-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-                    <p>• Vector-Based Aim</p>
-                    <p>• Prediction Engine</p>
-                    <p>• Custom Smoothing</p>
-                </div>
-            </div>
-            <div class="glass-card p-12 reveal">
-                <div class="text-purple-400 font-black text-[10px] tracking-[4px] uppercase border-b border-white/5 pb-6 mb-8">Visual Overlay</div>
-                <div class="space-y-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-                    <p>• 3D Box & Bone</p>
-                    <p>• Snaplines / Radar</p>
-                    <p>• Item & Loot Filter</p>
-                </div>
-            </div>
-            <div class="glass-card p-12 reveal">
-                <div class="text-purple-400 font-black text-[10px] tracking-[4px] uppercase border-b border-white/5 pb-6 mb-8">System Misc</div>
-                <div class="space-y-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-                    <p>• Streamproof (OBS)</p>
-                    <p>• Config System</p>
-                    <p>• HWID Spoofer Inc.</p>
-                </div>
-            </div>
-        </section>
-
-        <div class="ticker-wrap">
-            <div class="ticker">
-                <div class="ticker-item">Aimbot: Online</div>
-                <div class="ticker-item">Visuals: Stable</div>
-                <div class="ticker-item">Kernel Bypass: Active</div>
-                <div class="ticker-item">EAC Status: Bypassed</div>
-                <div class="ticker-item">BE Status: Bypassed</div>
-                <div class="ticker-item">Aimbot: Online</div>
-                <div class="ticker-item">Visuals: Stable</div>
-                <div class="ticker-item">Kernel Bypass: Active</div>
-            </div>
-        </div>
+        </main>
     </div>
 
     <script>
         lucide.createIcons();
         gsap.registerPlugin(ScrollTrigger);
 
-        // --- MOUSE & TILT 3D ---
+        // CURSOR LOGIC
         const cur = document.getElementById('cursor');
         const fol = document.getElementById('cursor-follower');
         window.addEventListener('mousemove', e => {
             gsap.to(cur, { x: e.clientX, y: e.clientY, duration: 0 });
-            gsap.to(fol, { x: e.clientX - 17, y: e.clientY - 17, duration: 0.1 });
+            gsap.to(fol, { x: e.clientX - 15, y: e.clientY - 15, duration: 0.1 });
         });
 
+        // AUTO START ON LOAD
+        window.addEventListener('DOMContentLoaded', () => {
+            document.body.style.overflow = 'hidden';
+            gsap.to(".reveal", {
+                opacity: 1, y: 0, filter: "blur(0px)",
+                duration: 1.5, stagger: 0.2, ease: "power4.out"
+            });
+            applyTilt();
+        });
+
+        // TILT 3D
         function applyTilt() {
             document.querySelectorAll('.glass-card').forEach(card => {
                 card.addEventListener('mousemove', e => {
@@ -215,87 +168,76 @@
                     const x = (e.clientX - rect.left) / rect.width - 0.5;
                     const y = (e.clientY - rect.top) / rect.height - 0.5;
                     gsap.to(card, {
-                        rotationY: x * 15,
-                        rotationX: -y * 15,
-                        transformPerspective: 1000,
-                        duration: 0.4,
-                        ease: "power2.out"
+                        rotationY: x * 15, rotationX: -y * 15,
+                        transformPerspective: 1000, duration: 0.4
                     });
                 });
                 card.addEventListener('mouseleave', () => {
-                    gsap.to(card, { rotationY: 0, rotationX: 0, duration: 0.7, ease: "power2.out" });
+                    gsap.to(card, { rotationY: 0, rotationX: 0, duration: 0.8 });
                 });
             });
         }
 
-        // --- SYSTEM START ---
-        function startSystem() {
-            const audio = document.getElementById('main-audio');
-            audio.play().catch(() => {});
-            gsap.to("#enter-gateway", { opacity: 0, duration: 1, onComplete: () => {
-                document.getElementById('enter-gateway').style.display = 'none';
-                document.getElementById('app').style.display = 'block';
-                initAnims();
-                applyTilt();
-                spawnToast();
-            }});
-        }
-
-        function initAnims() {
-            gsap.utils.toArray(".reveal").forEach(el => {
-                gsap.to(el, {
-                    scrollTrigger: { trigger: el, start: "top 95%" },
-                    opacity: 1, y: 0, filter: "blur(0px)", duration: 1.2, ease: "power2.out"
+        // PRICE LIST ANIMATION (GSAP)
+        let pricesOpen = false;
+        function togglePrices() {
+            const list = document.getElementById('price-list');
+            const items = document.querySelectorAll('.price-item');
+            
+            if(!pricesOpen) {
+                list.style.display = 'grid';
+                gsap.fromTo(items, 
+                    { opacity: 0, y: 20, filter: "blur(10px)", scale: 0.8 },
+                    { opacity: 1, y: 0, filter: "blur(0px)", scale: 1, duration: 0.6, stagger: 0.1, ease: "back.out(1.7)" }
+                );
+                pricesOpen = true;
+            } else {
+                gsap.to(items, { 
+                    opacity: 0, y: 10, filter: "blur(10px)", duration: 0.4, stagger: 0.05, 
+                    onComplete: () => { list.style.display = 'none'; }
                 });
-            });
+                pricesOpen = false;
+            }
         }
 
-        function spawnToast() {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-purple-400"></i>
-                               <span class="text-[9px] font-black uppercase tracking-widest">Client Initialized Successfully</span>`;
-            container.appendChild(toast);
-            lucide.createIcons();
-            gsap.to(toast, { opacity: 1, x: 0, duration: 0.5 });
-            setTimeout(() => {
-                gsap.to(toast, { opacity: 0, x: -20, duration: 0.5, onComplete: () => toast.remove() });
-            }, 4000);
-        }
-
-        // --- BACKGROUND ANIMATION ---
+        // BACKGROUND ANIMATION
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
-        let particles = [];
+        let points = [];
         function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        class Particle {
+        class Point {
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 1.5;
-                this.speed = Math.random() * 0.5;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = (Math.random() - 0.5) * 0.3;
             }
             update() {
-                this.y -= this.speed;
-                if (this.y < 0) this.y = canvas.height;
-            }
-            draw() {
-                ctx.fillStyle = "rgba(167, 139, 250, 0.2)";
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
+                this.x += this.vx; this.y += this.vy;
+                if(this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
             }
         }
         function initBg() {
-            for(let i=0; i<80; i++) particles.push(new Particle());
+            for(let i=0; i<50; i++) points.push(new Point());
         }
-        function animate() {
+        function draw() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animate);
+            ctx.strokeStyle = "rgba(167, 139, 250, 0.05)";
+            ctx.lineWidth = 0.5;
+            for(let i=0; i<points.length; i++) {
+                points[i].update();
+                for(let j=i+1; j<points.length; j++) {
+                    let d = Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
+                    if(d < 250) {
+                        ctx.beginPath(); ctx.moveTo(points[i].x, points[i].y);
+                        ctx.lineTo(points[j].x, points[j].y); ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(draw);
         }
-        resize(); initBg(); animate(); window.onresize = resize;
+        resize(); initBg(); draw(); window.onresize = resize;
     </script>
 </body>
 </html>
