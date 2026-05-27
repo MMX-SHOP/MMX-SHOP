@@ -168,13 +168,28 @@ shopLabel.pack(side="left")
 # Create Notebook (Tabs)
 tab_view = ttk.Notebook(gui)
 tab_view.pack(fill="both", expand=True)
+style = ttk.Style()
+style.theme_use("default")
+
+style.configure(
+    "TNotebook",
+    background="#050505",
+    borderwidth=0
+)
+
+style.configure(
+    "TNotebook.Tab",
+    background="#111111",
+    foreground="white",
+    padding=[10, 5]
+)
 
 # Create Main Tab
-main_tab = ctk.CTkFrame(tab_view)
+main_tab = ctk.CTkFrame(     tab_view,     fg_color="#050505" )
 tab_view.add(main_tab, text="Recoil")
 
 # Create Settings Tab
-settings_tab = ctk.CTkFrame(tab_view)
+settings_tab = ctk.CTkFrame(     tab_view,     fg_color="#050505" )
 tab_view.add(settings_tab, text="Loadouts")
 
 # Main Tab Contents
@@ -190,7 +205,7 @@ aimCheckButton = ctk.CTkButton(
 aimCheckButton.pack(pady=5)
 
 # X Control
-xFrame = ctk.CTkFrame(main_tab)
+xFrame = ctk.CTkFrame(main_tab, fg_color="#050505")
 xFrame.pack(pady=5)
 
 ctk.CTkLabel(xFrame, text='X Control').pack(side=ctk.LEFT)
@@ -200,7 +215,7 @@ xValueLabel = ctk.CTkLabel(xFrame, text=f"X: {xValue}")
 xValueLabel.pack(side=ctk.LEFT)
 
 # Y Control
-yFrame = ctk.CTkFrame(main_tab)
+yFrame = ctk.CTkFrame(main_tab, fg_color="#050505")
 yFrame.pack(pady=5)
 
 ctk.CTkLabel(yFrame, text='Y Control').pack(side=ctk.LEFT)
@@ -210,7 +225,7 @@ yValueLabel = ctk.CTkLabel(yFrame, text=f"Y: {yValue}")
 yValueLabel.pack(side=ctk.LEFT)
 
 # Delay Control
-delayFrame = ctk.CTkFrame(main_tab)
+delayFrame = ctk.CTkFrame(main_tab, fg_color="#050505")
 delayFrame.pack(pady=5)
 
 ctk.CTkLabel(delayFrame, text='Delay (ms)').pack(side=ctk.LEFT)
