@@ -80,7 +80,7 @@ def saveLoadout():
 def showLoadoutSelection():
     loadout_names = config.options('loadouts')  # Get all loadout names
     if not loadout_names:
-        ctk.CTkMessageBox.showinfo("Loadout List", "No loadouts found.")
+        messagebox.showinfo("Loadout List", "No loadouts found.")
         return
 
     loadout_window = ctk.CTkToplevel(gui)  # Create a new top-level window
@@ -120,7 +120,7 @@ def loadLoadout(name=None):
     try:
         loadout = config['loadouts'][name]
     except KeyError:
-        ctk.CTkMessageBox.showwarning("Error", f"No loadout called {name}")
+        messagebox.showwarning("Error", f"No loadout called {name}")
         return None
 
     loadoutList = ast.literal_eval(loadout)
@@ -268,7 +268,17 @@ saveButton = ctk.CTkButton(
 saveButton.pack(pady=5)
 
 
-loadButton = ctk.CTkButton(     settings_tab,     text='Load cfg',     command=showLoadoutSelection,     fg_color="#7C3AED",     hover_color="#8B5CF6",     corner_radius=15,     height=40 )
+loadButton = ctk.CTkButton(
+    settings_tab,
+    text="Load cfg",
+    command=showLoadoutSelection,
+    fg_color="#7C3AED",
+    hover_color="#8B5CF6",
+    corner_radius=15,
+    height=40
+)
+
+loadButton.pack(pady=5)
 loadButton.pack(pady=5)
 
 # Hotkey Entry
@@ -342,4 +352,8 @@ thread.daemon = True
 thread.start()
 
 # Start main GUI loop
-gui.mainloop()
+try:
+    gui.mainloop()
+except Exception as e:
+    print("ERREUR :", e)
+    input("Press Enter...")
