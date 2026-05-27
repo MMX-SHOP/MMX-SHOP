@@ -135,7 +135,6 @@ def loadLoadout(name=None):
 
 # Create GUI
 ctk.set_appearance_mode("dark")
-ctk.set_default_color_theme("dark-blue")
 
 gui = ctk.CTk()
 gui.title("MMX-SHOP")
@@ -178,7 +177,15 @@ settings_tab = ctk.CTkFrame(tab_view)
 tab_view.add(settings_tab, text="Loadouts")
 
 # Main Tab Contents
-aimCheckButton = ctk.CTkButton(main_tab, text="Aim Check Off", command=toggleAimCheck)
+aimCheckButton = ctk.CTkButton(
+    main_tab,
+    text="Aim Check Off",
+    command=toggleAimCheck,
+    fg_color="#7C3AED",
+    hover_color="#8B5CF6",
+    corner_radius=18,
+    height=40
+)
 aimCheckButton.pack(pady=5)
 
 # X Control
@@ -212,7 +219,10 @@ delay.pack(side=ctk.LEFT, padx=(5, 10))
 delayValueLabel = ctk.CTkLabel(delayFrame, text=f"Delay: {delayValue} ms")
 delayValueLabel.pack(side=ctk.LEFT)
 
-setButton = ctk.CTkButton(     main_tab,     text="Set",     command=setValues,     fg_color="#6A0DAD",     hover_color="#8A2BE2" )
+fg_color="#7C3AED",
+hover_color="#8B5CF6",
+corner_radius=15,
+height=42
 setButton.pack(pady=5)
 
 # Settings Tab Contents
