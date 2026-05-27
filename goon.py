@@ -294,7 +294,7 @@ loadButton = ctk.CTkButton(
 )
 
 loadButton.pack(pady=5)
-loadButton.pack(pady=5)
+
 
 # Hotkey Entry
 hotkeyFrame = ctk.CTkFrame(settings_tab)
