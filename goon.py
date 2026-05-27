@@ -46,164 +46,218 @@ except KeyError:
 
 print('Hotkey is:', hotkey)
 
-# ─── Couleurs ───────────────────────────────────────────
-BG_MAIN      = "#0d0d1a"
-BG_FRAME     = "#13102b"
-BG_CARD      = "#1a1535"
-ACCENT       = "#7c3aed"
-ACCENT_HOVER = "#6d28d9"
-ACCENT_GLOW  = "#9d5cff"
-TEXT_WHITE   = "#ffffff"
-TEXT_MUTED   = "#a78bfa"
+def setValues():
+    global xValue, yValue, delayValue
+    xValue = int(xControl.get())
+    yValue = int(yControl.get())
+    delayValue = int(delay.get())
+    xValueLabel.configure(text=f"X: {xValue}")
+    yValueLabel.configure(text=f"Y: {yValue}")
+    delayValueLabel.configure(text=f"Delay: {delayValue} ms")
+    print(f"Values set - X:{xValue} Y:{yValue} D:{delayValue}")
 
-# ─── GUI Setup ──────────────────────────────────────────
+def toggleAimCheck():
+    global aimCheck
+    aimCheck = not aimCheck
+    aimCheckButton.configure(text='Aim Check On' if aimCheck else 'Aim Check Off')
+
+def getResolution():
+    screens = screeninfo.get_monitors()
+    primary_monitor = screens[0]
+    return primary_monitor.width, primary_monitor.height
+
+def saveLoadout():
+    setValues()
+    name = str(loadoutName.get()).strip()
+    loadoutName.delete(0, ctk.END)
+    config = configparser.ConfigParser()
+    config.read('config.txt')
+    if not config.has_section('loadouts'):
+        config.add_section('loadouts')
+    config.set('loadouts', name, f'[{xValue},{yValue},{delayValue}]')
+    config.write(open('config.txt', 'w'))
+
+def showLoadoutSelection():
+    loadout_names = config.options('loadouts')  # Get all loadout names
+    if not loadout_names:
+        ctk.CTkMessageBox.showinfo("Loadout List", "No loadouts found.")
+        return
+
+    loadout_window = ctk.CTkToplevel(gui)  # Create a new top-level window
+    loadout_window.title("Loadout changer")
+    loadout_window.geometry("300x500")
+
+    loadout_listbox = tk.Listbox(loadout_window, font=('Arial', 10))  # Set font size for Listbox
+    loadout_listbox.pack(pady=10, padx=10, fill="both", expand=True)
+
+    for name in loadout_names:
+        loadout_listbox.insert(tk.END, name)  # Insert loadout names into the listbox
+
+    def confirmLoadout():
+        selected_index = loadout_listbox.curselection()
+        if selected_index:
+            name = loadout_names[selected_index[0]]  # Get the selected loadout name
+            confirmation = messagebox.askyesno("Confirm Loadout", f"Are you sure you want to load the loadout '{name}'?")
+            if confirmation:
+                loadLoadout(name)
+
+    loadButton = ctk.CTkButton(loadout_window, text="Load Selected Loadout", command=confirmLoadout)
+    loadButton.pack(pady=5)
+
+    # Set smaller font for the button
+    loadButton.configure(font=('Arial', 9))
+
+def loadLoadout(name=None):
+    global xValue, yValue, delayValue
+    if name is None:  # If no name is provided, get it from the entry
+        setValues()
+        name = str(loadoutName.get()).strip()
+        loadoutName.delete(0, ctk.END)
+
+    config = configparser.ConfigParser()
+    config.read('config.txt')
+
+    try:
+        loadout = config['loadouts'][name]
+    except KeyError:
+        ctk.CTkMessageBox.showwarning("Error", f"No loadout called {name}")
+        return None
+
+    loadoutList = ast.literal_eval(loadout)
+    xValue = loadoutList[0]
+    yValue = loadoutList[1]
+    delayValue = loadoutList[2]
+
+    xControl.set(loadoutList[0])
+    yControl.set(loadoutList[1])
+    delay.set(loadoutList[2])
+    setValues()  # Update labels with loaded values
+
+# Create GUI
 ctk.set_appearance_mode("dark")
-ctk.set_default_color_theme("blue")
+ctk.set_default_color_theme("dark-blue")
 
 gui = ctk.CTk()
 gui.title("MMX-SHOP")
 
+# Set window size
 x, y = getResolution()
 size = min(int(x / 5), int(y / 1.5))
 gui.geometry(f'{size}x{size}')
-gui.configure(fg_color=BG_MAIN)
+# MMX-SHOP Branding
 
-# ─── Onglets ─────────────────────────────────────────────
-style = ttk.Style()
-style.theme_use('default')
-style.configure("TNotebook", background=BG_MAIN, borderwidth=0)
-style.configure("TNotebook.Tab",
-    background=BG_CARD, foreground=TEXT_MUTED,
-    padding=[16, 7], font=('Segoe UI', 10, 'bold'), borderwidth=0)
-style.map("TNotebook.Tab",
-    background=[("selected", ACCENT)],
-    foreground=[("selected", TEXT_WHITE)])
+brandFrame = ctk.CTkFrame(gui, fg_color="transparent")
+brandFrame.pack(pady=(10, 5))
 
+mmxLabel = ctk.CTkLabel(
+    brandFrame,
+    text="MMX",
+    font=("Arial", 28, "bold"),
+    text_color="white"
+)
+mmxLabel.pack(side="left")
+
+shopLabel = ctk.CTkLabel(
+    brandFrame,
+    text="-SHOP",
+    font=("Arial", 28, "bold"),
+    text_color="#A020F0"
+)
+shopLabel.pack(side="left")
+
+# Create Notebook (Tabs)
 tab_view = ttk.Notebook(gui)
-tab_view.pack(fill="both", expand=True, padx=10, pady=10)
+tab_view.pack(fill="both", expand=True)
 
-main_tab = ctk.CTkFrame(tab_view, fg_color=BG_MAIN)
-tab_view.add(main_tab, text="  Recoil  ")
+# Create Main Tab
+main_tab = ctk.CTkFrame(tab_view)
+tab_view.add(main_tab, text="Recoil")
 
-settings_tab = ctk.CTkFrame(tab_view, fg_color=BG_MAIN)
-tab_view.add(settings_tab, text="  Loadouts  ")
+# Create Settings Tab
+settings_tab = ctk.CTkFrame(tab_view)
+tab_view.add(settings_tab, text="Loadouts")
 
-# ─── Header ──────────────────────────────────────────────
-header = ctk.CTkFrame(main_tab, fg_color=BG_CARD, corner_radius=14)
-header.pack(fill="x", padx=12, pady=(12, 6))
+# Main Tab Contents
+aimCheckButton = ctk.CTkButton(main_tab, text="Aim Check Off", command=toggleAimCheck)
+aimCheckButton.pack(pady=5)
 
-ctk.CTkLabel(header, text="MMX-SHOP",
-    font=("Segoe UI", 17, "bold"),
-    text_color=ACCENT_GLOW).pack(side="left", padx=14, pady=10)
+# X Control
+xFrame = ctk.CTkFrame(main_tab)
+xFrame.pack(pady=5)
 
-ctk.CTkLabel(header, text="v1.0",
-    font=("Segoe UI", 10),
-    text_color=TEXT_MUTED).pack(side="left")
+ctk.CTkLabel(xFrame, text='X Control').pack(side=ctk.LEFT)
+xControl = ctk.CTkSlider(xFrame, from_=-5, to=10, orientation='horizontal', width=150, command=lambda value: xValueLabel.configure(text=f"X: {int(value)}"))
+xControl.pack(side=ctk.LEFT, padx=(5, 10))
+xValueLabel = ctk.CTkLabel(xFrame, text=f"X: {xValue}")
+xValueLabel.pack(side=ctk.LEFT)
 
-# ─── Aim Check ───────────────────────────────────────────
-aimCheckButton = ctk.CTkButton(
-    main_tab, text="○  Aim Check  OFF",
-    command=toggleAimCheck,
-    fg_color=BG_CARD, hover_color=ACCENT,
-    font=("Segoe UI", 11, "bold"),
-    text_color=TEXT_MUTED,
-    corner_radius=10, height=38,
-    border_width=1, border_color=ACCENT)
-aimCheckButton.pack(pady=(6, 4), padx=12, fill="x")
+# Y Control
+yFrame = ctk.CTkFrame(main_tab)
+yFrame.pack(pady=5)
 
-# ─── Sliders ─────────────────────────────────────────────
-def makeSlider(parent, label, from_, to, default, unit=""):
-    frame = ctk.CTkFrame(parent, fg_color=BG_CARD, corner_radius=12)
-    frame.pack(pady=4, padx=12, fill="x")
+ctk.CTkLabel(yFrame, text='Y Control').pack(side=ctk.LEFT)
+yControl = ctk.CTkSlider(yFrame, from_=0, to=8, orientation='horizontal', width=150, command=lambda value: yValueLabel.configure(text=f"Y: {int(value)}"))
+yControl.pack(side=ctk.LEFT, padx=(5, 10))
+yValueLabel = ctk.CTkLabel(yFrame, text=f"Y: {yValue}")
+yValueLabel.pack(side=ctk.LEFT)
 
-    ctk.CTkLabel(frame, text=label,
-        font=("Segoe UI", 10, "bold"),
-        text_color=TEXT_MUTED, width=80, anchor="w").pack(side="left", padx=(14, 0), pady=12)
+# Delay Control
+delayFrame = ctk.CTkFrame(main_tab)
+delayFrame.pack(pady=5)
 
-    val_label = ctk.CTkLabel(frame,
-        text=f"{default}{unit}",
-        font=("Segoe UI", 10, "bold"),
-        text_color=ACCENT_GLOW, width=55, anchor="e")
-    val_label.pack(side="right", padx=14)
+ctk.CTkLabel(delayFrame, text='Delay (ms)').pack(side=ctk.LEFT)
+delay = ctk.CTkSlider(delayFrame, from_=1, to=30, orientation='horizontal', width=150, command=lambda value: delayValueLabel.configure(text=f"Delay: {int(value)} ms"))
+delay.set(10)
+delay.pack(side=ctk.LEFT, padx=(5, 10))
+delayValueLabel = ctk.CTkLabel(delayFrame, text=f"Delay: {delayValue} ms")
+delayValueLabel.pack(side=ctk.LEFT)
 
-    slider = ctk.CTkSlider(frame,
-        from_=from_, to=to,
-        button_color=ACCENT_GLOW,
-        button_hover_color=ACCENT,
-        progress_color=ACCENT,
-        fg_color="#2a2250",
-        command=lambda v: val_label.configure(text=f"{int(v)}{unit}"))
-    slider.set(default)
-    slider.pack(side="left", padx=(8, 8), fill="x", expand=True)
+setButton = ctk.CTkButton(     main_tab,     text="Set",     command=setValues,     fg_color="#6A0DAD",     hover_color="#8A2BE2" )
+setButton.pack(pady=5)
 
-    return slider, val_label
+# Settings Tab Contents
+loadoutName = ctk.CTkEntry(settings_tab)
+loadoutName.pack(pady=5)
 
-xControl,  xValueLabel    = makeSlider(main_tab, "X Control", -5, 10, 0)
-yControl,  yValueLabel    = makeSlider(main_tab, "Y Control",  0,  8, 0)
-delay,     delayValueLabel = makeSlider(main_tab, "Delay",      1, 30, 10, " ms")
+saveButton = ctk.CTkButton(settings_tab, text='Save cfg', command=saveLoadout)
+saveButton.pack(pady=5)
 
-# ─── Apply Button ─────────────────────────────────────────
-setButton = ctk.CTkButton(
-    main_tab, text="APPLY",
-    command=setValues,
-    fg_color=ACCENT, hover_color=ACCENT_HOVER,
-    font=("Segoe UI", 12, "bold"),
-    text_color=TEXT_WHITE,
-    corner_radius=10, height=40,
-    border_width=1, border_color=ACCENT_GLOW)
-setButton.pack(pady=10, padx=12, fill="x")
+loadButton = ctk.CTkButton(settings_tab, text='Load cfg', command=showLoadoutSelection)
+loadButton.pack(pady=5)
 
-# ─── Loadouts Tab ─────────────────────────────────────────
-ctk.CTkLabel(settings_tab, text="Loadouts",
-    font=("Segoe UI", 15, "bold"),
-    text_color=ACCENT_GLOW).pack(pady=(16, 6))
+# Hotkey Entry
+hotkeyFrame = ctk.CTkFrame(settings_tab)
+hotkeyFrame.pack(pady=5)
 
-loadoutName = ctk.CTkEntry(settings_tab,
-    placeholder_text="Loadout name...",
-    fg_color=BG_CARD, border_color=ACCENT,
-    text_color=TEXT_WHITE,
-    placeholder_text_color=TEXT_MUTED,
-    corner_radius=10, height=38)
-loadoutName.pack(pady=4, padx=12, fill="x")
-
-ctk.CTkButton(settings_tab, text="SAVE",
-    command=saveLoadout,
-    fg_color=ACCENT, hover_color=ACCENT_HOVER,
-    font=("Segoe UI", 11, "bold"),
-    corner_radius=10, height=36).pack(pady=4, padx=12, fill="x")
-
-ctk.CTkButton(settings_tab, text="LOAD",
-    command=showLoadoutSelection,
-    fg_color=BG_CARD, hover_color=ACCENT,
-    font=("Segoe UI", 11, "bold"),
-    text_color=TEXT_WHITE,
-    corner_radius=10, height=36,
-    border_width=1, border_color=ACCENT).pack(pady=4, padx=12, fill="x")
-
-# ─── Hotkey ───────────────────────────────────────────────
-ctk.CTkLabel(settings_tab, text="Hotkey",
-    font=("Segoe UI", 12, "bold"),
-    text_color=ACCENT_GLOW).pack(pady=(14, 4))
-
-hotkeyFrame = ctk.CTkFrame(settings_tab, fg_color=BG_CARD, corner_radius=12)
-hotkeyFrame.pack(pady=4, padx=12, fill="x")
-
-ctk.CTkLabel(hotkeyFrame, text="Key :",
-    font=("Segoe UI", 10),
-    text_color=TEXT_MUTED).pack(side="left", padx=12, pady=10)
-
-hotkeyEntry = ctk.CTkEntry(hotkeyFrame,
-    width=60, fg_color=BG_MAIN,
-    border_color=ACCENT,
-    text_color=TEXT_WHITE, corner_radius=8)
+ctk.CTkLabel(hotkeyFrame, text='Hotkey:').pack(side=ctk.LEFT)
+hotkeyEntry = ctk.CTkEntry(hotkeyFrame, width=10)
 hotkeyEntry.insert(0, hotkey)
-hotkeyEntry.pack(side="left", padx=6)
+hotkeyEntry.pack(side=ctk.LEFT, padx=(5, 10))
 
-ctk.CTkButton(hotkeyFrame, text="UPDATE",
-    command=updateHotkey,
-    fg_color=ACCENT, hover_color=ACCENT_HOVER,
-    font=("Segoe UI", 10, "bold"),
-    corner_radius=8, height=30).pack(side="left", padx=8)
+def updateHotkey():
+    global hotkey
+    new_hotkey = hotkeyEntry.get().strip()
+    
+    if new_hotkey and new_hotkey != hotkey:
+        # Remove the old hotkey listener
+        keyboard.remove_hotkey(hotkey)
+        
+        # Set the new hotkey
+        hotkey = new_hotkey
+        config['hotkey']['hotkey'] = hotkey
+        
+        # Add the new hotkey listener
+        keyboard.add_hotkey(hotkey, toggleMacro)
+
+        # Save the updated hotkey to config
+        with open('config.txt', 'w') as configfile:
+            config.write(configfile)
+
+        print(f"Hotkey updated to: {hotkey}")
+
+updateHotkeyButton = ctk.CTkButton(hotkeyFrame, text='Update Hotkey', command=updateHotkey)
+updateHotkeyButton.pack(side=ctk.LEFT)
+
 # Start of macro code
 enabled = False
 
