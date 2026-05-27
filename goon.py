@@ -138,6 +138,7 @@ ctk.set_appearance_mode("dark")
 
 gui = ctk.CTk()
 gui.title("MMX-SHOP")
+gui.configure(fg_color="#050505")
 
 # Set window size
 x, y = getResolution()
@@ -219,20 +220,26 @@ delay.pack(side=ctk.LEFT, padx=(5, 10))
 delayValueLabel = ctk.CTkLabel(delayFrame, text=f"Delay: {delayValue} ms")
 delayValueLabel.pack(side=ctk.LEFT)
 
-fg_color="#7C3AED",
-hover_color="#8B5CF6",
-corner_radius=15,
-height=42
+setButton = ctk.CTkButton(
+    main_tab,
+    text="Set",
+    command=setValues,
+    fg_color="#7C3AED",
+    hover_color="#8B5CF6",
+    corner_radius=15,
+    height=42
+)
+
 setButton.pack(pady=5)
 
 # Settings Tab Contents
 loadoutName = ctk.CTkEntry(settings_tab)
 loadoutName.pack(pady=5)
 
-saveButton = ctk.CTkButton(settings_tab, text='Save cfg', command=saveLoadout)
+gui = ctk.CTk() gui.title("MMX-SHOP") gui.configure(fg_color="#050505")
 saveButton.pack(pady=5)
 
-loadButton = ctk.CTkButton(settings_tab, text='Load cfg', command=showLoadoutSelection)
+loadButton = ctk.CTkButton(     settings_tab,     text='Load cfg',     command=showLoadoutSelection,     fg_color="#7C3AED",     hover_color="#8B5CF6",     corner_radius=15,     height=40 )
 loadButton.pack(pady=5)
 
 # Hotkey Entry
@@ -265,7 +272,7 @@ def updateHotkey():
 
         print(f"Hotkey updated to: {hotkey}")
 
-updateHotkeyButton = ctk.CTkButton(hotkeyFrame, text='Update Hotkey', command=updateHotkey)
+updateHotkeyButton = ctk.CTkButton(     hotkeyFrame,     text='Update Hotkey',     command=updateHotkey,     fg_color="#7C3AED",     hover_color="#8B5CF6",     corner_radius=15,     height=35 )
 updateHotkeyButton.pack(side=ctk.LEFT)
 
 # Start of macro code
