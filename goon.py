@@ -214,9 +214,26 @@ delayFrame = ctk.CTkFrame(main_tab)
 delayFrame.pack(pady=5)
 
 ctk.CTkLabel(delayFrame, text='Delay (ms)').pack(side=ctk.LEFT)
-delay = ctk.CTkSlider(delayFrame, from_=1, to=30, orientation='horizontal', width=150, command=lambda value: delayValueLabel.configure(text=f"Delay: {int(value)} ms"))
+
+delay = ctk.CTkSlider(
+    delayFrame,
+    from_=1,
+    to=30,
+    orientation='horizontal',
+    width=150,
+    command=lambda value: delayValueLabel.configure(
+        text=f"Delay: {int(value)} ms"
+    )
+)
+
 delay.set(10)
-delay.pack(side=ctk.LEFT, padx=(5, 10))
+delay.pack(side=ctk.LEFT, padx=(5,10))
+
+delayValueLabel = ctk.CTkLabel(
+    delayFrame,
+    text=f"Delay: {delayValue} ms"
+)
+
 delayValueLabel.pack(side=ctk.LEFT)
 
 setButton = ctk.CTkButton(
@@ -233,14 +250,23 @@ setButton.pack(pady=5)
 
 # Settings Tab Contents
 
-setButton.pack(pady=5)
+
 
 # Settings Tab Contents
 loadoutName = ctk.CTkEntry(settings_tab)
 loadoutName.pack(pady=5)
+saveButton = ctk.CTkButton(
+    settings_tab,
+    text='Save cfg',
+    command=saveLoadout,
+    fg_color="#7C3AED",
+    hover_color="#8B5CF6",
+    corner_radius=15,
+    height=40
+)
 
-gui = ctk.CTk() gui.title("MMX-SHOP") gui.configure(fg_color="#050505")
 saveButton.pack(pady=5)
+
 
 loadButton = ctk.CTkButton(     settings_tab,     text='Load cfg',     command=showLoadoutSelection,     fg_color="#7C3AED",     hover_color="#8B5CF6",     corner_radius=15,     height=40 )
 loadButton.pack(pady=5)
