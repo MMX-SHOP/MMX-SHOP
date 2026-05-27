@@ -217,7 +217,6 @@ ctk.CTkLabel(delayFrame, text='Delay (ms)').pack(side=ctk.LEFT)
 delay = ctk.CTkSlider(delayFrame, from_=1, to=30, orientation='horizontal', width=150, command=lambda value: delayValueLabel.configure(text=f"Delay: {int(value)} ms"))
 delay.set(10)
 delay.pack(side=ctk.LEFT, padx=(5, 10))
-delayValueLabel = ctk.CTkLabel(delayFrame, text=f"Delay: {delayValue} ms")
 delayValueLabel.pack(side=ctk.LEFT)
 
 setButton = ctk.CTkButton(
@@ -229,6 +228,10 @@ setButton = ctk.CTkButton(
     corner_radius=15,
     height=42
 )
+
+setButton.pack(pady=5)
+
+# Settings Tab Contents
 
 setButton.pack(pady=5)
 
